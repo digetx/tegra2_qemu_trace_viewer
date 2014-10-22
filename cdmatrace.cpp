@@ -1,0 +1,297 @@
+/*
+ * Copyright (c) 2014-2015 Dmitry Osipenko <digetx@gmail.com>
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the
+ *  Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but WITHOUT
+ *  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ *
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <QColor>
+#include <QTime>
+#include <QtCore/qmath.h>
+
+#include "cdmatrace.h"
+#include "host1x_cmd_processor.h"
+#include "tracecore.h"
+
+void CdmaTrace::validataEntry(log_entry &entry)
+{
+    switch (CMD_OPCODE(entry.data)) {
+    case SETCL:
+    {
+        setcl_op op = { .reg32 = entry.data };
+
+        m_class_id = op.class_id;
+        entry.class_id = 0;
+
+        return;
+    }
+    case INCR:
+    case NONINCR:
+    case MASK:
+    case IMM:
+    case RESTART:
+    case GATHER:
+    case EXTEND:
+    case CHDONE:
+        entry.class_id = m_class_id;
+        break;
+    default:
+        entry.invalid = true;
+        break;
+    }
+
+    entry.class_id = m_class_id;
+}
+
+CdmaTrace::log_entry CdmaTrace::read_log_entry(int index) const
+{
+    if (m_log_size < MAX_LOG_ENTRIES)
+        return m_log.value(index);
+
+    index += m_log_pointer;
+
+    if (index < m_log_size)
+        return m_log.value(index);
+
+    return m_log.value(index - MAX_LOG_ENTRIES);
+}
+
+void CdmaTrace::write_log(log_entry &entry)
+{
+    if (m_log_size < MAX_LOG_ENTRIES)
+        m_log.append(entry);
+    else
+        m_log.replace(m_log_pointer, entry);
+
+    m_log_pointer = (++m_log_pointer == MAX_LOG_ENTRIES) ? 0 : m_log_pointer;
+    m_log_size = qMin(m_log_size + 1, MAX_LOG_ENTRIES);
+
+    emit layoutChanged();
+    emit logItemInserted(m_log_size == MAX_LOG_ENTRIES);
+}
+
+void CdmaTrace::trace(u_int32_t &time, u_int32_t &data, bool is_gather)
+{
+    log_entry entry = { time, data, 0, is_gather, false };
+
+    validataEntry(entry);
+
+    write_log(entry);
+
+    m_access_nb++;
+
+    setText(m_name + QString().sprintf(" (%lu)", m_access_nb));
+}
+
+int CdmaTrace::rowCount(const QModelIndex &) const
+{
+    return m_log_size;
+}
+
+int CdmaTrace::columnCount(const QModelIndex &) const
+{
+    return CdmaTrace::COLUMNS_NB;
+}
+
+QString CdmaTrace::opcodeName(u_int8_t opcode) const
+{
+    switch (opcode) {
+    case SETCL:
+        return "SETCL";
+    case INCR:
+        return "INCR";
+    case NONINCR:
+        return "NONINCR";
+    case MASK:
+        return "MASK";
+    case IMM:
+        return "IMM";
+    case RESTART:
+        return "RESTART";
+    case GATHER:
+        return "GATHER";
+    case EXTEND:
+        return "EXTEND";
+    case CHDONE:
+        return "CHDONE";
+    default:
+        return QString().sprintf("0x%02X", opcode);
+    }
+}
+
+QString CdmaTrace::cmdParams(u_int32_t &data) const
+{
+    switch ( CMD_OPCODE(data) ) {
+    case SETCL:
+    {
+        setcl_op op = { .reg32 = data };
+
+        return QString().sprintf("mask=0x%X class_id=0x%02X offset=0x%X",
+                                 op.mask, op.class_id, op.offset);
+    }
+    case INCR:
+    case NONINCR:
+    {
+        incr_op op = { .reg32 = data };
+
+        return QString().sprintf("count=%d offset=0x%X",
+                                 op.count, op.offset);
+    }
+    case MASK:
+    {
+        mask_op op = { .reg32 = data };
+
+        return QString().sprintf("mask=0x%X offset=0x%X",
+                                 op.mask, op.offset);
+    }
+    case IMM:
+    {
+        imm_op op = { .reg32 = data };
+
+        return QString().sprintf("immdata=0x%X offset=0x%X",
+                                 op.immdata, op.offset);
+    }
+    case GATHER:
+    {
+        gather_op op = { .reg32 = data };
+
+        return QString().sprintf("incrcount=%d insert=%d incr=%d offset=0x%X",
+                                 op.incrcount, op.insert, op.incr, op.offset);
+    }
+    case EXTEND:
+    {
+        extend_op op = { .reg32 = data };
+
+        switch (op.subop) {
+        case ACQUIRE_MLOCK:
+            return QString().sprintf("subop=ACQUIRE_MLOCK id=%d", op.value);
+        case RELEASE_MLOCK:
+            return QString().sprintf("subop=RELEASE_MLOCK id=%d", op.value);
+        default:
+            return QString().sprintf("value=0x%X subop=0x%X",
+                                     op.value, op.subop);
+        }
+    }
+    case RESTART:
+    {
+        restart_op op = { .reg32 = data };
+
+        return QString().sprintf("new_get=%d", op.offset);
+    }
+    case CHDONE:
+        return QString();
+    default:
+        return QString().sprintf("0x%08X", data);
+    }
+}
+
+QVariant CdmaTrace::data(const QModelIndex &index, int role) const
+{
+    log_entry entry;
+    QTime mstime;
+
+    Q_ASSERT(index.row() < m_log_size);
+
+    switch (role) {
+    case Qt::EditRole:
+    case Qt::DisplayRole:
+    {
+        entry = read_log_entry( index.row() );
+
+        switch ( index.column() ) {
+        case CdmaTrace::CMD:
+            return opcodeName(CMD_OPCODE(entry.data));
+        case CdmaTrace::PARAMS:
+            return cmdParams(entry.data);
+        case CdmaTrace::CLASS_ID:
+            if (entry.class_id)
+                return QString().sprintf("0x%02X", entry.class_id);
+            break;
+        case CdmaTrace::TIME:
+        {
+            mstime = QTime(0, 0).addMSecs(entry.time / 1000);
+
+            return mstime.toString("hh:mm:ss.zzz") +
+                            QString().sprintf(".%03d", entry.time % 1000);
+        }
+        default:
+            break;
+        }
+        break;
+    }
+    case Qt::BackgroundRole:
+    {
+        entry = read_log_entry( index.row() );
+
+        if (entry.is_gather)
+            return QColor(200, 255, 200);
+
+        break;
+    }
+    default:
+        break;
+    }
+
+    return QVariant();
+}
+
+QVariant CdmaTrace::headerData(int section, Qt::Orientation, int role) const
+{
+    switch (role) {
+    case Qt::DisplayRole:
+        switch (section) {
+        case CdmaTrace::CMD:
+            return "Command";
+        case CdmaTrace::CLASS_ID:
+            return "Class ID";
+        case CdmaTrace::PARAMS:
+            return "Params";
+        case CdmaTrace::TIME:
+            return "Time";
+        default:
+            break;
+        }
+    default:
+        break;
+    }
+
+    return QVariant();
+}
+
+
+int CdmaTrace::deviceType() const
+{
+    return TraceDev::HOST1X_CDMA;
+}
+
+void CdmaTrace::ClearLog()
+{
+    m_class_id = 0;
+    m_access_nb = 0;
+    m_log.clear();
+    m_log_size = 0;
+
+    setText(m_name);
+
+    emit layoutChanged();
+}
+
+bool CdmaTrace::is_valid(u_int32_t ch_id)
+{
+    return ch_id == m_ch_id;
+}
+
+Qt::ItemFlags CdmaTrace::flags(const QModelIndex &index) const
+{
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}
