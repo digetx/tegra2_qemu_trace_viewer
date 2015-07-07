@@ -25,6 +25,10 @@
 #define EXTEND  0xe
 #define CHDONE  0xf
 
+/* Reserve for tracing */
+#define START  0xa
+#define STOP   0xb
+
 #define ACQUIRE_MLOCK   0
 #define RELEASE_MLOCK   1
 

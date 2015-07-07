@@ -23,6 +23,9 @@
 #include "host1x_cmd_processor.h"
 #include "tracecore.h"
 
+#define DMA_START   0xA
+#define DMA_STOP    0xB
+
 void CdmaTrace::validataEntry(log_entry &entry)
 {
     switch (CMD_OPCODE(entry.data)) {
@@ -190,6 +193,10 @@ QString CdmaTrace::cmdParams(u_int32_t &data) const
     }
     case CHDONE:
         return QString();
+    case START:
+        return "CDMA start";
+    case STOP:
+        return "CDMA stop";
     default:
         return QString().sprintf("0x%08X", data);
     }
@@ -235,6 +242,12 @@ QVariant CdmaTrace::data(const QModelIndex &index, int role) const
 
         if (entry.is_gather)
             return QColor(200, 255, 200);
+
+        if ((entry.data >> 28) == DMA_START)
+            return QColor(255, 255, 150);
+
+        if ((entry.data >> 28) == DMA_STOP)
+            return QColor(150, 150, 255);
 
         break;
     }
