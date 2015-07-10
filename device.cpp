@@ -71,14 +71,14 @@ QVariant BitDetails::data(const QModelIndex &index, int role) const
             QString bin = QString::number(bits.at(bit_index).value, 2);
             return QString().sprintf("%0*d%s (%d)",
                                      bits.at(bit_index).bits - bin.length(), 0,
-                                     bin.toAscii().data(),
+                                     bin.toLatin1().data(),
                                      bits.at(bit_index).value);
         }
         case BitDetails::NEW_VALUE: {
             QString bin = QString::number(bits.at(bit_index).new_value, 2);
             return QString().sprintf("%0*d%s (%d)",
                                      bits.at(bit_index).bits - bin.length(), 0,
-                                     bin.toAscii().data(),
+                                     bin.toLatin1().data(),
                                      bits.at(bit_index).new_value);
         }
         default:
