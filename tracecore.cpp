@@ -173,6 +173,7 @@ TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent) :
 
     addDeviceToList( new Host1xDev("host1x", 0x1) );
     addDeviceToList( new Gr2dDev("host1x gr2d", 0x51) );
+    addDeviceToList( new Gr2dDev("host1x gr2d_sb", 0x52) );
     addDeviceToList( new Gr2dDev("host1x gr3d", 0x60) );
 
 #ifdef LOCAL_SOCKET
