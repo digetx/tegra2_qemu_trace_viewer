@@ -15,7 +15,6 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QColor>
 #include <QTime>
 #include <QtCore/qmath.h>
 
@@ -179,6 +178,7 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
     else
         m_log.replace(m_log_pointer, entry);
 
+    m_log_pointer_last = m_log_pointer;
     m_log_pointer = (++m_log_pointer == m_max_log_size) ? 0 : m_log_pointer;
 
     m_log_size = qMin(m_log_size + 1, m_max_log_size);
@@ -205,8 +205,9 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
     else
         m_dev_reads_nb++;
 
-    blink(entry);
-    updateName();
+    if (!update_dev_stats_timer.isActive())
+        update_dev_stats_timer.start(300);
+    blink_reset_timer.start(1500);
 
     // ----------- LOG TO FILE -----------
     if (!entry.is_error && m_out && m_out->status() == QTextStream::Ok) {
@@ -247,23 +248,31 @@ QAbstractTableModel* Device::getBitDetailsModel(void)
     return &m_bit_details_model;
 }
 
-void Device::blink(const log_entry &entry)
+void Device::update_dev_stats(void)
 {
+    const log_entry entry = m_log.value(m_log_pointer_last);
+    static const QBrush bcolor_irq_on = QBrush ( QColor(255, 192, 255) );
+    static const QBrush bcolor_irq_off = QBrush ( QColor(192, 255, 255) );
+    static const QBrush bcolor_err = QBrush ( Qt::red );
+    static const QBrush bcolor_read = QBrush ( Qt::green );
+    static const QBrush bcolor_wr_new_value = QBrush ( QColor(0xf4, 0xa7, 0) );
+    static const QBrush bcolor_wr_no_upd = QBrush ( QColor(255, 255, 150) );
+
+    updateName();
+
     if (entry.is_irq) {
         if (entry.value)
-            setBackground( QBrush( QColor(255, 192, 255) ) );
+            setBackground( bcolor_irq_on );
         else
-            setBackground( QBrush( QColor(192, 255, 255) ) );
+            setBackground( bcolor_irq_off );
     } else if (entry.is_error)
-        setBackground( QBrush(Qt::red) );
+        setBackground( bcolor_err );
     else if (!entry.is_write)
-        setBackground( QBrush(Qt::green) );
+        setBackground( bcolor_read );
     else if (entry.value != entry.new_value)
-        setBackground( QBrush( QColor(0xf4, 0xa7, 0) ) );
+        setBackground( bcolor_wr_new_value );
     else
-        setBackground( QBrush( QColor(255, 255, 150) ) );
-
-    blink_reset_timer.start(1500);
+        setBackground( bcolor_wr_no_upd );
 }
 
 void Device::blink_reset(void)
@@ -420,8 +429,9 @@ void Device::ClearLog(void)
 
 void Device::updateName(void)
 {
-    setText(m_name + "  " +
-            QString().sprintf("(r %lu, w %lu, i %lu, e %lu)",
+    /* FIXME: sprintf() is a CPU consumption hog */
+    setText(m_name +
+            QString().sprintf(" (r %lu, w %lu, i %lu, e %lu)",
                               m_dev_reads_nb, m_dev_writes_nb,
                               m_dev_irqs_nb, m_dev_errs_nb));
 }

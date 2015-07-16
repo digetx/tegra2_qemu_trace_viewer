@@ -18,6 +18,7 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+#include <QColor>
 #include <QFile>
 #include <QMetaType>
 #include <QTextStream>
@@ -112,9 +113,14 @@ public:
           m_regFilter("")
     {
         updateName();
+
         blink_reset_timer.setSingleShot(true);
         connect(&blink_reset_timer, SIGNAL(timeout()),
                 this, SLOT(blink_reset()));
+
+        update_dev_stats_timer.setSingleShot(true);
+        connect(&update_dev_stats_timer, SIGNAL(timeout()),
+                this, SLOT(update_dev_stats()));
     }
 
     virtual bool is_valid(u_int32_t base) {return m_base == base;}
@@ -148,10 +154,12 @@ private:
     QVarLengthArray<log_entry> m_log;
     QFile *m_file;
     QTextStream *m_out;
+    QTimer update_dev_stats_timer;
     QTimer blink_reset_timer;
     const u_int32_t m_base;
     int m_max_log_size;
     int m_log_pointer;
+    int m_log_pointer_last;
     int m_log_size;
     u_int64_t m_dev_writes_nb;
     u_int64_t m_dev_reads_nb;
@@ -166,8 +174,6 @@ private:
     virtual void fill_bits_details(const u_int32_t &offset,
                                    const u_int32_t &value,
                                    const u_int32_t &new_value) = 0;
-
-    void blink(const log_entry &entry);
 
     void updateName(void);
 
@@ -188,6 +194,7 @@ signals:
                      const u_int32_t time);
 
 private slots:
+    void update_dev_stats(void);
     void blink_reset(void);
 
     // QAbstractItemModel interface
