@@ -9,4 +9,4 @@ $ qmake trace_viewer.pro
 $ make
 ```
 
-![Alt text](/trace_viewer.png?raw=true "Screenshot")
+![Screenshot](https://raw.githubusercontent.com/digetx/tegra2_qemu_trace_viewer/master/trace_viewer.png)
