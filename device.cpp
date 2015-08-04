@@ -100,9 +100,9 @@ QVariant BitDetails::headerData(int section, Qt::Orientation, int role) const
     case Qt::DisplayRole:
         switch (section) {
         case BitDetails::NAME:
-            return "Bit name";
+            return "Bitfield name";
         case BitDetails::VALUE:
-            return "Bit value";
+            return "Value";
         case BitDetails::NEW_VALUE:
             return "New value";
         default:
@@ -195,7 +195,7 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
         emit ErrorUnknownReg(text(), entry);
     } else if (is_write && is_undef_changed(offset, value, new_value)) {
         QString name = m_name;
-        QString text = "changing undef bit ";
+        QString text = "changing undefined bits ";
                 text += get_register_name(entry) + " ";
                 text += QString().sprintf("0x%08X -> 0x%08X", value, new_value) + " ";
                 text += QString().sprintf("cpu=0x%08x", cpu_pc);
