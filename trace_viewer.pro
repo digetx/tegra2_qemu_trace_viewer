@@ -14,7 +14,7 @@ TEMPLATE = app
 QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
+    mainwindow.cpp \
     device.cpp \
     traceipc.cpp \
     tracecore.cpp \
@@ -23,34 +23,34 @@ SOURCES += main.cpp\
     cdmatrace.cpp \
     tracedev.cpp
 
-SOURCES += apb_dmadev.cpp \
-    apb_miscdev.cpp \
-    cardev.cpp \
-    flowdev.cpp \
-    gpiodev.cpp \
-    pmcdev.cpp \
-    rtcdev.cpp \
-    sdhcidev.cpp \
-    timer_usdev.cpp \
-    timerdev.cpp \
-    uartdev.cpp \
-    emcdev.cpp \
-    mcdev.cpp \
-    gizmodev.cpp \
-    fusedev.cpp \
-    dcdev.cpp \
-    bsedev.cpp \
-    host1x_channeldev.cpp \
-    host1x_syncdev.cpp \
-    arb_semadev.cpp \
-    arb_gnt_ictlrdev.cpp \
-    evpdev.cpp \
-    ictlr_pridev.cpp \
-    ictlr_secdev.cpp \
-    ictlr_tridev.cpp \
-    ictlr_quaddev.cpp \
-    host1x_dev.cpp \
-    gr2ddev.cpp
+SOURCES += devices/apb_dmadev.cpp \
+    devices/apb_miscdev.cpp \
+    devices/cardev.cpp \
+    devices/flowdev.cpp \
+    devices/gpiodev.cpp \
+    devices/pmcdev.cpp \
+    devices/rtcdev.cpp \
+    devices/sdhcidev.cpp \
+    devices/timer_usdev.cpp \
+    devices/timerdev.cpp \
+    devices/uartdev.cpp \
+    devices/emcdev.cpp \
+    devices/mcdev.cpp \
+    devices/gizmodev.cpp \
+    devices/fusedev.cpp \
+    devices/dcdev.cpp \
+    devices/bsedev.cpp \
+    devices/host1x_channeldev.cpp \
+    devices/host1x_syncdev.cpp \
+    devices/arb_semadev.cpp \
+    devices/arb_gnt_ictlrdev.cpp \
+    devices/evpdev.cpp \
+    devices/ictlr_pridev.cpp \
+    devices/ictlr_secdev.cpp \
+    devices/ictlr_tridev.cpp \
+    devices/ictlr_quaddev.cpp \
+    devices/host1x_dev.cpp \
+    devices/gr2ddev.cpp
 
 HEADERS  += mainwindow.h \
     iomap.h \
@@ -62,36 +62,37 @@ HEADERS  += mainwindow.h \
     errorstablewidget.h \
     tracetabwidget.h \
     cdmatrace.h \
-    tracedev.h \
-    host1x_dev.h \
-    gr2ddev.h \
-    apb_dmadev.h \
-    apb_miscdev.h \
-    cardev.h \
-    flowdev.h \
-    gpiodev.h \
-    pmcdev.h \
-    rtcdev.h \
-    sdhcidev.h \
-    timer_usdev.h \
-    timerdev.h \
-    uartdev.h \
-    emcdev.h \
-    mcdev.h \
-    gizmodev.h \
-    fusedev.h \
-    dcdev.h \
-    bsedev.h \
-    host1x_channeldev.h \
-    host1x_cmd_processor.h \
-    host1x_syncdev.h \
-    arb_semadev.h \
-    arb_gnt_ictlrdev.h \
-    evpdev.h \
-    ictlr_pridev.h \
-    ictlr_secdev.h \
-    ictlr_tridev.h \
-    ictlr_quaddev.h
+    tracedev.h
+
+HEADERS  += devices/host1x_dev.h \
+    devices/gr2ddev.h \
+    devices/apb_dmadev.h \
+    devices/apb_miscdev.h \
+    devices/cardev.h \
+    devices/flowdev.h \
+    devices/gpiodev.h \
+    devices/pmcdev.h \
+    devices/rtcdev.h \
+    devices/sdhcidev.h \
+    devices/timer_usdev.h \
+    devices/timerdev.h \
+    devices/uartdev.h \
+    devices/emcdev.h \
+    devices/mcdev.h \
+    devices/gizmodev.h \
+    devices/fusedev.h \
+    devices/dcdev.h \
+    devices/bsedev.h \
+    devices/host1x_channeldev.h \
+    devices/host1x_cmd_processor.h \
+    devices/host1x_syncdev.h \
+    devices/arb_semadev.h \
+    devices/arb_gnt_ictlrdev.h \
+    devices/evpdev.h \
+    devices/ictlr_pridev.h \
+    devices/ictlr_secdev.h \
+    devices/ictlr_tridev.h \
+    devices/ictlr_quaddev.h
 
 FORMS    += mainwindow.ui
 
