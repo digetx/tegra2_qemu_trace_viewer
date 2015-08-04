@@ -83,6 +83,10 @@ QVariant BitDetails::data(const QModelIndex &index, int role) const
         default:
             break;
         }
+    case Qt::ForegroundRole:
+        if (bits.at(bit_index).value != bits.at(bit_index).new_value)
+            return Qt::black;
+        break;
     default:
         break;
     }
@@ -335,7 +339,7 @@ QVariant Device::data(const QModelIndex &index, int role) const
             div = 2;
 
         if (index.column() == Device::CPU_PC)
-            return QColor(255 / div, 255 / div, 255 / div);
+            return QVariant();
 
         if (entry.is_irq) {
             if (entry.value)
@@ -365,6 +369,10 @@ QVariant Device::data(const QModelIndex &index, int role) const
         default:
             break;
         }
+        break;
+    case Qt::ForegroundRole:
+        if (index.column() != Device::CPU_PC)
+            return Qt::black;
         break;
     default:
         break;

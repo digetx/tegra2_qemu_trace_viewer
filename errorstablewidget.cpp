@@ -76,6 +76,9 @@ void ErrorsTableWidget::AddRow(const u_int32_t &time,
         time_item->setBackground( QBrush( QColor(255, 190, 190) ));
         name_item->setBackground( QBrush( QColor(255, 190, 190) ));
         desc_item->setBackground( QBrush( QColor(255, 190, 190) ));
+        time_item->setForeground( QBrush( Qt::black ));
+        name_item->setForeground( QBrush( Qt::black ));
+        desc_item->setForeground( QBrush( Qt::black ));
     }
 
 //    resizeColumnToContents(ErrorsTableWidget::NAME);
