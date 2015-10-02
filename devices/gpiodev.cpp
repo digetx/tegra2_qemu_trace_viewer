@@ -1228,7 +1228,22 @@ QString GpioDev::get_register_name(const log_entry &entry) const
     int bank = (entry.offset >> 7) & 0x7;
     int port = (entry.offset & 0xf) >> 2;
     int port_nb = bank * 4 + port;
-    QString port_name = QString().sprintf(" (PORT '%c')", port_nb + 65);
+    QString port_name;
+
+    switch (port_nb) {
+    case 0 ... 25:
+        port_name = QString().sprintf(" (PORT '%c')", port_nb + 65);
+        break;
+    case 26:
+        port_name = " (PORT 'AA')";
+        break;
+    case 27:
+        port_name = " (PORT 'BB')";
+        break;
+    default:
+        Q_ASSERT(false);
+        break;
+    }
 
     switch (entry.offset & 0x870) {
     case GPIO_CNF_OFFSET:
