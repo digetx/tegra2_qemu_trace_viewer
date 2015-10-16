@@ -23,8 +23,8 @@
 #include <QMetaType>
 #include <QTextStream>
 #include <QTimer>
-#include <QVarLengthArray>
 
+#include "circularlog.h"
 #include "tracedev.h"
 
 #define MAX_LOG_ENTRIES 3000
@@ -96,16 +96,14 @@ public:
 
     explicit Device(QObject *parent = 0);
 
-    Device(const QString name, u_int32_t base, int log_size = MAX_LOG_ENTRIES)
+    explicit Device(const QString name, u_int32_t base)
         : TraceDev(),
           m_bit_details_model(this),
           m_name(name + " @" + QString::number(base, 16).toUpper()),
+          m_log(MAX_LOG_ENTRIES),
           m_file(0),
           m_out(0),
           m_base(base),
-          m_max_log_size(log_size),
-          m_log_pointer(0),
-          m_log_size(0),
           m_dev_writes_nb(0),
           m_dev_reads_nb(0),
           m_dev_irqs_nb(0),
@@ -151,16 +149,12 @@ protected:
 
 private:
     const QString m_name;
-    QVarLengthArray<log_entry> m_log;
+    CircularLog<log_entry> m_log;
     QFile *m_file;
     QTextStream *m_out;
     QTimer update_dev_stats_timer;
     QTimer blink_reset_timer;
     const u_int32_t m_base;
-    int m_max_log_size;
-    int m_log_pointer;
-    int m_log_pointer_last;
-    int m_log_size;
     u_int64_t m_dev_writes_nb;
     u_int64_t m_dev_reads_nb;
     u_int64_t m_dev_irqs_nb;

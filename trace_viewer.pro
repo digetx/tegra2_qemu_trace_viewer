@@ -62,7 +62,8 @@ HEADERS  += mainwindow.h \
     errorstablewidget.h \
     tracetabwidget.h \
     cdmatrace.h \
-    tracedev.h
+    tracedev.h \
+    circularlog.h
 
 HEADERS  += devices/host1x_dev.h \
     devices/gr2ddev.h \

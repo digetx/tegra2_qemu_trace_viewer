@@ -21,6 +21,7 @@
 #include <QListWidgetItem>
 #include <QVarLengthArray>
 
+#include "circularlog.h"
 #include "tracedev.h"
 
 #define MAX_LOG_ENTRIES 3000
@@ -30,19 +31,9 @@ class CdmaTrace : public TraceDev
     Q_OBJECT
 
 public:
-    CdmaTrace()
+    explicit CdmaTrace(int id)
         : TraceDev(),
-          m_log_pointer(0),
-          m_log_size(0),
-          m_class_id(0),
-          m_access_nb(0)
-    {
-    }
-
-    CdmaTrace(int id)
-        : TraceDev(),
-          m_log_pointer(0),
-          m_log_size(0),
+          m_log(MAX_LOG_ENTRIES),
           m_class_id(0),
           m_access_nb(0),
           m_ch_id(id)
@@ -69,9 +60,7 @@ private:
     } log_entry;
 
     QString m_name;
-    QVarLengthArray<log_entry> m_log;
-    int m_log_pointer;
-    int m_log_size;
+    CircularLog<log_entry> m_log;
     u_int8_t m_class_id;
     u_int64_t m_access_nb;
     unsigned m_ch_id;

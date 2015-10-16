@@ -58,34 +58,26 @@ void CdmaTrace::validataEntry(log_entry &entry)
 
 CdmaTrace::log_entry CdmaTrace::read_log_entry(int index) const
 {
-    if (m_log_size < MAX_LOG_ENTRIES)
-        return m_log.value(index);
-
-    index += m_log_pointer;
-
-    if (index < m_log_size)
-        return m_log.value(index);
-
-    return m_log.value(index - MAX_LOG_ENTRIES);
+    return m_log.read(index);
 }
 
 void CdmaTrace::write_log(log_entry &entry)
 {
-    if (m_log_size < MAX_LOG_ENTRIES)
-        m_log.append(entry);
-    else
-        m_log.replace(m_log_pointer, entry);
-
-    m_log_pointer = (++m_log_pointer == MAX_LOG_ENTRIES) ? 0 : m_log_pointer;
-    m_log_size = qMin(m_log_size + 1, MAX_LOG_ENTRIES);
+    m_log.write(entry);
 
     emit layoutChanged();
-    emit logItemInserted(m_log_size == MAX_LOG_ENTRIES);
+    emit logItemInserted(m_log.isFull());
 }
 
 void CdmaTrace::trace(u_int32_t &time, u_int32_t &data, bool is_gather)
 {
-    log_entry entry = { time, data, 0, is_gather, false };
+    log_entry entry = {
+        .time = time,
+        .data = data,
+        .class_id = 0,
+        .is_gather = is_gather,
+        .invalid = false,
+    };
 
     validataEntry(entry);
 
@@ -98,7 +90,7 @@ void CdmaTrace::trace(u_int32_t &time, u_int32_t &data, bool is_gather)
 
 int CdmaTrace::rowCount(const QModelIndex &) const
 {
-    return m_log_size;
+    return m_log.size();
 }
 
 int CdmaTrace::columnCount(const QModelIndex &) const
@@ -207,7 +199,7 @@ QVariant CdmaTrace::data(const QModelIndex &index, int role) const
     log_entry entry;
     QTime mstime;
 
-    Q_ASSERT(index.row() < m_log_size);
+    Q_ASSERT(index.row() < m_log.size());
 
     switch (role) {
     case Qt::EditRole:
@@ -292,7 +284,6 @@ void CdmaTrace::ClearLog()
     m_class_id = 0;
     m_access_nb = 0;
     m_log.clear();
-    m_log_size = 0;
 
     setText(m_name);
 

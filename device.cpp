@@ -126,21 +126,13 @@ Qt::ItemFlags BitDetails::flags(const QModelIndex &index) const
 }
 
 Device::Device(QObject *parent) :
-    TraceDev(parent), m_base(0)
+    TraceDev(parent), m_log(MAX_LOG_ENTRIES), m_base(0)
 {
 }
 
 Device::log_entry Device::read_log_entry(int index) const
 {
-    if (m_log_size < m_max_log_size)
-        return m_log.value(index);
-
-    index += m_log_pointer;
-
-    if (index < m_log_size)
-        return m_log.value(index);
-
-    return m_log.value(index - m_max_log_size);
+    return m_log.read(index);
 }
 
 void Device::set_log_dir(const QString ldir)
@@ -162,33 +154,25 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
                        const u_int32_t &cpu_id, const bool &is_irq)
 {
     log_entry entry = {
-        offset,
-        value,
-        is_write ? new_value : value,
-        time,
-        cpu_pc,
-        cpu_id,
-        is_write,
-        is_irq ? false : !is_offset_valid(offset),
-        false,
-        is_irq,
-        0
+        .offset = offset,
+        .value = value,
+        .new_value = is_write ? new_value : value,
+        .time = time,
+        .cpu_pc = cpu_pc,
+        .cpu_id = cpu_id,
+        .is_write = is_write,
+        .is_error = is_irq ? false : !is_offset_valid(offset),
+        .undefined_changed = false,
+        .is_irq = is_irq,
+        .custom = 0,
     };
 
     update_internal(entry);
 
-    if (m_log_size < m_max_log_size)
-        m_log.append(entry);
-    else
-        m_log.replace(m_log_pointer, entry);
-
-    m_log_pointer_last = m_log_pointer;
-    m_log_pointer = (++m_log_pointer == m_max_log_size) ? 0 : m_log_pointer;
-
-    m_log_size = qMin(m_log_size + 1, m_max_log_size);
+    m_log.write(entry);
 
     emit layoutChanged();
-    emit logItemInserted(m_log_size == m_max_log_size);
+    emit logItemInserted(m_log.isFull());
 
     if (entry.is_error) {
         m_dev_errs_nb++;
@@ -254,7 +238,7 @@ QAbstractTableModel* Device::getBitDetailsModel(void)
 
 void Device::update_dev_stats(void)
 {
-    const log_entry entry = m_log.value(m_log_pointer_last);
+    const log_entry entry = m_log.read_last();
     static const QBrush bcolor_irq_on = QBrush ( QColor(255, 192, 255) );
     static const QBrush bcolor_irq_off = QBrush ( QColor(192, 255, 255) );
     static const QBrush bcolor_err = QBrush ( Qt::red );
@@ -290,7 +274,7 @@ QVariant Device::data(const QModelIndex &index, int role) const
     QTime mstime;
     int div = 1;
 
-    Q_ASSERT(index.row() < m_log_size);
+    Q_ASSERT(index.row() < m_log.size());
 
     switch (role) {
     case Qt::EditRole:
@@ -383,7 +367,7 @@ QVariant Device::data(const QModelIndex &index, int role) const
 
 int Device::rowCount(const QModelIndex &) const
 {
-    return m_log_size;
+    return m_log.size();
 }
 
 int Device::columnCount(const QModelIndex &) const
@@ -417,7 +401,6 @@ QVariant Device::headerData(int section, Qt::Orientation, int role) const
 void Device::ClearLog(void)
 {
     m_log.clear();
-    m_log_size = 0;
     m_bit_details_model.bits.clear();
     m_bit_details_model.desc.clear();
     m_dev_reads_nb = 0;
