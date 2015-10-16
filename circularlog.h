@@ -29,9 +29,8 @@ public:
 
     E_Type read(int index) const;
     E_Type read_last(void) const;
-    bool isFull(void) const;
     unsigned size(void) const;
-    void write(E_Type entry);
+    bool write(E_Type entry);
     void clear(void);
 
 private:
@@ -87,8 +86,10 @@ E_Type CircularLog<E_Type>::read_last(void) const
 }
 
 template <class E_Type>
-void CircularLog<E_Type>::write(E_Type entry)
+bool CircularLog<E_Type>::write(E_Type entry)
 {
+    bool ret;
+
     mutex.lock();
 
     if (m_log_size < m_max_log_size)
@@ -100,14 +101,11 @@ void CircularLog<E_Type>::write(E_Type entry)
     m_log_pointer = (++m_log_pointer == m_max_log_size) ? 0 : m_log_pointer;
 
     m_log_size = qMin(m_log_size + 1, m_max_log_size);
+    ret = (m_log_size == m_max_log_size);
 
     mutex.unlock();
-}
 
-template <class E_Type>
-bool CircularLog<E_Type>::isFull(void) const
-{
-    return (m_log_size == m_max_log_size);
+    return ret;
 }
 
 template <class E_Type>

@@ -169,10 +169,8 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
 
     update_internal(entry);
 
-    m_log.write(entry);
-
+    emit logItemInserted(m_log.write(entry));
     emit layoutChanged();
-    emit logItemInserted(m_log.isFull());
 
     if (entry.is_error) {
         m_dev_errs_nb++;
