@@ -63,8 +63,9 @@ CdmaTrace::log_entry CdmaTrace::read_log_entry(int index) const
 
 void CdmaTrace::write_log(log_entry &entry)
 {
-    emit logItemInserted(m_log.write(entry));
+    bool log_is_full = m_log.write(entry);
     emit layoutChanged();
+    emit logItemInserted(log_is_full);
 }
 
 void CdmaTrace::trace(u_int32_t &time, u_int32_t &data, bool is_gather)
