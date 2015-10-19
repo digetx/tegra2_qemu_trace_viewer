@@ -18,15 +18,22 @@
 #ifndef CIRCULARLOG_H
 #define CIRCULARLOG_H
 
+#include <QFile>
 #include <QMutex>
+#include <QString>
+#include <QTextStream>
 #include <QVarLengthArray>
 
+#include "tracedev.h"
+
 template <class E_Type>
-class CircularLog
+class CircularLog : public QObject
 {
 public:
-    explicit CircularLog(unsigned max_log_size);
+    explicit CircularLog(TraceDev *d, unsigned max_log_size);
+    explicit CircularLog(TraceDev *d, unsigned max_log_size, QString file_path);
 
+    void setLogFilePath(QString file_path);
     E_Type read(int index) const;
     E_Type read_last(void) const;
     unsigned size(void) const;
@@ -34,22 +41,61 @@ public:
     void clear(void);
 
 private:
+    TraceDev *dev;
+    QFile m_file;
+    QTextStream m_out;
     mutable QMutex mutex;
     QVarLengthArray<E_Type> m_log;
     const unsigned m_max_log_size;
     unsigned m_log_pointer_last;
     unsigned m_log_pointer;
     unsigned m_log_size;
+
+    E_Type read_locked(int index) const;
+    void write_to_file(E_Type &entry);
 };
 
 template <class E_Type>
-CircularLog<E_Type>::CircularLog(unsigned max_log_size)
-    : m_max_log_size(max_log_size)
+CircularLog<E_Type>::CircularLog(TraceDev *d, unsigned max_log_size)
+    : dev(d),
+      m_max_log_size(max_log_size),
+      m_log_pointer_last(0),
+      m_log_pointer(0),
+      m_log_size(0)
 {
-    m_log_pointer_last = 0;
-    m_log_pointer = 0;
-    m_log_size = 0;
     m_log.clear();
+}
+
+template <class E_Type>
+CircularLog<E_Type>::CircularLog(TraceDev *d, unsigned max_log_size, QString file_path)
+    : CircularLog(d, max_log_size)
+{
+    setLogFilePath(file_path);
+}
+
+template <class E_Type>
+void CircularLog<E_Type>::setLogFilePath(QString file_path)
+{
+    mutex.lock();
+
+    m_file.setFileName(file_path);
+    Q_ASSERT(m_file.open(QIODevice::WriteOnly | QIODevice::Text) != 0);
+    m_out.setDevice(&m_file);
+
+    mutex.unlock();
+}
+
+template <class E_Type>
+E_Type CircularLog<E_Type>::read_locked(int index) const
+{
+    if (m_log_size == m_max_log_size) {
+        index += m_log_pointer;
+
+        if (index >= m_log_size)
+            index -= m_max_log_size;
+    }
+
+    return m_log.value(index);
 }
 
 template <class E_Type>
@@ -58,16 +104,7 @@ E_Type CircularLog<E_Type>::read(int index) const
     E_Type entry;
 
     mutex.lock();
-
-    if (m_log_size >= m_max_log_size) {
-        index += m_log_pointer;
-
-        if (index >= m_log_size)
-            index -= m_max_log_size;
-    }
-
-    entry = m_log.value(index);
-
+    entry = read_locked(index);
     mutex.unlock();
 
     return entry;
@@ -83,6 +120,15 @@ E_Type CircularLog<E_Type>::read_last(void) const
     mutex.unlock();
 
     return entry;
+}
+
+template <class E_Type>
+void CircularLog<E_Type>::write_to_file(E_Type &entry)
+{
+    if (m_out.status() != QTextStream::Ok)
+        return;
+
+    m_out << dev->entryAsString(&entry) << endl;
 }
 
 template <class E_Type>
@@ -105,6 +151,8 @@ bool CircularLog<E_Type>::write(E_Type entry)
 
     mutex.unlock();
 
+    write_to_file(entry);
+
     return ret;
 }
 
@@ -124,6 +172,5 @@ unsigned CircularLog<E_Type>::size(void) const
 {
     return m_log_size;
 }
-
 
 #endif // CIRCULARLOG_H

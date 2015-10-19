@@ -44,6 +44,7 @@ public:
     virtual void set_log_dir(QString) {}
     virtual QString updateDetails(const int &) { return QString(); }
     virtual QAbstractTableModel* getBitDetailsModel(void) { return NULL; }
+    virtual QString entryAsString(void *) const { return ""; }
 
 signals:
 

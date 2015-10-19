@@ -100,9 +100,7 @@ public:
         : TraceDev(),
           m_bit_details_model(this),
           m_name(name + " @" + QString::number(base, 16).toUpper()),
-          m_log(MAX_LOG_ENTRIES),
-          m_file(0),
-          m_out(0),
+          m_log(this, MAX_LOG_ENTRIES),
           m_base(base),
           m_dev_writes_nb(0),
           m_dev_reads_nb(0),
@@ -149,9 +147,7 @@ protected:
 
 private:
     const QString m_name;
-    CircularLog<log_entry> m_log;
-    QFile *m_file;
-    QTextStream *m_out;
+    CircularLog<Device::log_entry> m_log;
     QTimer update_dev_stats_timer;
     QTimer blink_reset_timer;
     const u_int32_t m_base;
@@ -160,8 +156,6 @@ private:
     u_int64_t m_dev_irqs_nb;
     u_int64_t m_dev_errs_nb;
     QString m_regFilter;
-
-    log_entry read_log_entry(int index) const;
 
     virtual QString get_register_name(const log_entry &entry) const = 0;
 
@@ -203,6 +197,7 @@ public:
 public:
     int deviceType() const;
     bool hasCap(dev_caps cap) const;
+    QString entryAsString(void *e) const;
 };
 
 Q_DECLARE_METATYPE(Device *)

@@ -125,23 +125,35 @@ Qt::ItemFlags BitDetails::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
-Device::Device(QObject *parent) :
-    TraceDev(parent), m_log(MAX_LOG_ENTRIES), m_base(0)
+QString Device::entryAsString(void *e) const
 {
+    log_entry *entry = (Device::log_entry*) e;
+    QTime mstime = QTime(0, 0).addMSecs(entry->time / 1000);
+    QString ret;
+
+    ret = mstime.toString("hh:mm:ss.zzz") +
+                    QString().sprintf(".%03d", entry->time % 1000) + "\t";
+    if (!entry->is_irq) {
+        ret += (entry->is_write ? QString("writing ") : QString("reading "));
+        ret += QString().sprintf("0x%08X", entry->new_value);
+        ret += (entry->is_write ? QString(" to ") : QString(" from "));
+        ret += get_register_name(*entry);
+    } else {
+        ret += QString("irq ") + QString::number(entry->offset);
+        ret +=  "\tstatus: " + QString::number(entry->value);
+    }
+
+    return ret;
 }
 
-Device::log_entry Device::read_log_entry(int index) const
+Device::Device(QObject *parent) :
+    TraceDev(parent), m_log(this, MAX_LOG_ENTRIES), m_base(0)
 {
-    return m_log.read(index);
 }
 
 void Device::set_log_dir(const QString ldir)
 {
-    m_file = new QFile(ldir + m_name + ".txt", this);
-
-    Q_ASSERT( m_file->open(QIODevice::WriteOnly | QIODevice::Text) );
-
-    m_out = new QTextStream(m_file);
+    m_log.setLogFilePath(ldir + m_name + ".txt");
 }
 
 void Device::update_internal(log_entry &)
@@ -195,29 +207,11 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
     if (!update_dev_stats_timer.isActive())
         update_dev_stats_timer.start(300);
     blink_reset_timer.start(1500);
-
-    // ----------- LOG TO FILE -----------
-    if (!entry.is_error && m_out && m_out->status() == QTextStream::Ok) {
-        QTime mstime = QTime(0, 0).addMSecs(time / 1000);
-        *m_out << mstime.toString("hh:mm:ss.zzz") +
-                        QString().sprintf(".%03d", time % 1000) + "\t";
-        if (!is_irq) {
-            *m_out << (is_write ? QString("writing ") : QString("reading "));
-            *m_out << QString().sprintf("0x%08X",
-                            is_write? new_value : value);
-            *m_out << (is_write ? QString(" to ") : QString(" from "));
-            *m_out << get_register_name(entry);
-        } else {
-            *m_out << QString("irq ") + QString::number(offset);
-            *m_out << "\tstatus: " + QString::number(value);
-        }
-        *m_out << endl;
-    }
 }
 
 QString Device::updateDetails(const int &index)
 {
-    log_entry entry = read_log_entry(index);
+    log_entry entry = m_log.read(index);
 
     m_bit_details_model.bits.clear();
     m_bit_details_model.desc.clear();
@@ -279,14 +273,14 @@ QVariant Device::data(const QModelIndex &index, int role) const
     case Qt::EditRole:
         switch ( index.column() ) {
         case Device::REGISTER:
-            entry = read_log_entry( index.row() );
+            entry = m_log.read( index.row() );
             return get_register_name(entry) +
                         QString().sprintf(" 0x%08X", entry.offset + (m_base >= 0x50000000 ? m_base : 0));
         default:
             break;
         }
     case Qt::DisplayRole:
-        entry = read_log_entry( index.row() );
+        entry = m_log.read( index.row() );
 
         switch ( index.column() ) {
         case Device::REGISTER:
@@ -316,7 +310,7 @@ QVariant Device::data(const QModelIndex &index, int role) const
         }
         break;
     case Qt::BackgroundRole:
-        entry = read_log_entry( index.row() );
+        entry = m_log.read( index.row() );
 
         if (m_regFilter.length() && get_register_name(entry).indexOf(m_regFilter) == -1)
             div = 2;
@@ -344,10 +338,10 @@ QVariant Device::data(const QModelIndex &index, int role) const
     case Qt::ToolTipRole:
         switch ( index.column() ) {
         case Device::TIME:
-            entry = read_log_entry( index.row() );
+            entry = m_log.read( index.row() );
             return QString::number(entry.time) + "us";
         case Device::REGISTER:
-            entry = read_log_entry( index.row() );
+            entry = m_log.read( index.row() );
             return QString().sprintf("0x%08X", entry.offset);
         default:
             break;
@@ -410,11 +404,6 @@ void Device::ClearLog(void)
     emit layoutChanged();
     m_bit_details_model.signalUpdate();
     updateName();
-
-    delete m_out;
-    if (m_file)
-        m_file->close();
-    delete m_file;
 }
 
 void Device::updateName(void)

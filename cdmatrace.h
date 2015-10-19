@@ -33,7 +33,7 @@ class CdmaTrace : public TraceDev
 public:
     explicit CdmaTrace(int id)
         : TraceDev(),
-          m_log(MAX_LOG_ENTRIES),
+          m_log(this, MAX_LOG_ENTRIES),
           m_class_id(0),
           m_access_nb(0),
           m_ch_id(id)
@@ -65,11 +65,11 @@ private:
     u_int64_t m_access_nb;
     unsigned m_ch_id;
 
-    log_entry read_log_entry(int index) const;
+    void set_log_dir(QString ldir);
     void write_log(log_entry &entry);
     QString opcodeName(u_int8_t opcode) const;
     QString cmdParams(u_int32_t &data) const;
-    void validataEntry(log_entry &entry);
+    void validateEntry(log_entry &entry);
 
 public:
     void trace(u_int32_t &time, u_int32_t &data, bool is_gather);
@@ -87,6 +87,7 @@ public:
     // TraceDev interface
 public:
     int deviceType() const;
+    QString entryAsString(void *e) const;
 
 public slots:
     void ClearLog();

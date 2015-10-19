@@ -26,7 +26,7 @@
 #define DMA_START   0xA
 #define DMA_STOP    0xB
 
-void CdmaTrace::validataEntry(log_entry &entry)
+void CdmaTrace::validateEntry(log_entry &entry)
 {
     switch (CMD_OPCODE(entry.data)) {
     case SETCL:
@@ -56,9 +56,27 @@ void CdmaTrace::validataEntry(log_entry &entry)
     entry.class_id = m_class_id;
 }
 
-CdmaTrace::log_entry CdmaTrace::read_log_entry(int index) const
+void CdmaTrace::set_log_dir(const QString ldir)
 {
-    return m_log.read(index);
+    m_log.setLogFilePath(ldir + m_name + ".txt");
+}
+
+QString CdmaTrace::entryAsString(void *e) const
+{
+    log_entry *entry = (CdmaTrace::log_entry*) e;
+    QTime mstime = QTime(0, 0).addMSecs(entry->time / 1000);
+    QString ret;
+
+    ret = mstime.toString("hh:mm:ss.zzz") +
+                    QString().sprintf(".%03d", entry->time % 1000) + "\t";
+
+    if (entry->class_id)
+        ret += "Class " + QString().sprintf("0x%02X",entry-> class_id) + " ";
+
+    ret += CdmaTrace::opcodeName(CMD_OPCODE(entry->data)) + ": ";
+    ret += CdmaTrace::cmdParams(entry->data);
+
+    return ret;
 }
 
 void CdmaTrace::write_log(log_entry &entry)
@@ -78,7 +96,7 @@ void CdmaTrace::trace(u_int32_t &time, u_int32_t &data, bool is_gather)
         .invalid = false,
     };
 
-    validataEntry(entry);
+    validateEntry(entry);
 
     write_log(entry);
 
@@ -204,7 +222,7 @@ QVariant CdmaTrace::data(const QModelIndex &index, int role) const
     case Qt::EditRole:
     case Qt::DisplayRole:
     {
-        entry = read_log_entry( index.row() );
+        entry = m_log.read( index.row() );
 
         switch ( index.column() ) {
         case CdmaTrace::CMD:
@@ -229,7 +247,7 @@ QVariant CdmaTrace::data(const QModelIndex &index, int role) const
     }
     case Qt::BackgroundRole:
     {
-        entry = read_log_entry( index.row() );
+        entry = m_log.read( index.row() );
 
         if (entry.is_gather)
             return QColor(200, 255, 200);
