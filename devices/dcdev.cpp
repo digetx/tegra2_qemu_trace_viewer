@@ -14848,339 +14848,6 @@ void DcDev::fill_disp_sd_bl_control_details(const u_int32_t &value, const u_int3
     m_bit_details_model.bits.append(entry);
 }
 
-#define WINC_B_COLOR_PALETTE_1_OFFSET 0x1501
-#define WINC_B_COLOR_PALETTE_1_UNDEFMASK 0xFF000000
-union winc_b_color_palette_1_u {
-    struct {
-        unsigned int b_color_palette_r:8;   /* Red Color Palette */
-        unsigned int b_color_palette_g:8;   /* Green Color Palette */
-        unsigned int b_color_palette_b:8;   /* Blue Color Palette */
-        unsigned int undefined_bits_24_31:8;
-    };
-
-    u_int32_t reg32;
-};
-
-void DcDev::fill_winc_b_color_palette_1_details(const u_int32_t &value, const u_int32_t &new_value)
-{
-    const winc_b_color_palette_1_u old_value_t = { .reg32 = value };
-    const winc_b_color_palette_1_u new_value_t = { .reg32 = new_value };
-    BitDetails::bit_entry entry;
-
-    m_bit_details_model.has_changed_bits = (value != new_value);
-
-    entry = { "00: b_color_palette_r:8",
-              "Red Color Palette",
-              8, old_value_t.b_color_palette_r, new_value_t.b_color_palette_r };
-    m_bit_details_model.bits.append(entry);
-    entry = { "08: b_color_palette_g:8",
-              "Green Color Palette",
-              8, old_value_t.b_color_palette_g, new_value_t.b_color_palette_g };
-    m_bit_details_model.bits.append(entry);
-    entry = { "16: b_color_palette_b:8",
-              "Blue Color Palette",
-              8, old_value_t.b_color_palette_b, new_value_t.b_color_palette_b };
-    m_bit_details_model.bits.append(entry);
-    entry = { "24: undefined_bits_24_31:8", "", 8, old_value_t.undefined_bits_24_31, new_value_t.undefined_bits_24_31 };
-    m_bit_details_model.bits.append(entry);
-}
-
-#define WINC_B_COLOR_PALETTE_2_OFFSET 0x1502
-#define WINC_B_COLOR_PALETTE_2_UNDEFMASK 0xFF000000
-union winc_b_color_palette_2_u {
-    struct {
-        unsigned int b_color_palette_r:8;   /* Red Color Palette */
-        unsigned int b_color_palette_g:8;   /* Green Color Palette */
-        unsigned int b_color_palette_b:8;   /* Blue Color Palette */
-        unsigned int undefined_bits_24_31:8;
-    };
-
-    u_int32_t reg32;
-};
-
-void DcDev::fill_winc_b_color_palette_2_details(const u_int32_t &value, const u_int32_t &new_value)
-{
-    const winc_b_color_palette_2_u old_value_t = { .reg32 = value };
-    const winc_b_color_palette_2_u new_value_t = { .reg32 = new_value };
-    BitDetails::bit_entry entry;
-
-    m_bit_details_model.has_changed_bits = (value != new_value);
-
-    entry = { "00: b_color_palette_r:8",
-              "Red Color Palette",
-              8, old_value_t.b_color_palette_r, new_value_t.b_color_palette_r };
-    m_bit_details_model.bits.append(entry);
-    entry = { "08: b_color_palette_g:8",
-              "Green Color Palette",
-              8, old_value_t.b_color_palette_g, new_value_t.b_color_palette_g };
-    m_bit_details_model.bits.append(entry);
-    entry = { "16: b_color_palette_b:8",
-              "Blue Color Palette",
-              8, old_value_t.b_color_palette_b, new_value_t.b_color_palette_b };
-    m_bit_details_model.bits.append(entry);
-    entry = { "24: undefined_bits_24_31:8", "", 8, old_value_t.undefined_bits_24_31, new_value_t.undefined_bits_24_31 };
-    m_bit_details_model.bits.append(entry);
-}
-
-#define WINC_B_COLOR_PALETTE_3_OFFSET 0x1503
-#define WINC_B_COLOR_PALETTE_3_UNDEFMASK 0xFF000000
-union winc_b_color_palette_3_u {
-    struct {
-        unsigned int b_color_palette_r:8;   /* Red Color Palette */
-        unsigned int b_color_palette_g:8;   /* Green Color Palette */
-        unsigned int b_color_palette_b:8;   /* Blue Color Palette */
-        unsigned int undefined_bits_24_31:8;
-    };
-
-    u_int32_t reg32;
-};
-
-void DcDev::fill_winc_b_color_palette_3_details(const u_int32_t &value, const u_int32_t &new_value)
-{
-    const winc_b_color_palette_3_u old_value_t = { .reg32 = value };
-    const winc_b_color_palette_3_u new_value_t = { .reg32 = new_value };
-    BitDetails::bit_entry entry;
-
-    m_bit_details_model.has_changed_bits = (value != new_value);
-
-    entry = { "00: b_color_palette_r:8",
-              "Red Color Palette",
-              8, old_value_t.b_color_palette_r, new_value_t.b_color_palette_r };
-    m_bit_details_model.bits.append(entry);
-    entry = { "08: b_color_palette_g:8",
-              "Green Color Palette",
-              8, old_value_t.b_color_palette_g, new_value_t.b_color_palette_g };
-    m_bit_details_model.bits.append(entry);
-    entry = { "16: b_color_palette_b:8",
-              "Blue Color Palette",
-              8, old_value_t.b_color_palette_b, new_value_t.b_color_palette_b };
-    m_bit_details_model.bits.append(entry);
-    entry = { "24: undefined_bits_24_31:8", "", 8, old_value_t.undefined_bits_24_31, new_value_t.undefined_bits_24_31 };
-    m_bit_details_model.bits.append(entry);
-}
-
-#define WINC_B_COLOR_PALETTE_4_OFFSET 0x1504
-#define WINC_B_COLOR_PALETTE_4_UNDEFMASK 0xFF000000
-union winc_b_color_palette_4_u {
-    struct {
-        unsigned int b_color_palette_r:8;   /* Red Color Palette */
-        unsigned int b_color_palette_g:8;   /* Green Color Palette */
-        unsigned int b_color_palette_b:8;   /* Blue Color Palette */
-        unsigned int undefined_bits_24_31:8;
-    };
-
-    u_int32_t reg32;
-};
-
-void DcDev::fill_winc_b_color_palette_4_details(const u_int32_t &value, const u_int32_t &new_value)
-{
-    const winc_b_color_palette_4_u old_value_t = { .reg32 = value };
-    const winc_b_color_palette_4_u new_value_t = { .reg32 = new_value };
-    BitDetails::bit_entry entry;
-
-    m_bit_details_model.has_changed_bits = (value != new_value);
-
-    entry = { "00: b_color_palette_r:8",
-              "Red Color Palette",
-              8, old_value_t.b_color_palette_r, new_value_t.b_color_palette_r };
-    m_bit_details_model.bits.append(entry);
-    entry = { "08: b_color_palette_g:8",
-              "Green Color Palette",
-              8, old_value_t.b_color_palette_g, new_value_t.b_color_palette_g };
-    m_bit_details_model.bits.append(entry);
-    entry = { "16: b_color_palette_b:8",
-              "Blue Color Palette",
-              8, old_value_t.b_color_palette_b, new_value_t.b_color_palette_b };
-    m_bit_details_model.bits.append(entry);
-    entry = { "24: undefined_bits_24_31:8", "", 8, old_value_t.undefined_bits_24_31, new_value_t.undefined_bits_24_31 };
-    m_bit_details_model.bits.append(entry);
-}
-
-#define WINC_B_COLOR_PALETTE_5_OFFSET 0x1505
-#define WINC_B_COLOR_PALETTE_5_UNDEFMASK 0xFF000000
-union winc_b_color_palette_5_u {
-    struct {
-        unsigned int b_color_palette_r:8;   /* Red Color Palette */
-        unsigned int b_color_palette_g:8;   /* Green Color Palette */
-        unsigned int b_color_palette_b:8;   /* Blue Color Palette */
-        unsigned int undefined_bits_24_31:8;
-    };
-
-    u_int32_t reg32;
-};
-
-void DcDev::fill_winc_b_color_palette_5_details(const u_int32_t &value, const u_int32_t &new_value)
-{
-    const winc_b_color_palette_5_u old_value_t = { .reg32 = value };
-    const winc_b_color_palette_5_u new_value_t = { .reg32 = new_value };
-    BitDetails::bit_entry entry;
-
-    m_bit_details_model.has_changed_bits = (value != new_value);
-
-    entry = { "00: b_color_palette_r:8",
-              "Red Color Palette",
-              8, old_value_t.b_color_palette_r, new_value_t.b_color_palette_r };
-    m_bit_details_model.bits.append(entry);
-    entry = { "08: b_color_palette_g:8",
-              "Green Color Palette",
-              8, old_value_t.b_color_palette_g, new_value_t.b_color_palette_g };
-    m_bit_details_model.bits.append(entry);
-    entry = { "16: b_color_palette_b:8",
-              "Blue Color Palette",
-              8, old_value_t.b_color_palette_b, new_value_t.b_color_palette_b };
-    m_bit_details_model.bits.append(entry);
-    entry = { "24: undefined_bits_24_31:8", "", 8, old_value_t.undefined_bits_24_31, new_value_t.undefined_bits_24_31 };
-    m_bit_details_model.bits.append(entry);
-}
-
-#define WINC_B_COLOR_PALETTE_6_OFFSET 0x1506
-#define WINC_B_COLOR_PALETTE_6_UNDEFMASK 0xFF000000
-union winc_b_color_palette_6_u {
-    struct {
-        unsigned int b_color_palette_r:8;   /* Red Color Palette */
-        unsigned int b_color_palette_g:8;   /* Green Color Palette */
-        unsigned int b_color_palette_b:8;   /* Blue Color Palette */
-        unsigned int undefined_bits_24_31:8;
-    };
-
-    u_int32_t reg32;
-};
-
-void DcDev::fill_winc_b_color_palette_6_details(const u_int32_t &value, const u_int32_t &new_value)
-{
-    const winc_b_color_palette_6_u old_value_t = { .reg32 = value };
-    const winc_b_color_palette_6_u new_value_t = { .reg32 = new_value };
-    BitDetails::bit_entry entry;
-
-    m_bit_details_model.has_changed_bits = (value != new_value);
-
-    entry = { "00: b_color_palette_r:8",
-              "Red Color Palette",
-              8, old_value_t.b_color_palette_r, new_value_t.b_color_palette_r };
-    m_bit_details_model.bits.append(entry);
-    entry = { "08: b_color_palette_g:8",
-              "Green Color Palette",
-              8, old_value_t.b_color_palette_g, new_value_t.b_color_palette_g };
-    m_bit_details_model.bits.append(entry);
-    entry = { "16: b_color_palette_b:8",
-              "Blue Color Palette",
-              8, old_value_t.b_color_palette_b, new_value_t.b_color_palette_b };
-    m_bit_details_model.bits.append(entry);
-    entry = { "24: undefined_bits_24_31:8", "", 8, old_value_t.undefined_bits_24_31, new_value_t.undefined_bits_24_31 };
-    m_bit_details_model.bits.append(entry);
-}
-
-#define WINC_B_COLOR_PALETTE_7_OFFSET 0x1507
-#define WINC_B_COLOR_PALETTE_7_UNDEFMASK 0xFF000000
-union winc_b_color_palette_7_u {
-    struct {
-        unsigned int b_color_palette_r:8;   /* Red Color Palette */
-        unsigned int b_color_palette_g:8;   /* Green Color Palette */
-        unsigned int b_color_palette_b:8;   /* Blue Color Palette */
-        unsigned int undefined_bits_24_31:8;
-    };
-
-    u_int32_t reg32;
-};
-
-void DcDev::fill_winc_b_color_palette_7_details(const u_int32_t &value, const u_int32_t &new_value)
-{
-    const winc_b_color_palette_7_u old_value_t = { .reg32 = value };
-    const winc_b_color_palette_7_u new_value_t = { .reg32 = new_value };
-    BitDetails::bit_entry entry;
-
-    m_bit_details_model.has_changed_bits = (value != new_value);
-
-    entry = { "00: b_color_palette_r:8",
-              "Red Color Palette",
-              8, old_value_t.b_color_palette_r, new_value_t.b_color_palette_r };
-    m_bit_details_model.bits.append(entry);
-    entry = { "08: b_color_palette_g:8",
-              "Green Color Palette",
-              8, old_value_t.b_color_palette_g, new_value_t.b_color_palette_g };
-    m_bit_details_model.bits.append(entry);
-    entry = { "16: b_color_palette_b:8",
-              "Blue Color Palette",
-              8, old_value_t.b_color_palette_b, new_value_t.b_color_palette_b };
-    m_bit_details_model.bits.append(entry);
-    entry = { "24: undefined_bits_24_31:8", "", 8, old_value_t.undefined_bits_24_31, new_value_t.undefined_bits_24_31 };
-    m_bit_details_model.bits.append(entry);
-}
-
-#define WINC_B_COLOR_PALETTE_8_OFFSET 0x1508
-#define WINC_B_COLOR_PALETTE_8_UNDEFMASK 0xFF000000
-union winc_b_color_palette_8_u {
-    struct {
-        unsigned int b_color_palette_r:8;   /* Red Color Palette */
-        unsigned int b_color_palette_g:8;   /* Green Color Palette */
-        unsigned int b_color_palette_b:8;   /* Blue Color Palette */
-        unsigned int undefined_bits_24_31:8;
-    };
-
-    u_int32_t reg32;
-};
-
-void DcDev::fill_winc_b_color_palette_8_details(const u_int32_t &value, const u_int32_t &new_value)
-{
-    const winc_b_color_palette_8_u old_value_t = { .reg32 = value };
-    const winc_b_color_palette_8_u new_value_t = { .reg32 = new_value };
-    BitDetails::bit_entry entry;
-
-    m_bit_details_model.has_changed_bits = (value != new_value);
-
-    entry = { "00: b_color_palette_r:8",
-              "Red Color Palette",
-              8, old_value_t.b_color_palette_r, new_value_t.b_color_palette_r };
-    m_bit_details_model.bits.append(entry);
-    entry = { "08: b_color_palette_g:8",
-              "Green Color Palette",
-              8, old_value_t.b_color_palette_g, new_value_t.b_color_palette_g };
-    m_bit_details_model.bits.append(entry);
-    entry = { "16: b_color_palette_b:8",
-              "Blue Color Palette",
-              8, old_value_t.b_color_palette_b, new_value_t.b_color_palette_b };
-    m_bit_details_model.bits.append(entry);
-    entry = { "24: undefined_bits_24_31:8", "", 8, old_value_t.undefined_bits_24_31, new_value_t.undefined_bits_24_31 };
-    m_bit_details_model.bits.append(entry);
-}
-
-#define WINC_B_COLOR_PALETTE_9_OFFSET 0x1509
-#define WINC_B_COLOR_PALETTE_9_UNDEFMASK 0xFF000000
-union winc_b_color_palette_9_u {
-    struct {
-        unsigned int b_color_palette_r:8;   /* Red Color Palette */
-        unsigned int b_color_palette_g:8;   /* Green Color Palette */
-        unsigned int b_color_palette_b:8;   /* Blue Color Palette */
-        unsigned int undefined_bits_24_31:8;
-    };
-
-    u_int32_t reg32;
-};
-
-void DcDev::fill_winc_b_color_palette_9_details(const u_int32_t &value, const u_int32_t &new_value)
-{
-    const winc_b_color_palette_9_u old_value_t = { .reg32 = value };
-    const winc_b_color_palette_9_u new_value_t = { .reg32 = new_value };
-    BitDetails::bit_entry entry;
-
-    m_bit_details_model.has_changed_bits = (value != new_value);
-
-    entry = { "00: b_color_palette_r:8",
-              "Red Color Palette",
-              8, old_value_t.b_color_palette_r, new_value_t.b_color_palette_r };
-    m_bit_details_model.bits.append(entry);
-    entry = { "08: b_color_palette_g:8",
-              "Green Color Palette",
-              8, old_value_t.b_color_palette_g, new_value_t.b_color_palette_g };
-    m_bit_details_model.bits.append(entry);
-    entry = { "16: b_color_palette_b:8",
-              "Blue Color Palette",
-              8, old_value_t.b_color_palette_b, new_value_t.b_color_palette_b };
-    m_bit_details_model.bits.append(entry);
-    entry = { "24: undefined_bits_24_31:8", "", 8, old_value_t.undefined_bits_24_31, new_value_t.undefined_bits_24_31 };
-    m_bit_details_model.bits.append(entry);
-}
-
 bool DcDev::is_offset_valid(const u_int32_t &offset) const
 {
     switch (offset) {
@@ -15332,7 +14999,7 @@ bool DcDev::is_offset_valid(const u_int32_t &offset) const
     case DISP_MCCIF_DISPLAY1B_HYST_OFFSET:
     case DISP_DAC_CRT_CTRL_OFFSET:
     case DISP_DISP_MISC_CONTROL_OFFSET:
-    case WINC_A_COLOR_PALETTE_OFFSET:
+    case WINC_A_COLOR_PALETTE_OFFSET ... (WINC_A_COLOR_PALETTE_OFFSET + 0xFF):
     case WINC_A_PALETTE_COLOR_EXT_OFFSET:
     case WIN_A_WIN_OPTIONS_OFFSET:
     case WIN_A_BYTE_SWAP_OFFSET:
@@ -15361,7 +15028,7 @@ bool DcDev::is_offset_valid(const u_int32_t &offset) const
     case WINBUF_A_ADDR_V_OFFSET_OFFSET:
     case WINBUF_A_ADDR_V_OFFSET_NS_OFFSET:
     case WINBUF_A_UFLOW_STATUS_OFFSET:
-    case WINC_B_COLOR_PALETTE_OFFSET:
+    case WINC_B_COLOR_PALETTE_OFFSET ... (WINC_B_COLOR_PALETTE_OFFSET + 0xFF):
     case WINC_B_PALETTE_COLOR_EXT_OFFSET:
     case WINC_B_H_FILTER_P00_OFFSET:
     case WINC_B_H_FILTER_P01_OFFSET:
@@ -15435,7 +15102,7 @@ bool DcDev::is_offset_valid(const u_int32_t &offset) const
     case WINBUF_B_ADDR_V_OFFSET_OFFSET:
     case WINBUF_B_ADDR_V_OFFSET_NS_OFFSET:
     case WINBUF_B_UFLOW_STATUS_OFFSET:
-    case WINC_C_COLOR_PALETTE_OFFSET:
+    case WINC_C_COLOR_PALETTE_OFFSET ... (WINC_C_COLOR_PALETTE_OFFSET + 0xFF):
     case WINC_C_PALETTE_COLOR_EXT_OFFSET:
     case WINC_C_H_FILTER_P00_OFFSET:
     case WINC_C_H_FILTER_P01_OFFSET:
@@ -15520,15 +15187,6 @@ bool DcDev::is_offset_valid(const u_int32_t &offset) const
     case DISP_SD_BL_TF_2_OFFSET:
     case DISP_SD_BL_TF_3_OFFSET:
     case DISP_SD_BL_CONTROL_OFFSET:
-    case WINC_B_COLOR_PALETTE_1_OFFSET:
-    case WINC_B_COLOR_PALETTE_2_OFFSET:
-    case WINC_B_COLOR_PALETTE_3_OFFSET:
-    case WINC_B_COLOR_PALETTE_4_OFFSET:
-    case WINC_B_COLOR_PALETTE_5_OFFSET:
-    case WINC_B_COLOR_PALETTE_6_OFFSET:
-    case WINC_B_COLOR_PALETTE_7_OFFSET:
-    case WINC_B_COLOR_PALETTE_8_OFFSET:
-    case WINC_B_COLOR_PALETTE_9_OFFSET:
         return true;
     default:
         break;
@@ -16134,7 +15792,7 @@ bool DcDev::is_undef_changed(const u_int32_t &offset,
         if ((value ^ new_value) & DISP_DISP_MISC_CONTROL_UNDEFMASK)
             return true;
         break;
-    case WINC_A_COLOR_PALETTE_OFFSET:
+    case WINC_A_COLOR_PALETTE_OFFSET ... (WINC_A_COLOR_PALETTE_OFFSET + 0xFF):
         if ((value ^ new_value) & WINC_A_COLOR_PALETTE_UNDEFMASK)
             return true;
         break;
@@ -16250,7 +15908,7 @@ bool DcDev::is_undef_changed(const u_int32_t &offset,
         if ((value ^ new_value) & WINBUF_A_UFLOW_STATUS_UNDEFMASK)
             return true;
         break;
-    case WINC_B_COLOR_PALETTE_OFFSET:
+    case WINC_B_COLOR_PALETTE_OFFSET ... (WINC_B_COLOR_PALETTE_OFFSET + 0xFF):
         if ((value ^ new_value) & WINC_B_COLOR_PALETTE_UNDEFMASK)
             return true;
         break;
@@ -16546,7 +16204,7 @@ bool DcDev::is_undef_changed(const u_int32_t &offset,
         if ((value ^ new_value) & WINBUF_B_UFLOW_STATUS_UNDEFMASK)
             return true;
         break;
-    case WINC_C_COLOR_PALETTE_OFFSET:
+    case WINC_C_COLOR_PALETTE_OFFSET ... (WINC_C_COLOR_PALETTE_OFFSET + 0xFF):
         if ((value ^ new_value) & WINC_C_COLOR_PALETTE_UNDEFMASK)
             return true;
         break;
@@ -16886,42 +16544,6 @@ bool DcDev::is_undef_changed(const u_int32_t &offset,
         if ((value ^ new_value) & DISP_SD_BL_CONTROL_UNDEFMASK)
             return true;
         break;
-    case WINC_B_COLOR_PALETTE_1_OFFSET:
-        if ((value ^ new_value) & WINC_B_COLOR_PALETTE_1_UNDEFMASK)
-            return true;
-        break;
-    case WINC_B_COLOR_PALETTE_2_OFFSET:
-        if ((value ^ new_value) & WINC_B_COLOR_PALETTE_2_UNDEFMASK)
-            return true;
-        break;
-    case WINC_B_COLOR_PALETTE_3_OFFSET:
-        if ((value ^ new_value) & WINC_B_COLOR_PALETTE_3_UNDEFMASK)
-            return true;
-        break;
-    case WINC_B_COLOR_PALETTE_4_OFFSET:
-        if ((value ^ new_value) & WINC_B_COLOR_PALETTE_4_UNDEFMASK)
-            return true;
-        break;
-    case WINC_B_COLOR_PALETTE_5_OFFSET:
-        if ((value ^ new_value) & WINC_B_COLOR_PALETTE_5_UNDEFMASK)
-            return true;
-        break;
-    case WINC_B_COLOR_PALETTE_6_OFFSET:
-        if ((value ^ new_value) & WINC_B_COLOR_PALETTE_6_UNDEFMASK)
-            return true;
-        break;
-    case WINC_B_COLOR_PALETTE_7_OFFSET:
-        if ((value ^ new_value) & WINC_B_COLOR_PALETTE_7_UNDEFMASK)
-            return true;
-        break;
-    case WINC_B_COLOR_PALETTE_8_OFFSET:
-        if ((value ^ new_value) & WINC_B_COLOR_PALETTE_8_UNDEFMASK)
-            return true;
-        break;
-    case WINC_B_COLOR_PALETTE_9_OFFSET:
-        if ((value ^ new_value) & WINC_B_COLOR_PALETTE_9_UNDEFMASK)
-            return true;
-        break;
 
     default:
         break;
@@ -17229,8 +16851,8 @@ QString DcDev::get_register_name(const log_entry &entry) const
         return QString("DISP_DAC_CRT_CTRL");
     case DISP_DISP_MISC_CONTROL_OFFSET:
         return QString("DISP_DISP_MISC_CONTROL");
-    case WINC_A_COLOR_PALETTE_OFFSET:
-        return QString("WINC_A_COLOR_PALETTE");
+    case WINC_A_COLOR_PALETTE_OFFSET ... (WINC_A_COLOR_PALETTE_OFFSET + 0xFF):
+        return QString("WINC_A_COLOR_PALETTE ") + QString::number(entry.offset - WINC_A_COLOR_PALETTE_OFFSET);
     case WINC_A_PALETTE_COLOR_EXT_OFFSET:
         return QString("WINC_A_PALETTE_COLOR_EXT");
     case WIN_A_WIN_OPTIONS_OFFSET:
@@ -17287,8 +16909,8 @@ QString DcDev::get_register_name(const log_entry &entry) const
         return QString("WINBUF_A_ADDR_V_OFFSET_NS");
     case WINBUF_A_UFLOW_STATUS_OFFSET:
         return QString("WINBUF_A_UFLOW_STATUS");
-    case WINC_B_COLOR_PALETTE_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE");
+    case WINC_B_COLOR_PALETTE_OFFSET ... (WINC_B_COLOR_PALETTE_OFFSET + 0xFF):
+        return QString("WINC_B_COLOR_PALETTE ") + QString::number(entry.offset - WINC_B_COLOR_PALETTE_OFFSET);
     case WINC_B_PALETTE_COLOR_EXT_OFFSET:
         return QString("WINC_B_PALETTE_COLOR_EXT");
     case WINC_B_H_FILTER_P00_OFFSET:
@@ -17435,8 +17057,8 @@ QString DcDev::get_register_name(const log_entry &entry) const
         return QString("WINBUF_B_ADDR_V_OFFSET_NS");
     case WINBUF_B_UFLOW_STATUS_OFFSET:
         return QString("WINBUF_B_UFLOW_STATUS");
-    case WINC_C_COLOR_PALETTE_OFFSET:
-        return QString("WINC_C_COLOR_PALETTE");
+    case WINC_C_COLOR_PALETTE_OFFSET ... (WINC_C_COLOR_PALETTE_OFFSET + 0xFF):
+        return QString("WINC_C_COLOR_PALETTE ") + QString::number(entry.offset - WINC_C_COLOR_PALETTE_OFFSET);
     case WINC_C_PALETTE_COLOR_EXT_OFFSET:
         return QString("WINC_C_PALETTE_COLOR_EXT");
     case WINC_C_H_FILTER_P00_OFFSET:
@@ -17605,24 +17227,6 @@ QString DcDev::get_register_name(const log_entry &entry) const
         return QString("DISP_SD_BL_TF_3");
     case DISP_SD_BL_CONTROL_OFFSET:
         return QString("DISP_SD_BL_CONTROL");
-    case WINC_B_COLOR_PALETTE_1_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE_1");
-    case WINC_B_COLOR_PALETTE_2_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE_2");
-    case WINC_B_COLOR_PALETTE_3_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE_3");
-    case WINC_B_COLOR_PALETTE_4_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE_4");
-    case WINC_B_COLOR_PALETTE_5_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE_5");
-    case WINC_B_COLOR_PALETTE_6_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE_6");
-    case WINC_B_COLOR_PALETTE_7_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE_7");
-    case WINC_B_COLOR_PALETTE_8_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE_8");
-    case WINC_B_COLOR_PALETTE_9_OFFSET:
-        return QString("WINC_B_COLOR_PALETTE_9");
 
     default:
         break;
@@ -18081,7 +17685,7 @@ void DcDev::fill_bits_details(const u_int32_t &offset,
     case DISP_DISP_MISC_CONTROL_OFFSET:
         fill_disp_disp_misc_control_details(value, new_value);
         break;
-    case WINC_A_COLOR_PALETTE_OFFSET:
+    case WINC_A_COLOR_PALETTE_OFFSET ... (WINC_A_COLOR_PALETTE_OFFSET + 0xFF):
         fill_winc_a_color_palette_details(value, new_value);
         break;
     case WINC_A_PALETTE_COLOR_EXT_OFFSET:
@@ -18168,7 +17772,7 @@ void DcDev::fill_bits_details(const u_int32_t &offset,
     case WINBUF_A_UFLOW_STATUS_OFFSET:
         fill_winbuf_a_uflow_status_details(value, new_value);
         break;
-    case WINC_B_COLOR_PALETTE_OFFSET:
+    case WINC_B_COLOR_PALETTE_OFFSET ... (WINC_B_COLOR_PALETTE_OFFSET + 0xFF):
         fill_winc_b_color_palette_details(value, new_value);
         break;
     case WINC_B_PALETTE_COLOR_EXT_OFFSET:
@@ -18390,7 +17994,7 @@ void DcDev::fill_bits_details(const u_int32_t &offset,
     case WINBUF_B_UFLOW_STATUS_OFFSET:
         fill_winbuf_b_uflow_status_details(value, new_value);
         break;
-    case WINC_C_COLOR_PALETTE_OFFSET:
+    case WINC_C_COLOR_PALETTE_OFFSET ... (WINC_C_COLOR_PALETTE_OFFSET + 0xFF):
         fill_winc_c_color_palette_details(value, new_value);
         break;
     case WINC_C_PALETTE_COLOR_EXT_OFFSET:
@@ -18644,33 +18248,6 @@ void DcDev::fill_bits_details(const u_int32_t &offset,
         break;
     case DISP_SD_BL_CONTROL_OFFSET:
         fill_disp_sd_bl_control_details(value, new_value);
-        break;
-    case WINC_B_COLOR_PALETTE_1_OFFSET:
-        fill_winc_b_color_palette_1_details(value, new_value);
-        break;
-    case WINC_B_COLOR_PALETTE_2_OFFSET:
-        fill_winc_b_color_palette_2_details(value, new_value);
-        break;
-    case WINC_B_COLOR_PALETTE_3_OFFSET:
-        fill_winc_b_color_palette_3_details(value, new_value);
-        break;
-    case WINC_B_COLOR_PALETTE_4_OFFSET:
-        fill_winc_b_color_palette_4_details(value, new_value);
-        break;
-    case WINC_B_COLOR_PALETTE_5_OFFSET:
-        fill_winc_b_color_palette_5_details(value, new_value);
-        break;
-    case WINC_B_COLOR_PALETTE_6_OFFSET:
-        fill_winc_b_color_palette_6_details(value, new_value);
-        break;
-    case WINC_B_COLOR_PALETTE_7_OFFSET:
-        fill_winc_b_color_palette_7_details(value, new_value);
-        break;
-    case WINC_B_COLOR_PALETTE_8_OFFSET:
-        fill_winc_b_color_palette_8_details(value, new_value);
-        break;
-    case WINC_B_COLOR_PALETTE_9_OFFSET:
-        fill_winc_b_color_palette_9_details(value, new_value);
         break;
 
     default:
