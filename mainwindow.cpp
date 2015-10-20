@@ -115,6 +115,7 @@ void MainWindow::connectClearErrorsLog(QObject *obj, const char *signal)
 
 void MainWindow::setRegDesc(QString text)
 {
+    ui->textRegDesc->clear();
     ui->textRegDesc->setPlainText(text);
 }
 

@@ -144,7 +144,7 @@
                  <bool>false</bool>
                 </attribute>
                </widget>
-               <widget class="QPlainTextEdit" name="textRegDesc">
+               <widget class="QTextEdit" name="textRegDesc">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -153,6 +153,13 @@
                 </property>
                 <property name="readOnly">
                  <bool>true</bool>
+                </property>
+                <property name="html">
+                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;IO:&lt;/span&gt; &lt;span style=&quot; font-size:8pt; background-color:#c8ffc8;&quot;&gt;Read&lt;/span&gt; &lt;span style=&quot; font-size:8pt; background-color:#ffff96;&quot;&gt;Write no change&lt;/span&gt; &lt;span style=&quot; font-size:8pt; background-color:#f4a700;&quot;&gt;Write&lt;/span&gt; &lt;span style=&quot; font-size:8pt; background-color:#ff9696;&quot;&gt;Error&lt;/span&gt; &lt;span style=&quot; font-size:8pt;&quot;&gt;    IRQ:&lt;/span&gt; &lt;span style=&quot; font-size:8pt; background-color:#ffc0ff;&quot;&gt;Raise&lt;/span&gt; &lt;span style=&quot; font-size:8pt; background-color:#c0ffff;&quot;&gt;Clear&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </widget>
