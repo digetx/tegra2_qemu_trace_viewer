@@ -132,15 +132,14 @@ QString Device::entryAsString(void *e) const
     QString ret;
 
     ret = mstime.toString("hh:mm:ss.zzz") +
-                    QString().sprintf(".%03d", entry->time % 1000) + "\t";
+                    QString().sprintf(".%03d\t", entry->time % 1000);
     if (!entry->is_irq) {
-        ret += (entry->is_write ? QString("writing ") : QString("reading "));
-        ret += QString().sprintf("0x%08X", entry->new_value);
-        ret += (entry->is_write ? QString(" to ") : QString(" from "));
+        ret += entry->is_write ? "writing" : "reading";
+        ret += QString().sprintf(" 0x%08X ", entry->new_value);
+        ret += (entry->is_write ? "to " : " from ");
         ret += get_register_name(*entry);
     } else {
-        ret += QString("irq ") + QString::number(entry->offset);
-        ret +=  "\tstatus: " + QString::number(entry->value);
+        ret += QString().sprintf("irq %u\tstatus: %u",entry->offset, entry->value);
     }
 
     return ret;

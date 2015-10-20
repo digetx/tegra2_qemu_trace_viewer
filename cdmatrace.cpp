@@ -68,10 +68,10 @@ QString CdmaTrace::entryAsString(void *e) const
     QString ret;
 
     ret = mstime.toString("hh:mm:ss.zzz") +
-                    QString().sprintf(".%03d", entry->time % 1000) + "\t";
+                    QString().sprintf(".%03d\t", entry->time % 1000);
 
     if (entry->class_id)
-        ret += "Class " + QString().sprintf("0x%02X",entry-> class_id) + " ";
+        ret += QString().sprintf("Class 0x%02X ",entry-> class_id);
 
     ret += CdmaTrace::opcodeName(CMD_OPCODE(entry->data)) + ": ";
     ret += CdmaTrace::cmdParams(entry->data);
