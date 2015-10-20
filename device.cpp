@@ -102,7 +102,7 @@ QVariant BitDetails::headerData(int section, Qt::Orientation, int role) const
         case BitDetails::NAME:
             return "Bitfield name";
         case BitDetails::VALUE:
-            return "Value";
+            return has_changed_bits ? "Old Value" : "Value";
         case BitDetails::NEW_VALUE:
             return "New value";
         default:
