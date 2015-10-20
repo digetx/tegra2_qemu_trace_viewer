@@ -49,7 +49,7 @@ public:
     QVarLengthArray<BitDetails::bit_entry> bits;
     QString desc;
 
-    bool has_changed_bits;
+    bool has_changed_bits:1;
 
 protected:
 
