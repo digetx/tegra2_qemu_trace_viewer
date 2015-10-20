@@ -187,6 +187,7 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
 
     if (entry.is_error) {
         m_dev_errs_nb++;
+        updateName();
         emit ErrorUnknownReg(text(), entry);
     } else if (is_write && is_undef_changed(offset, value, new_value)) {
         QString name = m_name;
