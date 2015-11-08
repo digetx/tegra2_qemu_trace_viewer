@@ -28,7 +28,7 @@ ErrorsTableWidget::ErrorsTableWidget(QWidget *parent) :
 void ErrorsTableWidget::AddEntry(const u_int32_t offset, const u_int32_t time)
 {
     const QString error_name("Unknown device");
-    const QString error_desc = QString().sprintf("@0x%08x", offset);
+    const QString error_desc = QString().sprintf("@0x%08X", offset);
 
     AddRow(time, error_name, error_desc, false);
 }
@@ -38,10 +38,10 @@ void ErrorsTableWidget::AddEntry(const QString dev_name, const Device::log_entry
     QString error_desc;
 
     if (entry.is_write)
-        error_desc = QString().sprintf("writing 0x%x to unknown reg @0x%x cpu[%d]=0x%x",
+        error_desc = QString().sprintf("writing 0x%x to unknown reg @0x%x cpu[%d]=0x%X",
                                        entry.value, entry.offset, entry.cpu_id, entry.cpu_pc);
     else
-        error_desc = QString().sprintf("reading of unknown reg @0x%x cpu[%d]=0x%x",
+        error_desc = QString().sprintf("reading of unknown reg @0x%x cpu[%d]=0x%X",
                                        entry.offset, entry.cpu_id, entry.cpu_pc);
 
     AddRow(entry.time, dev_name, error_desc, true);

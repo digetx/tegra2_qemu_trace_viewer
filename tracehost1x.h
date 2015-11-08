@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Dmitry Osipenko <digetx@gmail.com>
+ * Copyright (c) 2015 Dmitry Osipenko <digetx@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the
@@ -15,33 +15,15 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRACETABWIDGET_H
-#define TRACETABWIDGET_H
+#ifndef TraceHOST1X_H
+#define TraceHOST1X_H
 
-#include <QTabWidget>
+#include "tracesrc.h"
 
-class TraceTabWidget : public QTabWidget
+class TraceHOST1X : public TraceSRC
 {
-    Q_OBJECT
 public:
-    explicit TraceTabWidget(QWidget *parent = 0);
-
-signals:
-
-public slots:
-    void TabChanged(int index);
-    void OnError(void);
-    void ClearErrorState(void);
-
-private:
-    enum {
-        TRACE_A9_TAB = 0,
-        TRACE_AVP_TAB,
-        TRACE_HOST1X_CDMA_TAB,
-        ERROR_TAB,
-        CONSOLE_TAB
-    };
-
+    explicit TraceHOST1X(MainWindow *window, QString name, QObject *parent = 0);
 };
 
-#endif // TRACETABWIDGET_H
+#endif // TraceHOST1X_H

@@ -150,7 +150,7 @@ Device::Device(QObject *parent) :
 {
 }
 
-void Device::set_log_dir(const QString ldir)
+void Device::setLogPath(const QString ldir)
 {
     m_log.setLogFilePath(ldir + m_name + ".txt");
 }
@@ -193,7 +193,7 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
         QString text = "changing undefined bits ";
                 text += get_register_name(entry) + " ";
                 text += QString().sprintf("0x%08X -> 0x%08X", value, new_value) + " ";
-                text += QString().sprintf("cpu=0x%08x", cpu_pc);
+                text += QString().sprintf("cpu=0x%08X", cpu_pc);
         emit ErrorCustom(name, text, time);
     }
 
@@ -304,7 +304,7 @@ QVariant Device::data(const QModelIndex &index, int role) const
             return mstime.toString("hh:mm:ss.zzz") +
                             QString().sprintf(".%03d", entry.time % 1000);
         case Device::CPU_PC:
-            return QString().sprintf("[%d] @0x%08x", entry.cpu_id, entry.cpu_pc);
+            return QString().sprintf("[%d] @0x%08X", entry.cpu_id, entry.cpu_pc);
         default:
             break;
         }

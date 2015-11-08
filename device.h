@@ -96,8 +96,8 @@ public:
 
     explicit Device(QObject *parent = 0);
 
-    explicit Device(const QString name, u_int32_t base)
-        : TraceDev(),
+    explicit Device(const QString name, u_int32_t base, QObject *parent = 0)
+        : TraceDev(parent),
           m_bit_details_model(this),
           m_name(name + " @" + QString::number(base, 16).toUpper()),
           m_log(this, MAX_LOG_ENTRIES),
@@ -121,7 +121,7 @@ public:
 
     virtual bool is_valid(u_int32_t base) {return m_base == base;}
 
-    void set_log_dir(QString ldir);
+    void setLogPath(QString ldir);
 
     void write_log(const u_int32_t &offset, const u_int32_t &value,
                    const u_int32_t &new_value, const u_int32_t &time,

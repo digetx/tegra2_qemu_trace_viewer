@@ -25,7 +25,9 @@ class TraceDev : public QAbstractTableModel, public QListWidgetItem
 {
     Q_OBJECT
 public:
-    explicit TraceDev(QObject *parent = 0);
+    explicit TraceDev(QObject *parent = 0) : QAbstractTableModel(parent)
+    {
+    }
 
     enum dev_type {
         MMIO,
@@ -41,7 +43,7 @@ public:
     virtual int deviceType(void) const = 0;
     virtual bool hasCap(dev_caps) const { return false; }
     virtual bool is_valid(u_int32_t) { return false; }
-    virtual void set_log_dir(QString) {}
+    virtual void setLogPath(QString) {}
     virtual QString updateDetails(const int &) { return QString(); }
     virtual QAbstractTableModel* getBitDetailsModel(void) { return NULL; }
     virtual QString entryAsString(void *) const { return ""; }

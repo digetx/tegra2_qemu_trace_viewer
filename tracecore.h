@@ -26,34 +26,23 @@
 #include "mainwindow.h"
 #include "traceipc.h"
 
-#include "tracedev.h"
-
-#define CHANNELS_NB 8
+#include "tracea9.h"
+#include "traceavp.h"
+#include "tracehost1x.h"
 
 class TraceCore : public QObject
 {
     Q_OBJECT
 
 public:
-
-    explicit TraceCore(QObject *parent = 0);
-
-    TraceCore(MainWindow *mainwindow, QObject *parent = 0);
+    explicit TraceCore(MainWindow *mainwindow, QObject *parent = 0);
 
 signals:
-    void ErrorUnknownDev(const u_int32_t offset, const u_int32_t time);
 
 public slots:
-    void uiActiveDeviceChanged(QListWidgetItem *item);
-
-    void uiTraceSelectionChanged(const QItemSelection & selected,
-                                 const QItemSelection &);
-
-    void logItemInserted(bool);
-
-    void regWrite(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
-                  u_int32_t new_value, u_int32_t time, bool is_write,
-                  u_int32_t cpu_pc, u_int32_t cpu_id, bool is_irq);
+    void regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
+                   u_int32_t new_value, u_int32_t time, bool is_write,
+                   u_int32_t cpu_pc, u_int32_t cpu_id, bool is_irq);
 
     void chWrite(u_int32_t ch_id, u_int32_t time,
                  u_int32_t data, u_int32_t is_gather);
@@ -66,15 +55,10 @@ public slots:
 
 private:
     MainWindow *m_mainwindow;
-    TraceDev *m_activeDevice;
     TraceIPC m_ipc;
-    int m_dev_sel_index;
-
-//    TestDev testdev;
-    QVarLengthArray<TraceDev*> m_devices;
-
-    void addDeviceToList(TraceDev *dev);
-    void scrollTraceView(QTableView *tableView, bool is_full, bool force);
+    TraceAVP m_avp;
+    TraceA9 m_a9;
+    TraceHOST1X m_host1x;
 };
 
 #endif // TRACECORE_H

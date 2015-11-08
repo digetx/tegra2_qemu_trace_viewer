@@ -35,9 +35,9 @@ public:
     void connectTo(const QString &addr);
 
 signals:
-    void regWrite(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
-                  u_int32_t new_value, u_int32_t time, bool is_write,
-                  u_int32_t cpu_pc, u_int32_t cpu_id, bool is_irq);
+    void regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
+                   u_int32_t new_value, u_int32_t time, bool is_write,
+                   u_int32_t cpu_pc, u_int32_t cpu_id, bool is_irq);
     void chWrite(u_int32_t ch_id, u_int32_t time,
                  u_int32_t data, u_int32_t is_gather);
     void connected(void);

@@ -89,7 +89,7 @@ void TraceIPC::socket_readReady(void)
         case PACKET_TRACE_RW:
             m_socket.read((char*)&pak_rw, sizeof(pak_rw));
 
-            emit regWrite(ntohl(pak_rw.hwaddr), ntohl(pak_rw.offset),
+            emit regAccess(ntohl(pak_rw.hwaddr), ntohl(pak_rw.offset),
                           ntohl(pak_rw.value), ntohl(pak_rw.new_value),
                           ntohl(pak_rw.time), ntohl(pak_rw.is_write),
                           ntohl(pak_rw.cpu_pc), ntohl(pak_rw.cpu_id), false);
@@ -97,7 +97,7 @@ void TraceIPC::socket_readReady(void)
         case PACKET_TRACE_IRQ:
             m_socket.read((char*)&pak_irq, sizeof(pak_irq));
 
-            emit regWrite(ntohl(pak_irq.hwaddr), ntohl(pak_irq.hwirq),
+            emit regAccess(ntohl(pak_irq.hwaddr), ntohl(pak_irq.hwirq),
                           ntohl(pak_irq.status), 0,
                           ntohl(pak_irq.time), false,
                           ntohl(pak_irq.cpu_pc), ntohl(pak_irq.cpu_id), true);

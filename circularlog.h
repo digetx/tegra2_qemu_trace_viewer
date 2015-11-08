@@ -46,10 +46,10 @@ private:
     QTextStream m_out;
     mutable QMutex mutex;
     QVarLengthArray<E_Type> m_log;
-    const unsigned m_max_log_size;
-    unsigned m_log_pointer_last;
-    unsigned m_log_pointer;
-    unsigned m_log_size;
+    const int m_max_log_size;
+    int m_log_pointer_last;
+    int m_log_pointer;
+    int m_log_size;
 
     E_Type read_locked(int index) const;
     void write_to_file(E_Type &entry);
@@ -57,7 +57,7 @@ private:
 
 template <class E_Type>
 CircularLog<E_Type>::CircularLog(TraceDev *d, unsigned max_log_size)
-    : dev(d),
+    : QObject(d), dev(d),
       m_max_log_size(max_log_size),
       m_log_pointer_last(0),
       m_log_pointer(0),
@@ -78,8 +78,9 @@ void CircularLog<E_Type>::setLogFilePath(QString file_path)
 {
     mutex.lock();
 
+    m_file.close();
     m_file.setFileName(file_path);
-    Q_ASSERT(m_file.open(QIODevice::WriteOnly | QIODevice::Text) != 0);
+    m_file.open(QIODevice::WriteOnly | QIODevice::Text);
     m_out.setDevice(&m_file);
 
     mutex.unlock();

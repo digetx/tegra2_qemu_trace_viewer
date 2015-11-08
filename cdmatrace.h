@@ -26,20 +26,22 @@
 
 #define MAX_LOG_ENTRIES 3000
 
+#define CHANNELS_NB 8
+
 class CdmaTrace : public TraceDev
 {
     Q_OBJECT
 
 public:
-    explicit CdmaTrace(int id)
-        : TraceDev(),
+    explicit CdmaTrace(int id, QObject *parent = 0)
+        : TraceDev(parent),
           m_log(this, MAX_LOG_ENTRIES),
           m_class_id(0),
           m_access_nb(0),
           m_ch_id(id)
     {
         m_name = QString().sprintf("host1x cdma%d", m_ch_id);
-        setText(m_name);
+        setText(m_name + QString().sprintf(" (%lu)", m_access_nb));
     }
 
 private:
@@ -65,14 +67,14 @@ private:
     u_int64_t m_access_nb;
     unsigned m_ch_id;
 
-    void set_log_dir(QString ldir);
+    void setLogPath(QString ldir);
     void write_log(log_entry &entry);
     QString opcodeName(u_int8_t opcode) const;
     QString cmdParams(u_int32_t &data) const;
     void validateEntry(log_entry &entry);
 
 public:
-    void trace(u_int32_t &time, u_int32_t &data, bool is_gather);
+    void trace(const u_int32_t &time, const u_int32_t &data, const bool &is_gather);
 
 signals:
     void logItemInserted(bool);

@@ -56,7 +56,7 @@ void CdmaTrace::validateEntry(log_entry &entry)
     entry.class_id = m_class_id;
 }
 
-void CdmaTrace::set_log_dir(const QString ldir)
+void CdmaTrace::setLogPath(const QString ldir)
 {
     m_log.setLogFilePath(ldir + m_name + ".txt");
 }
@@ -86,7 +86,7 @@ void CdmaTrace::write_log(log_entry &entry)
     emit logItemInserted(log_is_full);
 }
 
-void CdmaTrace::trace(u_int32_t &time, u_int32_t &data, bool is_gather)
+void CdmaTrace::trace(const u_int32_t &time, const u_int32_t &data, const bool &is_gather)
 {
     log_entry entry = {
         .time = time,
@@ -97,12 +97,9 @@ void CdmaTrace::trace(u_int32_t &time, u_int32_t &data, bool is_gather)
     };
 
     validateEntry(entry);
-
     write_log(entry);
 
-    m_access_nb++;
-
-    setText(m_name + QString().sprintf(" (%lu)", m_access_nb));
+    setText(m_name + QString().sprintf(" (%lu)", m_access_nb++));
 }
 
 int CdmaTrace::rowCount(const QModelIndex &) const

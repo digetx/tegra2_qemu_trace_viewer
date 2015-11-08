@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2015 Dmitry Osipenko <digetx@gmail.com>
+ * Copyright (c) 2015 Dmitry Osipenko <digetx@gmail.com>
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the
@@ -15,9 +15,15 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "tracedev.h"
+#ifndef TraceAVP_H
+#define TraceAVP_H
 
-TraceDev::TraceDev(QObject *parent) :
-    QAbstractTableModel(parent)
+#include "tracesrc.h"
+
+class TraceAVP : public TraceSRC
 {
-}
+public:
+    explicit TraceAVP(MainWindow *window, QString name, QObject *parent = 0);
+};
+
+#endif // TraceAVP_H

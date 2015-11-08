@@ -21,7 +21,11 @@ SOURCES += main.cpp\
     errorstablewidget.cpp \
     tracetabwidget.cpp \
     cdmatrace.cpp \
-    tracedev.cpp
+    traceui.cpp \
+    tracesrc.cpp \
+    tracea9.cpp \
+    traceavp.cpp \
+    tracehost1x.cpp
 
 SOURCES += devices/apb_dmadev.cpp \
     devices/apb_miscdev.cpp \
@@ -63,7 +67,12 @@ HEADERS  += mainwindow.h \
     tracetabwidget.h \
     cdmatrace.h \
     tracedev.h \
-    circularlog.h
+    circularlog.h \
+    traceui.h \
+    tracesrc.h \
+    tracea9.h \
+    traceavp.h \
+    tracehost1x.h
 
 HEADERS  += devices/host1x_dev.h \
     devices/gr2ddev.h \
