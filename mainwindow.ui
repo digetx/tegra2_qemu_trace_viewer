@@ -631,10 +631,10 @@ p, li { white-space: pre-wrap; }
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QPlainTextEdit" name="plainTextEditMessages">
-          <property name="readOnly">
+         <widget class="TraceMessages" name="tableWidgetMessages">
+          <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
-          </property>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -656,6 +656,11 @@ p, li { white-space: pre-wrap; }
    <extends>QTabWidget</extends>
    <header>tracetabwidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TraceMessages</class>
+   <extends>QTableWidget</extends>
+   <header>tracemessages.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
