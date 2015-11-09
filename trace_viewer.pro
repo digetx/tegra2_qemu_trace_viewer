@@ -54,7 +54,8 @@ SOURCES += devices/apb_dmadev.cpp \
     devices/ictlr_tridev.cpp \
     devices/ictlr_quaddev.cpp \
     devices/host1x_dev.cpp \
-    devices/gr2ddev.cpp
+    devices/gr2ddev.cpp \
+    devices/avp_cch.cpp
 
 HEADERS  += mainwindow.h \
     iomap.h \
@@ -102,7 +103,8 @@ HEADERS  += devices/host1x_dev.h \
     devices/ictlr_pridev.h \
     devices/ictlr_secdev.h \
     devices/ictlr_tridev.h \
-    devices/ictlr_quaddev.h
+    devices/ictlr_quaddev.h \
+    devices/avp_cch.h
 
 FORMS    += mainwindow.ui
 

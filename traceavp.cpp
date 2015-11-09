@@ -43,6 +43,7 @@
 #include "devices/ictlr_quaddev.h"
 #include "devices/host1x_dev.h"
 #include "devices/gr2ddev.h"
+#include "devices/avp_cch.h"
 
 #include "iomap.h"
 #include "traceavp.h"
@@ -77,6 +78,7 @@ TraceAVP::TraceAVP(MainWindow *window, QString name, QObject *parent) :
     addDevice( new Ictlr_secDev("ictlr_sec", TEGRA_SECONDARY_ICTLR_BASE) );
     addDevice( new Ictlr_triDev("ictlr_tri", TEGRA_TERTIARY_ICTLR_BASE) );
     addDevice( new Ictlr_quadDev("ictlr_quad", TEGRA_QUATERNARY_ICTLR_BASE) );
+    addDevice( new AVP_CchDev("AVP MMU", 0xF0000000) );
 
     addDevice( new Host1x_channelDev("host1x ch0", TEGRA_HOST1X_BASE) );
     addDevice( new Host1x_syncDev("host1x sync0", TEGRA_HOST1X_BASE + 0x3000) );
