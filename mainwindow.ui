@@ -82,7 +82,7 @@
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
-              <widget class="QTableView" name="tableViewTrace_CPU">
+              <widget class="TraceDevView" name="tableWidgetTrace_CPU">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -274,7 +274,7 @@ p, li { white-space: pre-wrap; }
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
-              <widget class="QTableView" name="tableViewTrace_AVP">
+              <widget class="TraceDevView" name="tableWidgetTrace_AVP">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -466,7 +466,7 @@ p, li { white-space: pre-wrap; }
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
-              <widget class="QTableView" name="tableViewTrace_Host1x">
+              <widget class="TraceDevView" name="tableWidgetTrace_Host1x">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -661,6 +661,11 @@ p, li { white-space: pre-wrap; }
    <class>TraceMessages</class>
    <extends>QTableWidget</extends>
    <header>tracemessages.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TraceDevView</class>
+   <extends>QTableView</extends>
+   <header>tracedevview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

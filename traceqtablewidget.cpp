@@ -15,17 +15,30 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRACEMESSAGES_H
-#define TRACEMESSAGES_H
+#include <QScrollBar>
 
 #include "traceqtablewidget.h"
 
-class TraceMessages : public TraceQTableWidget
+TraceQTableWidget::TraceQTableWidget(QWidget * parent) :
+    QTableWidget(parent)
 {
-public:
-    explicit TraceMessages(QWidget *parent = 0);
 
-    void insertMessage(char *msg);
-};
+}
 
-#endif // TRACEMESSAGES_H
+TraceQTableWidget::TraceQTableWidget(int rows, int columns, QWidget * parent) :
+    QTableWidget(rows, columns, parent)
+{
+
+}
+
+void TraceQTableWidget::rowsInserted(const QModelIndex &parent, int start, int end)
+{
+    QScrollBar *sb = this->verticalScrollBar();
+    bool in_bottom = (sb->value() == sb->maximum());
+
+    QTableWidget::rowsInserted(parent, start, end);
+
+    if (in_bottom) {
+        scrollToBottom();
+    }
+}

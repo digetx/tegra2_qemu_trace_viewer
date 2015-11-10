@@ -26,7 +26,9 @@ SOURCES += main.cpp\
     tracea9.cpp \
     traceavp.cpp \
     tracehost1x.cpp \
-    tracemessages.cpp
+    tracemessages.cpp \
+    traceqtablewidget.cpp \
+    tracedevview.cpp
 
 SOURCES += devices/apb_dmadev.cpp \
     devices/apb_miscdev.cpp \
@@ -75,7 +77,9 @@ HEADERS  += mainwindow.h \
     tracea9.h \
     traceavp.h \
     tracehost1x.h \
-    tracemessages.h
+    tracemessages.h \
+    traceqtablewidget.h \
+    tracedevview.h
 
 HEADERS  += devices/host1x_dev.h \
     devices/gr2ddev.h \

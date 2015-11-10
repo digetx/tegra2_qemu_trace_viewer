@@ -18,11 +18,10 @@
 #ifndef ERRORSTABLEWIDGET_H
 #define ERRORSTABLEWIDGET_H
 
-#include <QTableWidget>
-
 #include "device.h"
+#include "traceqtablewidget.h"
 
-class ErrorsTableWidget : public QTableWidget
+class ErrorsTableWidget : public TraceQTableWidget
 {
     Q_OBJECT
 public:

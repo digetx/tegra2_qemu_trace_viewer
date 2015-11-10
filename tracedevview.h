@@ -15,17 +15,37 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRACEMESSAGES_H
-#define TRACEMESSAGES_H
+#ifndef TRACEDEVVIEW_H
+#define TRACEDEVVIEW_H
 
-#include "traceqtablewidget.h"
+#include <QTableView>
 
-class TraceMessages : public TraceQTableWidget
+#include "tracedev.h"
+
+class TraceDevView : public QTableView
 {
-public:
-    explicit TraceMessages(QWidget *parent = 0);
+    Q_OBJECT
 
-    void insertMessage(char *msg);
+public:
+    explicit TraceDevView(QWidget *parent = 0);
+
+    void setModel(TraceDev *dev);
+
+signals:
+    void selected(const QModelIndex &);
+
+private slots:
+    void sectionCountChanged(int oldCount, int newCount);
+
+public slots:
+    void itemInserted(void);
+
+    // QAbstractItemView interface
+protected slots:
+    void currentChanged(const QModelIndex &current, const QModelIndex &)
+    {
+        emit selected(current);
+    }
 };
 
-#endif // TRACEMESSAGES_H
+#endif // TRACEDEVVIEW_H

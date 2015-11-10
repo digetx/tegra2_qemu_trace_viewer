@@ -115,8 +115,6 @@ void TraceIPC::socket_readReady(void)
         case PACKET_TRACE_CDMA:
             m_socket.read((char*)&pak_cdma, sizeof(pak_cdma));
 
-            qDebug() << "PACKET_TRACE_CDMA";
-
             emit chWrite(ntohl(pak_cdma.ch_id), ntohl(pak_cdma.time),
                          ntohl(pak_cdma.data), ntohl(pak_cdma.is_gather));
             break;

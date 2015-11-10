@@ -27,13 +27,16 @@ TraceUI::TraceUI(MainWindow *window, QString name, QObject *parent) :
 
     m_tableViewBitDetails = tab->findChild<QTableView *>("tableViewBitDetails_" + name);
     m_listWidgetDevices = tab->findChild<QListWidget *>("listWidgetDevices_" + name);
-    m_tableViewTrace = tab->findChild<QTableView *>("tableViewTrace_" + name);
+    m_tableViewTrace = tab->findChild<TraceDevView *>("tableWidgetTrace_" + name);
     m_textRegDesc = tab->findChild<QTextEdit *>("textRegDesc_" + name);
     m_regFilter = tab->findChild<QLineEdit *>("lineEditRegFilter_" + name);
 
     connect(m_listWidgetDevices,
             SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
             this, SLOT(ActiveDeviceChanged(QListWidgetItem *, QListWidgetItem *)));
+
+    connect(m_tableViewTrace, SIGNAL(selected(const QModelIndex &)),
+            this, SLOT(ActiveRegChanged(const QModelIndex &)));
 }
 
 void TraceUI::addDevice(TraceDev *dev)
@@ -56,40 +59,17 @@ void TraceUI::addDevice(TraceDev *dev)
             tab, SLOT(OnError(void)));
 }
 
-void TraceUI::ActiveRegChanged(const QItemSelection & selected,
-                               const QItemSelection &)
+void TraceUI::ActiveRegChanged(const QModelIndex &index)
 {
-    QModelIndexList indexes = selected.indexes();
-    int index;
-
-    if (indexes.count() == 0)
-        return;
-
-    index = indexes.at(0).row();
-
-    if (m_reg_sel_index == index)
-        return;
-
-    m_textRegDesc->setPlainText( m_activeDevice->updateDetails(index) );
-    m_reg_sel_index = index;
+    m_textRegDesc->setPlainText( m_activeDevice->updateDetails(index.row()) );
 }
 
 void TraceUI::ActiveDeviceChanged(QListWidgetItem *item, QListWidgetItem *)
 {
-    if (m_activeDevice != NULL) {
-        disconnect(m_activeDevice, SIGNAL(logItemInserted(bool)),
-                   this, SLOT(logItemInserted(bool)));
-
-        disconnect(m_regFilter, SIGNAL(textEdited(const QString)),
-                   m_activeDevice, SLOT(regFilterChanged(const QString)));
-
-        disconnect(m_tableViewTrace->selectionModel(),
-                SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-                this, SLOT(ActiveRegChanged(const QItemSelection &, const QItemSelection &)));
-    }
+    disconnect(m_regFilter, SIGNAL(textEdited(const QString)),
+               m_activeDevice, SLOT(regFilterChanged(const QString)));
 
     m_activeDevice = static_cast<TraceDev *> (item);
-    m_reg_sel_index = -1;
 
     m_tableViewTrace->setModel(m_activeDevice);
     m_tableViewBitDetails->setModel(m_activeDevice->getBitDetailsModel());
@@ -101,56 +81,11 @@ void TraceUI::ActiveDeviceChanged(QListWidgetItem *item, QListWidgetItem *)
     m_textRegDesc->setVisible(
                 m_activeDevice->hasCap(TraceDev::REG_DESC) );
 
-    scrollTraceView(false, true);
-
     connect(m_regFilter, SIGNAL(textEdited(const QString)),
             m_activeDevice, SLOT(regFilterChanged(const QString)));
-
-    connect(m_activeDevice, SIGNAL(logItemInserted(bool)),
-            this, SLOT(logItemInserted(bool)));
-
-    connect(m_tableViewTrace->selectionModel(),
-            SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            this, SLOT(ActiveRegChanged(const QItemSelection &, const QItemSelection &)));
-}
-
-void TraceUI::scrollTraceView(bool is_full, bool force)
-{
-    QItemSelectionModel *select = m_tableViewTrace->selectionModel();
-    QAbstractItemModel *model = m_tableViewTrace->model();
-    QScrollBar *sb = m_tableViewTrace->verticalScrollBar();
-    int first_visible_row = qMax(0, m_tableViewTrace->rowAt(0) - 1);
-    bool in_bottom = (sb->value() == sb->maximum());
-
-    if (is_full) {
-        if (select->hasSelection()) {
-            int prev_row = qMax(0, select->selectedIndexes().at(0).row() - 1);
-
-            m_tableViewTrace->selectRow(prev_row);
-        }
-
-        if (!in_bottom) {
-            m_tableViewTrace->scrollTo(model->index(first_visible_row, 0),
-                                       QAbstractItemView::PositionAtTop);
-        }
-    }
-
-    if (in_bottom || force) {
-        m_tableViewTrace->scrollToBottom();
-    }
-}
-
-void TraceUI::logItemInserted(bool is_full)
-{
-    if (is_full) {
-        m_reg_sel_index = qMax(m_reg_sel_index - 1, 0);
-    }
-
-    scrollTraceView(is_full, false);
 }
 
 void TraceUI::resetUI(void)
 {
     m_textRegDesc->setPlainText("");
-    m_reg_sel_index = -1;
 }

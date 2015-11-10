@@ -20,7 +20,7 @@
 #include "errorstablewidget.h"
 
 ErrorsTableWidget::ErrorsTableWidget(QWidget *parent) :
-    QTableWidget(0, COLUMNS_NB, parent)
+    TraceQTableWidget(0, COLUMNS_NB, parent)
 {
     setHorizontalHeaderLabels(QStringList() << "Time" << "Device" << "Description");
 }

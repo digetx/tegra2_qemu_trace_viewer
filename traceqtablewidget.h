@@ -15,17 +15,21 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef TRACEMESSAGES_H
-#define TRACEMESSAGES_H
+#ifndef TRACEQTABLEWIDGET_H
+#define TRACEQTABLEWIDGET_H
 
-#include "traceqtablewidget.h"
+#include <QTableWidget>
 
-class TraceMessages : public TraceQTableWidget
+class TraceQTableWidget : public QTableWidget
 {
 public:
-    explicit TraceMessages(QWidget *parent = 0);
+    explicit TraceQTableWidget(QWidget *parent = 0);
+    explicit TraceQTableWidget(int rows, int columns, QWidget * parent = 0);
 
-    void insertMessage(char *msg);
+    // QAbstractItemView interface
+protected slots:
+    void rowsInserted(const QModelIndex &parent, int start, int end);
+
 };
 
-#endif // TRACEMESSAGES_H
+#endif // TRACEQTABLEWIDGET_H

@@ -174,7 +174,7 @@ private:
     };
 
 signals:
-    void logItemInserted(bool);
+    void itemInserted();
 
     void ErrorUnknownReg(const QString dev_name, const Device::log_entry entry);
 

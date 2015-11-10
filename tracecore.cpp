@@ -43,7 +43,7 @@ void TraceCore::onConnect(void)
     m_avp.reset(ldir);
     m_host1x.reset(ldir);
 
-    m_mainwindow->getUi()->plainTextEditMessages->clear();
+    m_mainwindow->getUi()->tableWidgetMessages->setRowCount(0);
 }
 
 void TraceCore::onDisconnect(void)
@@ -78,8 +78,7 @@ TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
 
 void TraceCore::message(char *txt)
 {
-    m_mainwindow->getUi()->plainTextEditMessages->textCursor().movePosition(QTextCursor::End, QTextCursor::MoveAnchor);
-    m_mainwindow->getUi()->plainTextEditMessages->textCursor().insertText(QString(txt));
+    m_mainwindow->getUi()->tableWidgetMessages->insertMessage(txt);
     delete[] txt;
 }
 
@@ -100,6 +99,7 @@ void TraceCore::regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
     case HOST1X_CDMA:
         m_host1x.regAccess(hwaddr, offset, value, new_value, time, is_write,
                            cpu_pc, cpu_id, is_irq);
+        break;
     default:
         Q_ASSERT(0);
         break;

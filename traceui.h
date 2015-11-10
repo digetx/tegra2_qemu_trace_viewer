@@ -21,12 +21,13 @@
 #include <QObject>
 #include <QLineEdit>
 #include <QListWidget>
-#include <QTableView>
 #include <QTextEdit>
 
 #include "device.h"
 #include "mainwindow.h"
 #include "tracedev.h"
+#include "tracedevview.h"
+#include "traceqtablewidget.h"
 
 class TraceUI : public QObject
 {
@@ -38,23 +39,19 @@ public:
     void resetUI(void);
 
 private:
-    MainWindow  *m_mainwindow;
-    QTableView  *m_tableViewTrace;
-    QTableView  *m_tableViewBitDetails;
-    QListWidget *m_listWidgetDevices;
-    QTextEdit   *m_textRegDesc;
-    QLineEdit   *m_regFilter;
-    TraceDev    *m_activeDevice;
-    int         m_reg_sel_index;
-
-    void scrollTraceView(bool is_full, bool force);
+    MainWindow      *m_mainwindow;
+    TraceDevView    *m_tableViewTrace;
+    QTableView      *m_tableViewBitDetails;
+    QListWidget     *m_listWidgetDevices;
+    QTextEdit       *m_textRegDesc;
+    QLineEdit       *m_regFilter;
+    TraceDev        *m_activeDevice;
 
 signals:
 
-public slots:
+private slots:
     void ActiveDeviceChanged(QListWidgetItem *, QListWidgetItem *);
-    void ActiveRegChanged(const QItemSelection &, const QItemSelection &);
-    void logItemInserted(bool is_full);
+    void ActiveRegChanged(const QModelIndex &index);
 };
 
 #endif // TRACEUI_H
