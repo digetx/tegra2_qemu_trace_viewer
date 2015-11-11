@@ -99,7 +99,15 @@ void CdmaTrace::trace(const u_int32_t &time, const u_int32_t &data, const bool &
     validateEntry(entry);
     write_log(entry);
 
-    setText(m_name + QString().sprintf(" (%lu)", m_access_nb++));
+    if (!m_update_stats_timer.isActive())
+        m_update_stats_timer.start(300);
+
+    m_access_nb++;
+}
+
+void CdmaTrace::updateStats(void)
+{
+    setText(m_name + QString().sprintf(" (%lu)", m_access_nb));
 }
 
 int CdmaTrace::rowCount(const QModelIndex &) const
@@ -299,7 +307,7 @@ void CdmaTrace::ClearLog()
     m_access_nb = 0;
     m_log.clear();
 
-    setText(m_name);
+    updateStats();
 
     emit layoutChanged();
 }

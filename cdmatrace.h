@@ -19,6 +19,7 @@
 #define CDMATRACE_H
 
 #include <QListWidgetItem>
+#include <QTimer>
 #include <QVarLengthArray>
 
 #include "circularlog.h"
@@ -41,7 +42,10 @@ public:
           m_ch_id(id)
     {
         m_name = QString().sprintf("host1x cdma%d", m_ch_id);
-        setText(m_name + QString().sprintf(" (%lu)", m_access_nb));
+        updateStats();
+
+        m_update_stats_timer.setSingleShot(true);
+        connect(&m_update_stats_timer, SIGNAL(timeout()), this, SLOT(updateStats()));
     }
 
 private:
@@ -66,6 +70,7 @@ private:
     u_int8_t m_class_id;
     u_int64_t m_access_nb;
     unsigned m_ch_id;
+    QTimer m_update_stats_timer;
 
     void setLogPath(QString ldir);
     void write_log(log_entry &entry);
@@ -79,28 +84,25 @@ public:
 signals:
     void logItemInserted(bool);
 
+public slots:
+    void ClearLog();
+
+private slots:
+    void updateStats(void);
+
     // QAbstractItemModel interface
 public:
     int rowCount(const QModelIndex &) const;
     int columnCount(const QModelIndex &) const;
     QVariant data(const QModelIndex &index, int role) const;
     QVariant headerData(int section, Qt::Orientation, int role) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const;
 
     // TraceDev interface
 public:
     int deviceType() const;
     QString entryAsString(void *e) const;
-
-public slots:
-    void ClearLog();
-
-    // TraceDev interface
-public:
     bool is_valid(u_int32_t ch_id);
-
-    // QAbstractItemModel interface
-public:
-    Qt::ItemFlags flags(const QModelIndex &index) const;
 };
 
 #endif // CDMATRACE_H
