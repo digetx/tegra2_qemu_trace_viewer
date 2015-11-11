@@ -34,19 +34,6 @@ public:
     ~MainWindow();
 
     void closeEvent(QCloseEvent *event);
-    void addDeviceListItem(QListWidgetItem *item);
-    void connectDevicesListItemClick(QObject *obj, const char *slot);
-    void connectTraceSelectionChanged(QObject *obj, const char *slot);
-    void setTableViewTraceModel(QAbstractTableModel *model);
-    void setDetailsModel(QAbstractTableModel *model);
-    void connectDeviceErrorsLog(QObject *obj,
-                                const char *signal_reg,
-                                const char *signal_cust);
-    void connectUnkDeviceErrorsLog(QObject *obj, const char *signal);
-    void connectClearErrorsLog(QObject *obj, const char *signal);
-    void setRegDesc(QString text);
-    void connectDeviceRegFilter(QObject *obj, const char *signal_regfilter);
-    void disconnectDeviceRegFilter(QObject *obj, const char *signal_regfilter);
     Ui::MainWindow * getUi(void);
 
 private:
