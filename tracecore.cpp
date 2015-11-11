@@ -103,7 +103,9 @@ void TraceCore::regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
     case TEGRA2_A9_CORE1:
         m_a9.regAccess(hwaddr, offset, value, new_value, time, is_write,
                        cpu_pc, cpu_id, is_irq);
-        break;
+        if (!is_irq) {
+            break;
+        }
     case TEGRA2_COP:
         m_avp.regAccess(hwaddr, offset, value, new_value, time, is_write,
                         cpu_pc, cpu_id, is_irq);
