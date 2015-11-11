@@ -24,24 +24,22 @@
 #include <QTextStream>
 #include <QVarLengthArray>
 
-#include "tracedev.h"
-
-template <class E_Type>
+template <class O_Type, class E_Type>
 class CircularLog : public QObject
 {
 public:
-    explicit CircularLog(TraceDev *d, unsigned max_log_size);
-    explicit CircularLog(TraceDev *d, unsigned max_log_size, QString file_path);
+    explicit CircularLog(O_Type *o, unsigned max_log_size);
+    explicit CircularLog(O_Type *o, unsigned max_log_size, QString file_path);
 
     void setLogFilePath(QString file_path);
     E_Type read(int index) const;
     E_Type read_last(void) const;
-    unsigned size(void) const;
-    bool write(E_Type entry);
+    int size(void) const;
+    bool write(E_Type &entry);
     void clear(void);
 
 private:
-    TraceDev *dev;
+    O_Type *m_owner;
     QFile m_file;
     QTextStream m_out;
     mutable QMutex mutex;
@@ -55,9 +53,9 @@ private:
     void write_to_file(E_Type &entry);
 };
 
-template <class E_Type>
-CircularLog<E_Type>::CircularLog(TraceDev *d, unsigned max_log_size)
-    : QObject(d), dev(d),
+template <class O_Type, class E_Type>
+CircularLog<O_Type, E_Type>::CircularLog(O_Type *o, unsigned max_log_size)
+    : QObject(o), m_owner(o),
       m_max_log_size(max_log_size),
       m_log_pointer_last(0),
       m_log_pointer(0),
@@ -66,15 +64,15 @@ CircularLog<E_Type>::CircularLog(TraceDev *d, unsigned max_log_size)
     m_log.clear();
 }
 
-template <class E_Type>
-CircularLog<E_Type>::CircularLog(TraceDev *d, unsigned max_log_size, QString file_path)
+template <class O_Type, class E_Type>
+CircularLog<O_Type, E_Type>::CircularLog(O_Type *d, unsigned max_log_size, QString file_path)
     : CircularLog(d, max_log_size)
 {
     setLogFilePath(file_path);
 }
 
-template <class E_Type>
-void CircularLog<E_Type>::setLogFilePath(QString file_path)
+template <class O_Type, class E_Type>
+void CircularLog<O_Type, E_Type>::setLogFilePath(QString file_path)
 {
     mutex.lock();
 
@@ -86,8 +84,8 @@ void CircularLog<E_Type>::setLogFilePath(QString file_path)
     mutex.unlock();
 }
 
-template <class E_Type>
-E_Type CircularLog<E_Type>::read_locked(int index) const
+template <class O_Type, class E_Type>
+E_Type CircularLog<O_Type, E_Type>::read_locked(int index) const
 {
     if (m_log_size == m_max_log_size) {
         index += m_log_pointer;
@@ -99,8 +97,8 @@ E_Type CircularLog<E_Type>::read_locked(int index) const
     return m_log.value(index);
 }
 
-template <class E_Type>
-E_Type CircularLog<E_Type>::read(int index) const
+template <class O_Type, class E_Type>
+E_Type CircularLog<O_Type, E_Type>::read(int index) const
 {
     E_Type entry;
 
@@ -111,8 +109,8 @@ E_Type CircularLog<E_Type>::read(int index) const
     return entry;
 }
 
-template <class E_Type>
-E_Type CircularLog<E_Type>::read_last(void) const
+template <class O_Type, class E_Type>
+E_Type CircularLog<O_Type, E_Type>::read_last(void) const
 {
     E_Type entry;
 
@@ -123,17 +121,17 @@ E_Type CircularLog<E_Type>::read_last(void) const
     return entry;
 }
 
-template <class E_Type>
-void CircularLog<E_Type>::write_to_file(E_Type &entry)
+template <class O_Type, class E_Type>
+void CircularLog<O_Type, E_Type>::write_to_file(E_Type &entry)
 {
     if (m_out.status() != QTextStream::Ok)
         return;
 
-    m_out << dev->entryAsString(&entry) << endl;
+    m_out << m_owner->entryAsString(&entry) << endl;
 }
 
-template <class E_Type>
-bool CircularLog<E_Type>::write(E_Type entry)
+template <class O_Type, class E_Type>
+bool CircularLog<O_Type, E_Type>::write(E_Type &entry)
 {
     bool ret;
 
@@ -157,8 +155,8 @@ bool CircularLog<E_Type>::write(E_Type entry)
     return ret;
 }
 
-template <class E_Type>
-void CircularLog<E_Type>::clear(void)
+template <class O_Type, class E_Type>
+void CircularLog<O_Type, E_Type>::clear(void)
 {
     mutex.lock();
 
@@ -168,8 +166,8 @@ void CircularLog<E_Type>::clear(void)
     mutex.unlock();
 }
 
-template <class E_Type>
-unsigned CircularLog<E_Type>::size(void) const
+template <class O_Type, class E_Type>
+int CircularLog<O_Type, E_Type>::size(void) const
 {
     return m_log_size;
 }

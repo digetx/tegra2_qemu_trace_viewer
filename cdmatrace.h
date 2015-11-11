@@ -62,7 +62,7 @@ private:
     } log_entry;
 
     QString m_name;
-    CircularLog<log_entry> m_log;
+    CircularLog<CdmaTrace, log_entry> m_log;
     u_int8_t m_class_id;
     u_int64_t m_access_nb;
     unsigned m_ch_id;

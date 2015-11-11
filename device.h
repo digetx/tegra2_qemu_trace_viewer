@@ -147,7 +147,7 @@ protected:
 
 private:
     const QString m_name;
-    CircularLog<Device::log_entry> m_log;
+    CircularLog<Device, Device::log_entry> m_log;
     QTimer update_dev_stats_timer;
     QTimer blink_reset_timer;
     const u_int32_t m_base;
