@@ -50,7 +50,7 @@ protected:
     void addDevice(TraceDev *dev);
 
 signals:
-    void ErrUnkDev(const u_int32_t, const u_int32_t);
+    void ErrUnkDev(const QString, const Device::log_entry);
 
 public slots:
 };
