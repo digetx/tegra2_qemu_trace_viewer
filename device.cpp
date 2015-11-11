@@ -245,10 +245,15 @@ void Device::update_dev_stats(void)
     updateName();
 
     if (entry.is_irq) {
-        if (entry.value)
+        if (entry.value) {
+            m_background = bcolor_irq_on;
             setBackground( bcolor_irq_on );
-        else
+        } else {
+            m_background = QBrush();
             setBackground( bcolor_irq_off );
+        }
+
+        return;
     } else if (entry.is_error)
         setBackground( bcolor_err );
     else if (!entry.is_write)
@@ -257,11 +262,13 @@ void Device::update_dev_stats(void)
         setBackground( bcolor_wr_new_value );
     else
         setBackground( bcolor_wr_no_upd );
+
+    m_background = QBrush ( Qt::lightGray );
 }
 
 void Device::blink_reset(void)
 {
-    setBackground( QBrush() );
+    setBackground(m_background);
 }
 
 QVariant Device::data(const QModelIndex &index, int role) const
@@ -403,10 +410,12 @@ void Device::ClearLog(void)
     m_dev_writes_nb = 0;
     m_dev_irqs_nb = 0;
     m_dev_errs_nb = 0;
+    m_background = QBrush();
 
     emit layoutChanged();
     m_bit_details_model.signalUpdate();
     updateName();
+    blink_reset();
 }
 
 void Device::updateName(void)

@@ -156,6 +156,7 @@ private:
     u_int64_t m_dev_irqs_nb;
     u_int64_t m_dev_errs_nb;
     QString m_regFilter;
+    QBrush m_background;
 
     virtual QString get_register_name(const log_entry &entry) const = 0;
 
