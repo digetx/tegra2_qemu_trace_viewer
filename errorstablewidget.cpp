@@ -38,11 +38,11 @@ void ErrorsTableWidget::AddEntry(const QString dev_name, const Device::log_entry
     QString error_desc;
 
     if (entry.is_write)
-        error_desc = QString().sprintf("writing 0x%x to unknown reg @0x%x cpu[%d]=0x%X",
-                                       entry.value, entry.offset, entry.cpu_id, entry.cpu_pc);
+        error_desc.sprintf("writing 0x%x to unknown reg @0x%x cpu[%d]=0x%X",
+                           entry.value, entry.offset, entry.cpu_id, entry.cpu_pc);
     else
-        error_desc = QString().sprintf("reading of unknown reg @0x%x cpu[%d]=0x%X",
-                                       entry.offset, entry.cpu_id, entry.cpu_pc);
+        error_desc.sprintf("reading of unknown reg @0x%x cpu[%d]=0x%X",
+                           entry.offset, entry.cpu_id, entry.cpu_pc);
 
     AddRow(entry.time, dev_name, error_desc, true);
 }
@@ -62,7 +62,7 @@ void ErrorsTableWidget::AddRow(const u_int32_t &time,
     QTableWidgetItem *desc_item = new QTableWidgetItem(desc);
     QTime mstime = QTime(0, 0).addMSecs(time / 1000);
     QString timestr =  mstime.toString("hh:mm:ss.zzz") +
-                                    QString().sprintf(".%d", time % 1000);
+                                    QString().sprintf(".%03d", time % 1000);
     QTableWidgetItem *time_item = new QTableWidgetItem(timestr);
     int next_row = rowCount();
 
