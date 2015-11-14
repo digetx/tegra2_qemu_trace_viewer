@@ -47,35 +47,27 @@ void TraceSRC::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
                          const bool &is_irq)
 {
     QVarLengthArray<TraceDev*>::const_iterator tdev;
-    static u_int32_t last_err_addr = ~0;
     Device::log_entry err_entry;
 
-    if (offset == last_err_addr) {
-        goto UNK_DEV_ERR;
-    }
-
     for (tdev = m_devices.constBegin(); tdev != m_devices.constEnd(); tdev++) {
-        if ((*tdev)->deviceType() != TraceDev::MMIO)
+        Device *dev = static_cast<Device *> (*tdev);
+
+        if (dev->deviceType() != TraceDev::MMIO)
             continue;
 
-        if ((*tdev)->is_valid(hwaddr)) {
-            Device *dev = static_cast<Device *> (*tdev);
-
+        if (dev->is_valid(hwaddr)) {
             dev->write_log(offset, value, new_value, time,
                            is_write, cpu_pc, cpu_id, is_irq);
             return;
         }
     }
 
-UNK_DEV_ERR:
     err_entry.time = time;
     err_entry.value = value;
     err_entry.cpu_pc = cpu_pc;
     err_entry.cpu_id = cpu_id;
     err_entry.offset = hwaddr + offset;
     err_entry.is_write = is_write;
-
-    last_err_addr = offset;
 
     emit ErrUnkDev("Unknown device", err_entry);
 }
@@ -86,11 +78,12 @@ void TraceSRC::chWrite(const u_int32_t &ch_id, const u_int32_t &time,
     QVarLengthArray<TraceDev*>::const_iterator tdev;
 
     for (tdev = m_devices.constBegin(); tdev != m_devices.constEnd(); tdev++) {
-        if ((*tdev)->deviceType() != TraceDev::HOST1X_CDMA)
+        CdmaTrace *dev = static_cast<CdmaTrace *> (*tdev);
+
+        if (dev->deviceType() != TraceDev::HOST1X_CDMA)
             continue;
 
-        if ((*tdev)->is_valid(ch_id)) {
-            CdmaTrace *dev = static_cast<CdmaTrace *> (*tdev);
+        if (dev->is_valid(ch_id)) {
 
             dev->trace(time, data, is_gather);
             return;
