@@ -136,8 +136,9 @@ QString Device::entryAsString(void *e) const
     if (!entry->is_irq) {
         ret += entry->is_write ? "writing" : "reading";
         ret += QString().sprintf(" 0x%08X ", entry->new_value);
-        ret += (entry->is_write ? "to " : " from ");
+        ret += (entry->is_write ? "to " : "from ");
         ret += get_register_name(*entry);
+        ret += QString().sprintf("\tcpu[%d] @0x%08X", entry->cpu_id, entry->cpu_pc);
     } else {
         ret += QString().sprintf("irq %u\tstatus: %u",entry->offset, entry->value);
     }
