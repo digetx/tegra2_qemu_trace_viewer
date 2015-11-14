@@ -70,6 +70,7 @@ HEADERS  += mainwindow.h \
     errorstablewidget.h \
     tracetabwidget.h \
     cdmatrace.h \
+    host1x_cmd_processor.h \
     tracedev.h \
     circularlog.h \
     traceui.h \
@@ -101,7 +102,6 @@ HEADERS  += devices/host1x_dev.h \
     devices/dcdev.h \
     devices/bsedev.h \
     devices/host1x_channeldev.h \
-    devices/host1x_cmd_processor.h \
     devices/host1x_syncdev.h \
     devices/arb_semadev.h \
     devices/arb_gnt_ictlrdev.h \
