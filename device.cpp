@@ -85,7 +85,7 @@ QVariant BitDetails::data(const QModelIndex &index, int role) const
         }
     case Qt::ForegroundRole:
         if (bits.at(bit_index).value != bits.at(bit_index).new_value)
-            return Qt::black;
+            return QColor(Qt::black);
         break;
     default:
         break;
@@ -360,7 +360,7 @@ QVariant Device::data(const QModelIndex &index, int role) const
         break;
     case Qt::ForegroundRole:
         if (index.column() != Device::CPU_PC)
-            return Qt::black;
+            return QColor(Qt::black);
         break;
     default:
         break;
