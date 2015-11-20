@@ -43,6 +43,7 @@
 #include "devices/ictlr_quaddev.h"
 #include "devices/host1x_dev.h"
 #include "devices/gr2ddev.h"
+#include "devices/res_semadev.h"
 
 #include "iomap.h"
 #include "tracea9.h"
@@ -69,6 +70,7 @@ TraceA9::TraceA9(MainWindow *window, QString name, QObject *parent) :
     addDevice( new BseDev("bsea", TEGRA_BSEA_BASE + 0x1000) );
     addDevice( new BseDev("bsev", TEGRA_VDE_BASE + 0x1000) );
 //    addDevice( new Host1x_channelDev("host1x ch prot", TEGRA_HOST1X_BASE + 0x20000) );
+    addDevice( new Res_semaDev("res sema", TEGRA_RES_SEMA_BASE) );
     addDevice( new Arb_semaDev("arb sema", TEGRA_ARB_SEMA_BASE) );
     addDevice( new Arb_gnt_ictlrDev("arb gnt icrtrl", TEGRA_ARBGNT_ICTLR_BASE) );
     addDevice( new SdhciDev("sdhci4", TEGRA_SDMMC4_BASE) );
