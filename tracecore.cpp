@@ -87,15 +87,14 @@ void TraceCore::regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
                           u_int32_t new_value, u_int32_t time, bool is_write,
                           u_int32_t cpu_pc, u_int32_t cpu_id, bool is_irq)
 {
-    if (is_irq && offset == 65) {
-        if (value & 1) {
+    bool host1x_irq = false;
+
+    if (is_irq) {
+        if (offset == 65 || offset == 67) {
             cpu_id = TEGRA2_A9_CORE0;
-            value = !!(value & 2);
-        } else if (value & 3) {
+            host1x_irq = true;
+        } else if (offset == 64 || offset == 66) {
             cpu_id = TEGRA2_COP;
-            value = !!(value & 5);
-        } else {
-            Q_ASSERT(0);
         }
     }
 
@@ -104,7 +103,7 @@ void TraceCore::regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
     case TEGRA2_A9_CORE1:
         m_a9.regAccess(hwaddr, offset, value, new_value, time, is_write,
                        cpu_pc, cpu_id, is_irq);
-        if (!is_irq) {
+        if (!is_irq || host1x_irq) {
             break;
         }
     case TEGRA2_COP:
