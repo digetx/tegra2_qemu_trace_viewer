@@ -249,12 +249,10 @@ void Device::update_dev_stats(void)
         if (entry.value) {
             m_background = bcolor_irq_on;
             setBackground( bcolor_irq_on );
+            return;
         } else {
-            m_background = QBrush();
             setBackground( bcolor_irq_off );
         }
-
-        return;
     } else if (entry.is_error)
         setBackground( bcolor_err );
     else if (!entry.is_write)
