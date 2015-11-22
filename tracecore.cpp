@@ -44,6 +44,7 @@ void TraceCore::onConnect(void)
     m_host1x.reset(ldir);
 
     m_mainwindow->getUi()->tableWidgetMessages->setRowCount(0);
+    m_mainwindow->getUi()->tableWidgetErrors->ClearLog();
 }
 
 void TraceCore::onDisconnect(void)
