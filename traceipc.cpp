@@ -135,3 +135,8 @@ void TraceIPC::socket_error(QAbstractSocket::SocketError)
 
     m_reconnect_timer.start(1500);
 }
+
+void TraceIPC::changeAddr(const QString &addr)
+{
+    m_addr = addr;
+}

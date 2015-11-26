@@ -19,10 +19,8 @@
 #include <QDir>
 
 #include "tracecore.h"
+#include "tracesettings.h"
 #include "ui_mainwindow.h"
-
-#define LOGS_DIR    "/home/dima/vl/logs/"
-#define REMOTE_ADDR "192.168.1.145"
 
 #define HOST1X_CDMA	0x1010
 
@@ -36,7 +34,8 @@ enum {
 
 void TraceCore::onConnect(void)
 {
-    QString ldir = LOGS_DIR + QDateTime::currentDateTime().toString("dd.M_hh:mm:ss") + "/";
+    QString ldir = TraceSettings::instance()->logsDirPath() + "/" +
+                QDateTime::currentDateTime().toString("dd.M_hh:mm:ss") + "/";
     QDir().mkdir(ldir);
 
     m_a9.reset(ldir);
@@ -70,11 +69,12 @@ TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
     connect(&m_ipc, SIGNAL(chWrite(u_int32_t, u_int32_t, u_int32_t, u_int32_t)),
             this, SLOT(chWrite(u_int32_t, u_int32_t, u_int32_t, u_int32_t)));
 
-#ifdef LOCAL_SOCKET
-    m_ipc.connectTo("/tmp/trace.sock");
-#else
-    m_ipc.connectTo(REMOTE_ADDR);
-#endif
+    TraceSettings::createInstance(m_mainwindow);
+
+    connect(TraceSettings::instance(), SIGNAL(remoteAddrChanged(const QString &)),
+            &m_ipc, SLOT(changeAddr(const QString &)));
+
+    m_ipc.connectTo(TraceSettings::instance()->remoteAddr());
 }
 
 void TraceCore::message(char *txt)

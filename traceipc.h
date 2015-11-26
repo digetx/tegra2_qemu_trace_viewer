@@ -56,6 +56,7 @@ public slots:
 
 private slots:
     void Reconnect(void);
+    void changeAddr(const QString &addr);
 
 private:
 #ifdef LOCAL_SOCKET
