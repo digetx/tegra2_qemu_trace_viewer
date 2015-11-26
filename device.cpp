@@ -263,6 +263,8 @@ void Device::update_dev_stats(void)
         setBackground( bcolor_wr_no_upd );
 
     m_background = QBrush ( Qt::lightGray );
+
+    m_log.flush();
 }
 
 void Device::blink_reset(void)

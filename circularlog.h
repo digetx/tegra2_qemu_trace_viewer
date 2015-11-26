@@ -37,6 +37,7 @@ public:
     int size(void) const;
     bool write(E_Type &entry);
     void clear(void);
+    void flush(void);
 
 private:
     O_Type *m_owner;
@@ -170,6 +171,13 @@ template <class O_Type, class E_Type>
 int CircularLog<O_Type, E_Type>::size(void) const
 {
     return m_log_size;
+}
+
+template <class O_Type, class E_Type>
+void CircularLog<O_Type, E_Type>::flush(void)
+{
+    if (m_file.isOpen() && m_out.status() == QTextStream::Ok)
+        m_file.flush();
 }
 
 #endif // CIRCULARLOG_H

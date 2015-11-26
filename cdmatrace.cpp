@@ -108,6 +108,7 @@ void CdmaTrace::trace(const u_int32_t &time, const u_int32_t &data, const bool &
 void CdmaTrace::updateStats(void)
 {
     setText(m_name + QString().sprintf(" (%lu)", m_access_nb));
+    m_log.flush();
 }
 
 int CdmaTrace::rowCount(const QModelIndex &) const
