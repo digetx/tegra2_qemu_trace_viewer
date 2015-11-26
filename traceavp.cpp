@@ -15,6 +15,9 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include  <QDate>
+#include "ui_mainwindow.h"
+
 #include "devices/emcdev.h"
 #include "devices/mcdev.h"
 #include "devices/gizmodev.h"
@@ -49,8 +52,13 @@
 #include "iomap.h"
 #include "traceavp.h"
 
+#define RECORD_IRQ      0
+#define RECORD_READ     1
+#define RECORD_WRITE    2
+
 TraceAVP::TraceAVP(MainWindow *window, QString name, QObject *parent) :
-    TraceSRC(window, name, parent)
+    TraceSRC(window, name, parent), m_recordfile_opened(false),
+    m_record_en(false)
 {
     addDevice( new EmcDev("emc", TEGRA_EMC_BASE) );
     addDevice( new McDev("mc", TEGRA_MC_BASE) );
@@ -104,4 +112,84 @@ TraceAVP::TraceAVP(MainWindow *window, QString name, QObject *parent) :
     addDevice( new Gr2dDev("host1x gr2d", 0x51) );
     addDevice( new Gr2dDev("host1x gr2d_sb", 0x52) );
     addDevice( new Gr2dDev("host1x gr3d", 0x60) );
+
+    m_rec_button = window->getUi()->pushButton_RecodAVP;
+
+    connect(m_rec_button, SIGNAL(clicked(bool)), this, SLOT(recordingToggle()));
+}
+
+bool TraceAVP::openRecordFile(void)
+{
+    QString date;
+
+    if (m_recordfile_opened)
+        return true;
+
+    date = QDateTime::currentDateTime().toString("hh:mm:ss");
+    m_recordfile.setFileName(m_log_path + "/"+"AVP_Record_" + date + ".bin");
+    m_recordfile.open(QIODevice::WriteOnly);
+    m_recordstream.setDevice(&m_recordfile);
+    m_recordfile_opened = (m_recordstream.status() == QTextStream::Ok);
+
+    return m_recordfile_opened;
+}
+
+void TraceAVP::closeRecordFile(void)
+{
+    if (m_recordfile_opened) {
+        m_recordfile.close();
+        m_recordfile_opened = false;
+    }
+}
+
+void TraceAVP::recordingSet(bool en)
+{
+    m_record_en = en;
+
+    m_rec_button->setText(m_record_en ? "Stop recording" : "Record AVP IO");
+    m_rec_button->setStyleSheet(m_record_en ? "background: red" : "");
+
+    if (!m_record_en)
+        closeRecordFile();
+}
+
+void TraceAVP::recordingToggle(void)
+{
+    recordingSet(!m_record_en);
+}
+
+void TraceAVP::stopRecording(void)
+{
+    recordingSet(false);
+}
+
+void TraceAVP::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
+                         const u_int32_t &value, const u_int32_t &new_value,
+                         const u_int32_t &time, const bool &is_write,
+                         const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
+                         const bool &is_irq)
+{
+    TraceSRC::regAccess(hwaddr, offset, value, new_value, time, is_write,
+                        cpu_pc, cpu_id, is_irq);
+
+    if (m_record_en && openRecordFile()) {
+        if (is_irq) {
+            quint32 irq_nb = offset;
+            quint32 irq_sts = value;
+
+            m_recordstream << quint32(RECORD_IRQ) << irq_nb << irq_sts;
+        } else {
+            quint32 type  = is_write ? RECORD_WRITE : RECORD_READ;
+            quint32 val  = is_write ? new_value : value;
+            quint32 addr = hwaddr + offset;
+
+            m_recordstream << type << addr << val;
+        }
+    }
+}
+
+void TraceAVP::reset(QString log_path)
+{
+    TraceSRC::reset(log_path);
+    m_log_path = log_path;
 }

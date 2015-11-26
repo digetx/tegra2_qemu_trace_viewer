@@ -15,6 +15,8 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QPushButton>
+
 #ifndef TraceAVP_H
 #define TraceAVP_H
 
@@ -22,8 +24,36 @@
 
 class TraceAVP : public TraceSRC
 {
+    Q_OBJECT
 public:
     explicit TraceAVP(MainWindow *window, QString name, QObject *parent = 0);
+
+    void stopRecording(void);
+
+private slots:
+    void recordingToggle(void);
+
+private:
+    QFile m_recordfile;
+    QTextStream m_recordstream;
+    QPushButton *m_rec_button;
+    QString m_log_path;
+    bool m_recordfile_opened;
+    bool m_record_en;
+
+    void recordingSet(bool en);
+    bool openRecordFile(void);
+    void closeRecordFile(void);
+
+    // TraceSRC interface
+public:
+    void regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
+                   const u_int32_t &value, const u_int32_t &new_value,
+                   const u_int32_t &time, const bool &is_write,
+                   const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
+                   const bool &is_irq);
+
+    void reset(QString log_path);
 };
 
 #endif // TraceAVP_H
