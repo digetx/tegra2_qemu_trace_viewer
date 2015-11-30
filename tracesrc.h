@@ -18,14 +18,52 @@
 #ifndef TRACECPU_H
 #define TRACECPU_H
 
+#include <QAbstractTableModel>
 #include <QObject>
+#include <QLineEdit>
+#include <QTextEdit>
 #include <QVarLengthArray>
 
 #include "mainwindow.h"
-#include "tracedev.h"
-#include "traceui.h"
 
-class TraceSRC : public QObject
+#include "device.h"
+#include "tracedev.h"
+#include "tracedevview.h"
+#include "traceqtablewidget.h"
+
+class TraceSRC;
+
+class TraceUI : public QObject
+{
+    Q_OBJECT
+public:
+    explicit TraceUI(MainWindow *window, QString name, TraceSRC *parent);
+
+    void addDevice(TraceDev *dev);
+    void resetUI(void);
+
+private:
+    MainWindow      *m_mainwindow;
+    QTableView      *m_tableViewDevices;
+    TraceDevView    *m_tableViewTrace;
+    QTableView      *m_tableViewBitDetails;
+    QListWidget     *m_listWidgetDevices;
+    QTextEdit       *m_textRegDesc;
+    QLineEdit       *m_regFilter;
+    TraceDev        *m_activeDevice;
+    TraceSRC        *m_tracesrc;
+
+    void ActiveDeviceChanged(TraceDev *dev);
+
+signals:
+
+private slots:
+    void ActiveDeviceChanged(QListWidgetItem *item, QListWidgetItem *);
+    void ActiveDeviceChanged(const QModelIndex &, const QModelIndex &);
+    void ActiveRegChanged(const QModelIndex &);
+};
+
+class TraceSRC : public QAbstractTableModel
 {
     Q_OBJECT
 public:
@@ -42,6 +80,8 @@ public:
 
     virtual void reset(QString log_path);
 
+    TraceDev * getDevAt(int idx) const;
+
 protected:
     TraceUI m_tui;
     QString m_name;
@@ -53,6 +93,23 @@ signals:
     void ErrUnkDev(const QString, const Device::log_entry);
 
 public slots:
+
+    // QAbstractItemModel interface
+public:
+    int rowCount(const QModelIndex &) const
+    {
+        return m_devices.size();
+    }
+
+    int columnCount(const QModelIndex &) const
+    {
+        return 0;
+    }
+
+    QVariant data(const QModelIndex &, int) const
+    {
+        return QVariant();
+    }
 };
 
 #endif // TRACECPU_H

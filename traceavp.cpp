@@ -118,6 +118,57 @@ TraceAVP::TraceAVP(MainWindow *window, QString name, QObject *parent) :
     connect(m_rec_button, SIGNAL(clicked(bool)), this, SLOT(recordingToggle()));
 }
 
+void TraceAVP::addDevice(TraceDev *dev)
+{
+    Device *dev_ = static_cast<Device *> (dev);
+
+    TraceSRC::addDevice(dev);
+
+    connect(dev_, SIGNAL(firstTimeStatUpdated(int)),
+            this, SLOT(firstTimeStatUpdated(int)));
+
+    connect(dev_, SIGNAL(irqStatUpdated(int)),
+            this, SLOT(irqStatUpdated(int)));
+
+    connect(dev_, SIGNAL(readStatUpdated(int)),
+            this, SLOT(readStatUpdated(int)));
+
+    connect(dev_, SIGNAL(writeStatUpdated(int)),
+            this, SLOT(writeStatUpdated(int)));
+
+    connect(dev_, SIGNAL(errorStatUpdated(int)),
+            this, SLOT(errorStatUpdated(int)));
+}
+
+void TraceAVP::firstTimeStatUpdated(int id)
+{
+    emit dataChanged(index(id, 0), index(id, COLUMS_NB - 1));
+}
+
+void TraceAVP::irqStatUpdated(int id)
+{
+    const QModelIndex idx = index(id, IRQ_ACTIONS);
+    emit dataChanged(idx, idx);
+}
+
+void TraceAVP::readStatUpdated(int id)
+{
+    const QModelIndex idx = index(id, READS);
+    emit dataChanged(idx, idx);
+}
+
+void TraceAVP::writeStatUpdated(int id)
+{
+    const QModelIndex idx = index(id, WRITES);
+    emit dataChanged(idx, idx);
+}
+
+void TraceAVP::errorStatUpdated(int id)
+{
+    const QModelIndex idx = index(id, ERRORS);
+    emit dataChanged(idx, idx);
+}
+
 bool TraceAVP::openRecordFile(void)
 {
     QString date;
@@ -192,4 +243,88 @@ void TraceAVP::reset(QString log_path)
 {
     TraceSRC::reset(log_path);
     m_log_path = log_path;
+}
+
+int TraceAVP::columnCount(const QModelIndex &) const
+{
+    return COLUMS_NB;
+}
+
+QVariant TraceAVP::data(const QModelIndex &index, int role) const
+{
+    Device *dev = static_cast<Device *> ( getDevAt(index.row()) );
+
+    switch (role) {
+    case Qt::EditRole:
+    case Qt::DisplayRole:
+        switch ( index.column() ) {
+        case BASE:
+            return QString().sprintf("0x%08X", dev->base());
+        case NAME:
+            return dev->name();
+        case READS:
+            return dev->reads();
+        case WRITES:
+            return dev->writes();
+        case IRQ_ACTIONS:
+            return dev->irqs();
+        case ERRORS:
+            return dev->errors();
+        default:
+            break;
+        }
+        break;
+    case Qt::BackgroundRole:
+        if ( index.column() == IRQ_ACTIONS && dev->irq_active() ) {
+            return QColor(255, 192, 255);
+        }
+        if ( index.column() == ERRORS && dev->errors() ) {
+            return QColor(255, 150, 150); // light red
+        }
+        if (!dev->nostats()) {
+            return QColor(220, 220, 220); // light gray
+        }
+        break;
+    case Qt::ForegroundRole:
+        if (!dev->nostats()) {
+            return QColor(Qt::black);
+        }
+        break;
+    default:
+        break;
+    }
+
+    return QVariant();
+}
+
+Qt::ItemFlags TraceAVP::flags(const QModelIndex &index) const
+{
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}
+
+QVariant TraceAVP::headerData(int section, Qt::Orientation, int role) const
+{
+    switch (role) {
+    case Qt::DisplayRole:
+        switch (section) {
+        case BASE:
+            return "Base";
+        case NAME:
+            return "Name";
+        case READS:
+            return "Reads";
+        case WRITES:
+            return "Writes";
+        case IRQ_ACTIONS:
+            return "IRQ's";
+        case ERRORS:
+            return "Errors";
+        default:
+            break;
+        }
+    default:
+        break;
+    }
+
+    return QVariant();
 }

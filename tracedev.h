@@ -25,7 +25,7 @@ class TraceDev : public QAbstractTableModel, public QListWidgetItem
 {
     Q_OBJECT
 public:
-    explicit TraceDev(QObject *parent = 0) : QAbstractTableModel(parent)
+    explicit TraceDev(QObject *parent = 0) : QAbstractTableModel(parent), id(0)
     {
     }
 
@@ -47,6 +47,8 @@ public:
     virtual QString updateDetails(const int &) { return QString(); }
     virtual QAbstractTableModel* getBitDetailsModel(void) { return NULL; }
     virtual QString entryAsString(void *) const { return ""; }
+
+    int id;
 
 signals:
 

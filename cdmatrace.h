@@ -82,7 +82,7 @@ public:
     void trace(const u_int32_t &time, const u_int32_t &data, const bool &is_gather);
 
 signals:
-    void logItemInserted(bool);
+    void itemInserted(void);
 
 public slots:
     void ClearLog();

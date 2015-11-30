@@ -22,8 +22,37 @@
 
 class TraceA9 : public TraceSRC
 {
+    Q_OBJECT
 public:
     explicit TraceA9(MainWindow *window, QString name, QObject *parent = 0);
+
+    enum {
+        BASE,
+        NAME,
+        READS,
+        WRITES,
+        IRQ_ACTIONS,
+        ERRORS,
+        COLUMS_NB,
+    };
+
+private slots:
+    void firstTimeStatUpdated(int);
+    void readStatUpdated(int);
+    void writeStatUpdated(int);
+    void irqStatUpdated(int);
+    void errorStatUpdated(int);
+
+    // TraceSRC interface
+public:
+    void addDevice(TraceDev *dev);
+
+    // QAbstractItemModel interface
+public:
+    int columnCount(const QModelIndex &) const;
+    QVariant data(const QModelIndex &, int) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 };
 
 #endif // TraceA9_H

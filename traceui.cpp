@@ -17,14 +17,15 @@
 
 #include <QScrollBar>
 
-#include "traceui.h"
+#include "tracesrc.h"
 #include "ui_mainwindow.h"
 
-TraceUI::TraceUI(MainWindow *window, QString name, QObject *parent) :
-    QObject(parent), m_mainwindow(window), m_activeDevice(NULL)
+TraceUI::TraceUI(MainWindow *window, QString name, TraceSRC *parent) :
+    QObject(parent), m_mainwindow(window), m_activeDevice(NULL), m_tracesrc(parent)
 {
     TraceTabWidget *tab = window->getUi()->tabWidgetTrace;
 
+    m_tableViewDevices = tab->findChild<QTableView *>("tableViewDevices_" + name);
     m_tableViewBitDetails = tab->findChild<QTableView *>("tableViewBitDetails_" + name);
     m_listWidgetDevices = tab->findChild<QListWidget *>("listWidgetDevices_" + name);
     m_tableViewTrace = tab->findChild<TraceDevView *>("tableWidgetTrace_" + name);
@@ -37,6 +38,14 @@ TraceUI::TraceUI(MainWindow *window, QString name, QObject *parent) :
 
     connect(m_tableViewTrace, SIGNAL(selected(const QModelIndex &)),
             this, SLOT(ActiveRegChanged(const QModelIndex &)));
+
+    if (m_tableViewDevices != NULL) {
+        m_tableViewDevices->setModel(m_tracesrc);
+
+        connect(m_tableViewDevices->selectionModel(),
+                SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
+                this, SLOT(ActiveDeviceChanged(const QModelIndex &, const QModelIndex &)));
+    }
 }
 
 void TraceUI::addDevice(TraceDev *dev)
@@ -44,7 +53,9 @@ void TraceUI::addDevice(TraceDev *dev)
     ErrorsTableWidget *e = m_mainwindow->getUi()->tableWidgetErrors;
     TraceTabWidget *tab = m_mainwindow->getUi()->tabWidgetTrace;
 
-    m_listWidgetDevices->addItem(dev);
+    if (m_listWidgetDevices != NULL) {
+        m_listWidgetDevices->addItem(dev);
+    }
 
     connect(dev, SIGNAL(ErrorUnknownReg(const QString, const Device::log_entry)),
             e, SLOT(AddEntry(const QString, const Device::log_entry)));
@@ -66,10 +77,20 @@ void TraceUI::ActiveRegChanged(const QModelIndex &index)
 
 void TraceUI::ActiveDeviceChanged(QListWidgetItem *item, QListWidgetItem *)
 {
+    ActiveDeviceChanged( static_cast<TraceDev *> (item) );
+}
+
+void TraceUI::ActiveDeviceChanged(const QModelIndex &index, const QModelIndex &)
+{
+    ActiveDeviceChanged( m_tracesrc->getDevAt(index.row()) );
+}
+
+void TraceUI::ActiveDeviceChanged(TraceDev *dev)
+{
     disconnect(m_regFilter, SIGNAL(textEdited(const QString)),
                m_activeDevice, SLOT(regFilterChanged(const QString)));
 
-    m_activeDevice = static_cast<TraceDev *> (item);
+    m_activeDevice = dev;
 
     m_tableViewTrace->setModel(m_activeDevice);
     m_tableViewBitDetails->setModel(m_activeDevice->getBitDetailsModel());

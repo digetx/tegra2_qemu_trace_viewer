@@ -190,26 +190,39 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
 
     if (entry.is_error) {
         m_dev_errs_nb++;
+        m_errs_stat_dirty = true;
         updateName();
-        emit ErrorUnknownReg(text(), entry);
+        emit ErrorUnknownReg(m_name, entry);
+        emit errorStatUpdated(this->id);
     } else if (is_write && is_undef_changed(offset, value, new_value)) {
-        QString name = m_name;
         QString text = "changing undefined bits ";
                 text += get_register_name(entry) + " ";
                 text += QString().sprintf("0x%08X -> 0x%08X", value, new_value) + " ";
                 text += QString().sprintf("cpu=0x%08X", cpu_pc);
-        emit ErrorCustom(name, text, time);
+        emit ErrorCustom(m_name, text, time);
     }
 
-    if (is_irq)
+    if (is_irq) {
+        m_irq_act = !!entry.value;
         m_dev_irqs_nb++;
-    else if (is_write)
+        m_irqs_stat_dirty = true;
+    } else if (is_write) {
         m_dev_writes_nb++;
-    else
+        m_writes_stat_dirty = true;
+    } else {
         m_dev_reads_nb++;
+        m_reads_stat_dirty = true;
+    }
 
-    if (!update_dev_stats_timer.isActive())
+    if (!m_stats_changed) {
+        m_stats_changed = true;
+        emit firstTimeStatUpdated(this->id);
+    }
+
+    if (!update_dev_stats_timer.isActive()) {
         update_dev_stats_timer.start(300);
+    }
+
     blink_reset_timer.start(1500);
 }
 
@@ -243,33 +256,57 @@ void Device::update_dev_stats(void)
     static const QBrush bcolor_wr_new_value = QBrush ( QColor(0xf4, 0xa7, 0) );
     static const QBrush bcolor_wr_no_upd = QBrush ( QColor(255, 255, 150) );
 
-    updateName();
+    if (m_is_listitem) {
+        updateName();
 
-    if (entry.is_irq) {
-        if (entry.value) {
-            m_background = bcolor_irq_on;
-            setBackground( bcolor_irq_on );
-            return;
-        } else {
-            setBackground( bcolor_irq_off );
+        if (entry.is_irq) {
+            if (entry.value) {
+                m_background = bcolor_irq_on;
+                setBackground( bcolor_irq_on );
+                goto LOG_FLUSH;
+            } else {
+                setBackground( bcolor_irq_off );
+            }
+        } else if (entry.is_error)
+            setBackground( bcolor_err );
+        else if (!entry.is_write)
+            setBackground( bcolor_read );
+        else if (entry.value != entry.new_value)
+            setBackground( bcolor_wr_new_value );
+        else
+            setBackground( bcolor_wr_no_upd );
+
+        m_background = QBrush ( Qt::lightGray );
+    } else {
+        if (m_irqs_stat_dirty) {
+            emit irqStatUpdated(this->id);
+            m_irqs_stat_dirty = false;
         }
-    } else if (entry.is_error)
-        setBackground( bcolor_err );
-    else if (!entry.is_write)
-        setBackground( bcolor_read );
-    else if (entry.value != entry.new_value)
-        setBackground( bcolor_wr_new_value );
-    else
-        setBackground( bcolor_wr_no_upd );
 
-    m_background = QBrush ( Qt::lightGray );
+        if (m_errs_stat_dirty) {
+            emit errorStatUpdated(this->id);
+            m_errs_stat_dirty = false;
+        }
 
+        if (m_reads_stat_dirty) {
+            emit readStatUpdated(this->id);
+            m_reads_stat_dirty = false;
+        }
+
+        if (m_writes_stat_dirty) {
+            emit writeStatUpdated(this->id);
+            m_writes_stat_dirty = false;
+        }
+    }
+
+LOG_FLUSH:
     m_log.flush();
 }
 
 void Device::blink_reset(void)
 {
     setBackground(m_background);
+    emit firstTimeStatUpdated(this->id);
 }
 
 QVariant Device::data(const QModelIndex &index, int role) const
@@ -412,6 +449,12 @@ void Device::ClearLog(void)
     m_dev_irqs_nb = 0;
     m_dev_errs_nb = 0;
     m_background = QBrush();
+    m_stats_changed = false;
+    m_irq_act = false;
+    m_writes_stat_dirty = false;
+    m_reads_stat_dirty = false;
+    m_irqs_stat_dirty = false;
+    m_errs_stat_dirty = false;
 
     emit layoutChanged();
     m_bit_details_model.signalUpdate();
@@ -421,6 +464,10 @@ void Device::ClearLog(void)
 
 void Device::updateName(void)
 {
+    if (!m_is_listitem) {
+        return;
+    }
+
     /* FIXME: sprintf() is a CPU consumption hog */
     setText(m_name +
             QString().sprintf(" (r %lu, w %lu, i %lu, e %lu)",

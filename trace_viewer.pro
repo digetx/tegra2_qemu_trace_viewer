@@ -75,7 +75,6 @@ HEADERS  += mainwindow.h \
     host1x_cmd_processor.h \
     tracedev.h \
     circularlog.h \
-    traceui.h \
     tracesrc.h \
     tracea9.h \
     traceavp.h \

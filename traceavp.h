@@ -30,8 +30,23 @@ public:
 
     void stopRecording(void);
 
+    enum {
+        BASE,
+        NAME,
+        READS,
+        WRITES,
+        IRQ_ACTIONS,
+        ERRORS,
+        COLUMS_NB,
+    };
+
 private slots:
     void recordingToggle(void);
+    void firstTimeStatUpdated(int);
+    void readStatUpdated(int);
+    void writeStatUpdated(int);
+    void irqStatUpdated(int);
+    void errorStatUpdated(int);
 
 private:
     QFile m_recordfile;
@@ -53,7 +68,15 @@ public:
                    const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
                    const bool &is_irq);
 
+    void addDevice(TraceDev *dev);
     void reset(QString log_path);
+
+    // QAbstractItemModel interface
+public:
+    int columnCount(const QModelIndex &) const;
+    QVariant data(const QModelIndex &, int) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 };
 
 #endif // TraceAVP_H

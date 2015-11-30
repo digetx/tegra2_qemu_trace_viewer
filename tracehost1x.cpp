@@ -33,8 +33,8 @@ TraceHOST1X::TraceHOST1X(MainWindow *window, QString name, QObject *parent) :
     addDevice( new CdmaTrace(6) );
     addDevice( new CdmaTrace(7) );
 
-    addDevice( new Host1xDev("host1x", 0x1) );
-    addDevice( new Gr2dDev("host1x gr2d", 0x51) );
-    addDevice( new Gr2dDev("host1x gr2d_sb", 0x52) );
-    addDevice( new Gr2dDev("host1x gr3d", 0x60) );
+    addDevice( new Host1xDev("host1x", 0x1, true) );
+    addDevice( new Gr2dDev("host1x gr2d", 0x51, true) );
+    addDevice( new Gr2dDev("host1x gr2d_sb", 0x52, true) );
+    addDevice( new Gr2dDev("host1x gr3d", 0x60, true) );
 }

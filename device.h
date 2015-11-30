@@ -96,10 +96,12 @@ public:
 
     explicit Device(QObject *parent = 0);
 
-    explicit Device(const QString name, u_int32_t base, QObject *parent = 0)
+    explicit Device(const QString name, u_int32_t base, bool listitem = false,
+                    QObject *parent = 0)
         : TraceDev(parent),
           m_bit_details_model(this),
-          m_name(name + " @" + QString::number(base, 16).toUpper()),
+          m_is_listitem(listitem),
+          m_name(name + (listitem ? " @" + QString::number(base, 16).toUpper() : "")),
           m_log(this, MAX_LOG_ENTRIES),
           m_base(base),
           m_dev_writes_nb(0),
@@ -132,6 +134,15 @@ public:
 
     QAbstractTableModel* getBitDetailsModel(void);
 
+    QString name(void)   { return m_name; }
+    quint32 base(void)   { return m_base; }
+    quint64 reads(void)  { return m_dev_reads_nb; }
+    quint64 writes(void) { return m_dev_writes_nb; }
+    quint64 irqs(void)   { return m_dev_irqs_nb; }
+    quint64 errors(void) { return m_dev_errs_nb; }
+    bool    nostats(void) { return !m_stats_changed; }
+    bool    irq_active(void) { return m_irq_act; }
+
 public slots:
     void ClearLog(void);
     void regFilterChanged(const QString &text);
@@ -146,17 +157,24 @@ protected:
     virtual void update_internal(log_entry &entry);
 
 private:
+    bool m_is_listitem;
     const QString m_name;
     CircularLog<Device, Device::log_entry> m_log;
     QTimer update_dev_stats_timer;
     QTimer blink_reset_timer;
     const u_int32_t m_base;
     u_int64_t m_dev_writes_nb;
+    bool m_writes_stat_dirty;
     u_int64_t m_dev_reads_nb;
+    bool m_reads_stat_dirty;
     u_int64_t m_dev_irqs_nb;
+    bool m_irqs_stat_dirty;
     u_int64_t m_dev_errs_nb;
+    bool m_errs_stat_dirty;
     QString m_regFilter;
     QBrush m_background;
+    bool m_stats_changed;
+    bool m_irq_act;
 
     virtual QString get_register_name(const log_entry &entry) const = 0;
 
@@ -181,6 +199,12 @@ signals:
 
     void ErrorCustom(const QString dev_name, const QString text,
                      const u_int32_t time);
+
+    void irqStatUpdated(int);
+    void readStatUpdated(int);
+    void writeStatUpdated(int);
+    void errorStatUpdated(int);
+    void firstTimeStatUpdated(int);
 
 private slots:
     void update_dev_stats(void);
