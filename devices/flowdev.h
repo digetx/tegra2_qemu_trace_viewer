@@ -24,10 +24,7 @@ class FlowDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit FlowDev(QObject *parent = 0);
-
-    FlowDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

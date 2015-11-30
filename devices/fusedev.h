@@ -24,10 +24,7 @@ class FuseDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit FuseDev(QObject *parent = 0);
-
-    FuseDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

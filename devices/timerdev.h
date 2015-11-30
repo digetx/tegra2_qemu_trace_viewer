@@ -24,10 +24,7 @@ class TimerDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit TimerDev(QObject *parent = 0);
-
-    TimerDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

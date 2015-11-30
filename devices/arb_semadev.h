@@ -24,10 +24,7 @@ class Arb_semaDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Arb_semaDev(QObject *parent = 0);
-
-    Arb_semaDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

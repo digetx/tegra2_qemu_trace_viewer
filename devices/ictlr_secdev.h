@@ -24,10 +24,7 @@ class Ictlr_secDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Ictlr_secDev(QObject *parent = 0);
-
-    Ictlr_secDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

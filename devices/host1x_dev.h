@@ -24,10 +24,7 @@ class Host1xDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Host1xDev(QObject *parent = 0);
-
-    Host1xDev(const QString name, u_int32_t base) : Device(name, base) {}
+using Device::Device;
 
 signals:
 

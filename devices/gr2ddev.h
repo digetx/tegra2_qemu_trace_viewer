@@ -24,10 +24,7 @@ class Gr2dDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Gr2dDev(QObject *parent = 0);
-
-    Gr2dDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

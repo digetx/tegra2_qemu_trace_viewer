@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Apb_miscDev::Apb_miscDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define PP_STRAPPING_OPT_A_OFFSET 0x8
 #define PP_STRAPPING_OPT_A_UNDEFMASK 0xC03FFE0E
 union pp_strapping_opt_a_u {

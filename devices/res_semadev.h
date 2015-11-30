@@ -24,10 +24,7 @@ class Res_semaDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Res_semaDev(QObject *parent = 0);
-
-    Res_semaDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

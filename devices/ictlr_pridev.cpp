@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Ictlr_priDev::Ictlr_priDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define PRI_ICTLR_VIRQ_CPU_OFFSET 0x0
 #define PRI_ICTLR_VIRQ_CPU_UNDEFMASK 0x00000000
 union pri_ictlr_virq_cpu_u {

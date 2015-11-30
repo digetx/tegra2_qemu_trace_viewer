@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-GizmoDev::GizmoDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define AHB_MEM_OFFSET 0xC
 #define AHB_MEM_UNDEFMASK 0x00F8FF38
 union ahb_mem_u {

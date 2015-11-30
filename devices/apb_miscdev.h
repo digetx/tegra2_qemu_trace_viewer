@@ -24,10 +24,7 @@ class Apb_miscDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Apb_miscDev(QObject *parent = 0);
-
-    Apb_miscDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

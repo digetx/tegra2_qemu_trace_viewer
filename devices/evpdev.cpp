@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-EvpDev::EvpDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define EVP_RESET_VECTOR_OFFSET 0x0
 #define EVP_RESET_VECTOR_UNDEFMASK 0x00000000
 union evp_reset_vector_u {

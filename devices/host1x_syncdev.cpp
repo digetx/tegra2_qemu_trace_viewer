@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Host1x_syncDev::Host1x_syncDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define INTSTATUS_OFFSET 0x0
 #define INTSTATUS_UNDEFMASK 0x3FFFE080
 union intstatus_u {

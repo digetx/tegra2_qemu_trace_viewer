@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-DcDev::DcDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define CMD_GENERAL_INCR_SYNCPT_OFFSET 0x0
 #define CMD_GENERAL_INCR_SYNCPT_UNDEFMASK 0xFFFF0000
 union cmd_general_incr_syncpt_u {

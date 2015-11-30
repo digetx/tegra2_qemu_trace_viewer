@@ -24,10 +24,7 @@ class EvpDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit EvpDev(QObject *parent = 0);
-
-    EvpDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

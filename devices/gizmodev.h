@@ -24,10 +24,7 @@ class GizmoDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit GizmoDev(QObject *parent = 0);
-
-    GizmoDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

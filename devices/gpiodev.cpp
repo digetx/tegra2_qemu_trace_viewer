@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-GpioDev::GpioDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define GPIO_CNF_OFFSET 0x0
 union gpio_cnf_u {
     struct {

@@ -24,10 +24,7 @@ class Ictlr_triDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Ictlr_triDev(QObject *parent = 0);
-
-    Ictlr_triDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

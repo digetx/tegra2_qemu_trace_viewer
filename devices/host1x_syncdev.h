@@ -24,10 +24,7 @@ class Host1x_syncDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Host1x_syncDev(QObject *parent = 0);
-
-    Host1x_syncDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

@@ -24,10 +24,7 @@ class UartDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit UartDev(QObject *parent = 0);
-
-    UartDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

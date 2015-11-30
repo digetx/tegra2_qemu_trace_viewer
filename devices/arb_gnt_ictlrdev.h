@@ -24,10 +24,7 @@ class Arb_gnt_ictlrDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Arb_gnt_ictlrDev(QObject *parent = 0);
-
-    Arb_gnt_ictlrDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

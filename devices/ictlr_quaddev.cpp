@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Ictlr_quadDev::Ictlr_quadDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define QUAD_ICTLR_VIRQ_CPU_OFFSET 0x300
 #define QUAD_ICTLR_VIRQ_CPU_UNDEFMASK 0xFF0000E0
 union quad_ictlr_virq_cpu_u {

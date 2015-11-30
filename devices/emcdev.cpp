@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-EmcDev::EmcDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define INTSTATUS_OFFSET 0x0
 #define INTSTATUS_UNDEFMASK 0xFFFFFFC7
 union intstatus_u {

@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-McDev::McDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define EMEM_CFG_OFFSET 0xC
 #define EMEM_CFG_UNDEFMASK 0xFFC00000
 union emem_cfg_u {

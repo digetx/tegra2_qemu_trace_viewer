@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Host1xDev::Host1xDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define NV_CLASS_HOST_INCR_SYNCPT_OFFSET 0x0
 #define NV_CLASS_HOST_INCR_SYNCPT_UNDEFMASK 0xFFFF0000
 union nv_class_host_incr_syncpt_u {

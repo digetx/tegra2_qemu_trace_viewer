@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Arb_semaDev::Arb_semaDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define ARB_SEMA_SMP_GNT_ST_OFFSET 0x0
 #define ARB_SEMA_SMP_GNT_ST_UNDEFMASK 0x00000000
 union arb_sema_smp_gnt_st_u {

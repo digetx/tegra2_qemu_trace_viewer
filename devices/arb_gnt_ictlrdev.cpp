@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Arb_gnt_ictlrDev::Arb_gnt_ictlrDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define PRI_ICTLR_ARBGNT_CPU_STATUS_OFFSET 0x0
 #define PRI_ICTLR_ARBGNT_CPU_STATUS_UNDEFMASK 0x00000000
 union pri_ictlr_arbgnt_cpu_status_u {

@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Host1x_channelDev::Host1x_channelDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define FIFOSTAT_OFFSET 0x0
 #define FIFOSTAT_UNDEFMASK 0x60E0E000
 union fifostat_u {

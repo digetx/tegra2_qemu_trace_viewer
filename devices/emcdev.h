@@ -24,10 +24,7 @@ class EmcDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit EmcDev(QObject *parent = 0);
-
-    EmcDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

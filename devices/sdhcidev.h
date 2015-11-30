@@ -24,10 +24,7 @@ class SdhciDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit SdhciDev(QObject *parent = 0);
-
-    SdhciDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

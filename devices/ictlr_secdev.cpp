@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Ictlr_secDev::Ictlr_secDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define SEC_ICTLR_VIRQ_CPU_OFFSET 0x100
 #define SEC_ICTLR_VIRQ_CPU_UNDEFMASK 0x04000000
 union sec_ictlr_virq_cpu_u {

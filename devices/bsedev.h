@@ -24,9 +24,9 @@ class BseDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit BseDev(QObject *parent = 0);
+    using Device::Device;
 
+public:
     BseDev(const QString name, u_int32_t base) :
         Device(name, base), m_state(BseDev::IDLE) {}
 

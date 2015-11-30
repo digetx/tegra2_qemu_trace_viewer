@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-UartDev::UartDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define THR_DLAB_OFFSET 0x0
 #define THR_DLAB_UNDEFMASK 0xFFFFFF00
 union thr_dlab_u {

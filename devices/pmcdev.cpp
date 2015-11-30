@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-PmcDev::PmcDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define CNTRL_OFFSET 0x0
 #define CNTRL_UNDEFMASK 0xFFF80000
 union cntrl_u {

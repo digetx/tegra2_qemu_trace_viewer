@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-RtcDev::RtcDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define CONTROL_OFFSET 0x0
 #define CONTROL_UNDEFMASK 0xFFFFFFFE
 union control_u {

@@ -24,10 +24,7 @@ class AVP_CchDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit AVP_CchDev(QObject *parent = 0);
-
-    AVP_CchDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-FlowDev::FlowDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define HALT_CPU_EVENTS_OFFSET 0x0
 #define HALT_CPU_EVENTS_UNDEFMASK 0x00000000
 union halt_cpu_events_u {

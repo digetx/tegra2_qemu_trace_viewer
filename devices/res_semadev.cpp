@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Res_semaDev::Res_semaDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define RES_SEMA_SHRD_SMP_STA_OFFSET 0x0
 #define RES_SEMA_SHRD_SMP_STA_UNDEFMASK 0x00000000
 union res_sema_shrd_smp_sta_u {

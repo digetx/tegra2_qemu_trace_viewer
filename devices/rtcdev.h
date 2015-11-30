@@ -24,10 +24,7 @@ class RtcDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit RtcDev(QObject *parent = 0);
-
-    RtcDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Timer_usDev::Timer_usDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define CNTR_1US_OFFSET 0x0
 #define CNTR_1US_UNDEFMASK 0x00000000
 union cntr_1us_u {

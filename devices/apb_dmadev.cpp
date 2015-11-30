@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Apb_dmaDev::Apb_dmaDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define COMMAND_OFFSET 0x0
 #define COMMAND_UNDEFMASK 0x7FFFFFFF
 union command_u {

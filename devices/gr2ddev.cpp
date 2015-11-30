@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-Gr2dDev::Gr2dDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define G2SB_INCR_SYNCPT_OFFSET 0x0
 #define G2SB_INCR_SYNCPT_UNDEFMASK 0xFFFF0000
 union g2sb_incr_syncpt_u {

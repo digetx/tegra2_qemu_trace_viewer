@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-FuseDev::FuseDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define FUSE_FUSEBYPASS_OFFSET 0x24
 #define FUSE_FUSEBYPASS_UNDEFMASK 0xFFFFFFFE
 union fuse_fusebypass_u {

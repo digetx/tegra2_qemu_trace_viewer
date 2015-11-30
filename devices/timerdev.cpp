@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-TimerDev::TimerDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define PTV_OFFSET 0x0
 #define PTV_UNDEFMASK 0x20000000
 union ptv_u {

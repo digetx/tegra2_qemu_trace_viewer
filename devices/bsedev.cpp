@@ -25,11 +25,6 @@
 #define CMD_SETTABLE        0x15
 #define CMD_MEMDMAVD        0x22
 
-BseDev::BseDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 typedef union bse_cmd_setup_table {
     struct {
         unsigned int key_table_phy_addr:17;

@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-AVP_CchDev::AVP_CchDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define PTE0_COMPARE    0xF000
 union pte_compare_u {
     struct {

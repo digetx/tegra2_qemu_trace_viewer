@@ -24,10 +24,7 @@ class PmcDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit PmcDev(QObject *parent = 0);
-
-    PmcDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

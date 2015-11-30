@@ -24,10 +24,7 @@ class GpioDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit GpioDev(QObject *parent = 0);
-
-    GpioDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

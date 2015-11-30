@@ -24,10 +24,7 @@ class DcDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit DcDev(QObject *parent = 0);
-
-    DcDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

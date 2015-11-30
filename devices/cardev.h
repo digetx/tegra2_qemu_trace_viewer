@@ -24,10 +24,7 @@ class CarDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit CarDev(QObject *parent = 0);
-
-    CarDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

@@ -24,10 +24,7 @@ class Apb_dmaDev : public Device
 {
     Q_OBJECT
 
-public:
-    explicit Apb_dmaDev(QObject *parent = 0);
-
-    Apb_dmaDev(const QString name, u_int32_t base) : Device(name, base) {}
+    using Device::Device;
 
 signals:
 

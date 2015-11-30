@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-CarDev::CarDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define RST_SOURCE_OFFSET 0x0
 #define RST_SOURCE_UNDEFMASK 0xFFFFC0C8
 union rst_source_u {

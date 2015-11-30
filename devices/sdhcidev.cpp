@@ -19,11 +19,6 @@
 
 #include <QDebug>
 
-SdhciDev::SdhciDev(QObject *parent) :
-    Device(parent)
-{
-}
-
 #define SYSTEM_ADDRESS_OFFSET 0x0
 #define SYSTEM_ADDRESS_UNDEFMASK 0x00000000
 union system_address_u {
