@@ -29,6 +29,7 @@ public:
     explicit TraceAVP(MainWindow *window, QString name, QObject *parent = 0);
 
     void stopRecording(void);
+    void restartRecording(void);
 
     enum {
         BASE,
@@ -37,6 +38,7 @@ public:
         WRITES,
         IRQ_ACTIONS,
         ERRORS,
+        RECORDING_EN,
         COLUMS_NB,
     };
 
@@ -50,15 +52,14 @@ private slots:
 
 private:
     QFile m_recordfile;
-    QTextStream m_recordstream;
+    QDataStream m_recordstream;
     QPushButton *m_rec_button;
     QString m_log_path;
-    bool m_recordfile_opened;
     bool m_record_en;
 
     void recordingSet(bool en);
     bool openRecordFile(void);
-    void closeRecordFile(void);
+    void flushRecordFile(void);
 
     // TraceSRC interface
 public:
@@ -75,6 +76,7 @@ public:
 public:
     int columnCount(const QModelIndex &) const;
     QVariant data(const QModelIndex &, int) const;
+    bool setData(const QModelIndex &index, const QVariant &value, int role);
     Qt::ItemFlags flags(const QModelIndex &index) const;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 };

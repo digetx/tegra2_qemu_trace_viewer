@@ -25,7 +25,8 @@ class TraceDev : public QAbstractTableModel, public QListWidgetItem
 {
     Q_OBJECT
 public:
-    explicit TraceDev(QObject *parent = 0) : QAbstractTableModel(parent), id(0)
+    explicit TraceDev(QObject *parent = 0)
+        : QAbstractTableModel(parent), id(0), rec_enb(false)
     {
     }
 
@@ -49,6 +50,7 @@ public:
     virtual QString entryAsString(void *) const { return ""; }
 
     int id;
+    bool rec_enb;
 
 signals:
 

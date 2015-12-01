@@ -15,7 +15,8 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include  <QDate>
+#include <QCheckBox>
+#include <QDate>
 #include "ui_mainwindow.h"
 
 #include "devices/emcdev.h"
@@ -57,8 +58,7 @@
 #define RECORD_WRITE    2
 
 TraceAVP::TraceAVP(MainWindow *window, QString name, QObject *parent) :
-    TraceSRC(window, name, parent), m_recordfile_opened(false),
-    m_record_en(false)
+    TraceSRC(window, name, parent), m_record_en(false)
 {
     addDevice( new EmcDev("emc", TEGRA_EMC_BASE) );
     addDevice( new McDev("mc", TEGRA_MC_BASE) );
@@ -138,6 +138,8 @@ void TraceAVP::addDevice(TraceDev *dev)
 
     connect(dev_, SIGNAL(errorStatUpdated(int)),
             this, SLOT(errorStatUpdated(int)));
+
+    m_recordstream.setDevice(&m_recordfile);
 }
 
 void TraceAVP::firstTimeStatUpdated(int id)
@@ -149,18 +151,21 @@ void TraceAVP::irqStatUpdated(int id)
 {
     const QModelIndex idx = index(id, IRQ_ACTIONS);
     emit dataChanged(idx, idx);
+    flushRecordFile();
 }
 
 void TraceAVP::readStatUpdated(int id)
 {
     const QModelIndex idx = index(id, READS);
     emit dataChanged(idx, idx);
+    flushRecordFile();
 }
 
 void TraceAVP::writeStatUpdated(int id)
 {
     const QModelIndex idx = index(id, WRITES);
     emit dataChanged(idx, idx);
+    flushRecordFile();
 }
 
 void TraceAVP::errorStatUpdated(int id)
@@ -173,23 +178,21 @@ bool TraceAVP::openRecordFile(void)
 {
     QString date;
 
-    if (m_recordfile_opened)
+    if (m_recordfile.isOpen()) {
         return true;
+    }
 
     date = QDateTime::currentDateTime().toString("hh:mm:ss");
     m_recordfile.setFileName(m_log_path + "/"+"AVP_Record_" + date + ".bin");
     m_recordfile.open(QIODevice::WriteOnly);
-    m_recordstream.setDevice(&m_recordfile);
-    m_recordfile_opened = (m_recordstream.status() == QTextStream::Ok);
 
-    return m_recordfile_opened;
+    return m_recordfile.isOpen();
 }
 
-void TraceAVP::closeRecordFile(void)
+void TraceAVP::flushRecordFile(void)
 {
-    if (m_recordfile_opened) {
-        m_recordfile.close();
-        m_recordfile_opened = false;
+    if (m_recordfile.isOpen()) {
+        m_recordfile.flush();
     }
 }
 
@@ -200,8 +203,9 @@ void TraceAVP::recordingSet(bool en)
     m_rec_button->setText(m_record_en ? "Stop recording" : "Record AVP IO");
     m_rec_button->setStyleSheet(m_record_en ? "background: red" : "");
 
-    if (!m_record_en)
-        closeRecordFile();
+    if (!m_record_en) {
+        m_recordfile.close();
+    }
 }
 
 void TraceAVP::recordingToggle(void)
@@ -214,6 +218,16 @@ void TraceAVP::stopRecording(void)
     recordingSet(false);
 }
 
+void TraceAVP::restartRecording(void)
+{
+    if (!m_record_en) {
+        return;
+    }
+
+    recordingSet(false);
+    recordingSet(true);
+}
+
 void TraceAVP::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
                          const u_int32_t &value, const u_int32_t &new_value,
                          const u_int32_t &time, const bool &is_write,
@@ -223,7 +237,9 @@ void TraceAVP::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
     TraceSRC::regAccess(hwaddr, offset, value, new_value, time, is_write,
                         cpu_pc, cpu_id, is_irq);
 
-    if (m_record_en && openRecordFile()) {
+    Device *dev = static_cast<Device *> (getDevByAddr(hwaddr, TraceDev::MMIO));
+
+    if (dev != NULL && dev->rec_enb && m_record_en && openRecordFile()) {
         if (is_irq) {
             quint32 irq_nb = offset;
             quint32 irq_sts = value;
@@ -243,6 +259,8 @@ void TraceAVP::reset(QString log_path)
 {
     TraceSRC::reset(log_path);
     m_log_path = log_path;
+
+    restartRecording();
 }
 
 int TraceAVP::columnCount(const QModelIndex &) const
@@ -270,6 +288,8 @@ QVariant TraceAVP::data(const QModelIndex &index, int role) const
             return dev->irqs();
         case ERRORS:
             return dev->errors();
+        case RECORDING_EN:
+            return "enabled";
         default:
             break;
         }
@@ -290,6 +310,14 @@ QVariant TraceAVP::data(const QModelIndex &index, int role) const
             return QColor(Qt::black);
         }
         break;
+    case Qt::CheckStateRole:
+        switch ( index.column() ) {
+        case RECORDING_EN:
+            return dev->rec_enb ? Qt::Checked : Qt::Unchecked;
+        default:
+            break;
+        }
+        break;
     default:
         break;
     }
@@ -297,9 +325,37 @@ QVariant TraceAVP::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
+bool TraceAVP::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    Device *dev = static_cast<Device *> ( getDevAt(index.row()) );
+
+    switch (role) {
+    case Qt::CheckStateRole:
+        switch ( index.column() ) {
+        case RECORDING_EN:
+            dev->rec_enb = value.toBool();
+            emit dataChanged(index, index);
+            return true;
+        default:
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+
+    return false;
+}
+
 Qt::ItemFlags TraceAVP::flags(const QModelIndex &index) const
 {
-    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+    Qt::ItemFlags flags = Qt::ItemIsEditable;
+
+    if (index.column() == RECORDING_EN) {
+        flags |= Qt::ItemIsUserCheckable;
+    }
+
+    return QAbstractItemModel::flags(index) | flags;
 }
 
 QVariant TraceAVP::headerData(int section, Qt::Orientation, int role) const
@@ -319,6 +375,8 @@ QVariant TraceAVP::headerData(int section, Qt::Orientation, int role) const
             return "IRQ's";
         case ERRORS:
             return "Errors";
+        case RECORDING_EN:
+            return "Recording";
         default:
             break;
         }

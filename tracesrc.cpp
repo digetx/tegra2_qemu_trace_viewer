@@ -22,7 +22,8 @@
 #include "ui_mainwindow.h"
 
 TraceSRC::TraceSRC(MainWindow *window, QString name, QObject *parent) :
-    QAbstractTableModel(parent), m_tui(window, name, this), m_name(name)
+    QAbstractTableModel(parent), m_tui(window, name, this), m_name(name),
+    m_prev_addr(~0), m_prev_dev(NULL)
 {
     ErrorsTableWidget *e = window->getUi()->tableWidgetErrors;
     TraceTabWidget *tab = window->getUi()->tabWidgetTrace;
@@ -43,57 +44,74 @@ void TraceSRC::addDevice(TraceDev *dev)
     emit layoutChanged();
 }
 
+TraceDev * TraceSRC::getDevByAddr(const u_int32_t &addr,
+                                  const TraceDev::dev_type &type)
+{
+    QVarLengthArray<TraceDev*>::const_iterator tdev;
+
+    QMutexLocker locker(&m_mutex);
+
+    if (m_prev_addr == addr) {
+        if (m_prev_dev == NULL || m_prev_dev->deviceType() == type) {
+            return m_prev_dev;
+        }
+    }
+
+    m_prev_addr = addr;
+
+    for (tdev = m_devices.constBegin(); tdev != m_devices.constEnd(); tdev++) {
+        m_prev_dev = (*tdev);
+
+        if (m_prev_dev->deviceType() != type) {
+            continue;
+        }
+
+        if (m_prev_dev->is_valid(addr)) {
+            return (*tdev);
+        }
+    }
+
+    m_prev_dev = NULL;
+
+    return NULL;
+}
+
 void TraceSRC::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
                          const u_int32_t &value, const u_int32_t &new_value,
                          const u_int32_t &time, const bool &is_write,
                          const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
                          const bool &is_irq)
 {
-    QVarLengthArray<TraceDev*>::const_iterator tdev;
-    Device::log_entry err_entry;
+    Device *dev = static_cast<Device *> (getDevByAddr(hwaddr, TraceDev::MMIO));
 
-    for (tdev = m_devices.constBegin(); tdev != m_devices.constEnd(); tdev++) {
-        Device *dev = static_cast<Device *> (*tdev);
+    if (dev != NULL) {
+        dev->write_log(offset, value, new_value, time,
+                       is_write, cpu_pc, cpu_id, is_irq);
+    } else {
+        Device::log_entry err_entry;
 
-        if (dev->deviceType() != TraceDev::MMIO)
-            continue;
+        err_entry.time = time;
+        err_entry.value = value;
+        err_entry.cpu_pc = cpu_pc;
+        err_entry.cpu_id = cpu_id;
+        err_entry.offset = hwaddr + offset;
+        err_entry.is_write = is_write;
 
-        if (dev->is_valid(hwaddr)) {
-            dev->write_log(offset, value, new_value, time,
-                           is_write, cpu_pc, cpu_id, is_irq);
-            return;
-        }
+        emit ErrUnkDev("Unknown device", err_entry);
     }
-
-    err_entry.time = time;
-    err_entry.value = value;
-    err_entry.cpu_pc = cpu_pc;
-    err_entry.cpu_id = cpu_id;
-    err_entry.offset = hwaddr + offset;
-    err_entry.is_write = is_write;
-
-    emit ErrUnkDev("Unknown device", err_entry);
 }
 
 void TraceSRC::chWrite(const u_int32_t &ch_id, const u_int32_t &time,
                        const u_int32_t &data, const u_int32_t &is_gather)
 {
-    QVarLengthArray<TraceDev*>::const_iterator tdev;
+    CdmaTrace *dev =
+            static_cast<CdmaTrace *> (getDevByAddr(ch_id, TraceDev::HOST1X_CDMA));
 
-    for (tdev = m_devices.constBegin(); tdev != m_devices.constEnd(); tdev++) {
-        CdmaTrace *dev = static_cast<CdmaTrace *> (*tdev);
+    Q_ASSERT(dev != NULL);
 
-        if (dev->deviceType() != TraceDev::HOST1X_CDMA)
-            continue;
-
-        if (dev->is_valid(ch_id)) {
-
-            dev->trace(time, data, is_gather);
-            return;
-        }
+    if (dev != NULL) {
+        dev->trace(time, data, is_gather);
     }
-
-    Q_ASSERT(0);
 }
 
 void TraceSRC::reset(QString log_path)

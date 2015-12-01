@@ -80,6 +80,7 @@ public:
 
     virtual void reset(QString log_path);
 
+    TraceDev * getDevByAddr(const u_int32_t &, const TraceDev::dev_type &);
     TraceDev * getDevAt(int idx) const;
 
 protected:
@@ -88,6 +89,11 @@ protected:
     QVarLengthArray<TraceDev*> m_devices;
 
     void addDevice(TraceDev *dev);
+
+private:
+    u_int32_t m_prev_addr;
+    TraceDev *m_prev_dev;
+    QMutex m_mutex;
 
 signals:
     void ErrUnkDev(const QString, const Device::log_entry);
