@@ -108,7 +108,9 @@ public:
           m_dev_reads_nb(0),
           m_dev_irqs_nb(0),
           m_dev_errs_nb(0),
-          m_regFilter("")
+          m_regFilter(""),
+          m_stats_changed(false),
+          m_irq_act(false)
     {
         updateName();
 

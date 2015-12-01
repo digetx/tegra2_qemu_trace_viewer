@@ -22,7 +22,7 @@
 #include "ui_mainwindow.h"
 
 TraceSRC::TraceSRC(MainWindow *window, QString name, QObject *parent) :
-    QAbstractTableModel(parent), m_tui(window, name, this), m_name(name),
+    QAbstractTableModel(parent), m_name(name),
     m_prev_addr(~0), m_prev_dev(NULL)
 {
     ErrorsTableWidget *e = window->getUi()->tableWidgetErrors;
@@ -33,13 +33,15 @@ TraceSRC::TraceSRC(MainWindow *window, QString name, QObject *parent) :
 
     connect(this, SIGNAL(ErrUnkDev(const QString, const Device::log_entry)),
             tab, SLOT(OnError(void)));
+
+    m_tui = new TraceUI(window, name, this);
 }
 
 void TraceSRC::addDevice(TraceDev *dev)
 {
     dev->id = m_devices.size();
     m_devices.append(dev);
-    m_tui.addDevice(dev);
+    m_tui->addDevice(dev);
 
     emit layoutChanged();
 }
@@ -123,7 +125,7 @@ void TraceSRC::reset(QString log_path)
             (*dev)->setLogPath(log_path + m_name + "_");
     }
 
-    m_tui.resetUI();
+    m_tui->resetUI();
 
     emit layoutChanged();
 }

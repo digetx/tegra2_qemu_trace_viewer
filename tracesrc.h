@@ -84,7 +84,7 @@ public:
     TraceDev * getDevAt(int idx) const;
 
 protected:
-    TraceUI m_tui;
+    TraceUI *m_tui;
     QString m_name;
     QVarLengthArray<TraceDev*> m_devices;
 
