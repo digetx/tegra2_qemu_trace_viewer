@@ -66,7 +66,6 @@ HEADERS  += mainwindow.h \
     iomap.h \
     sizes.h \
     device.h \
-    register.h \
     traceipc.h \
     tracecore.h \
     errorstablewidget.h \
