@@ -113,7 +113,8 @@ HEADERS  += devices/host1x_dev.h \
     devices/ictlr_tridev.h \
     devices/ictlr_quaddev.h \
     devices/avp_cch.h \
-    devices/res_semadev.h
+    devices/res_semadev.h \
+    devices/dummydev.h
 
 FORMS    += mainwindow.ui
 
