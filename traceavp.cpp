@@ -49,6 +49,7 @@
 #include "devices/gr2ddev.h"
 #include "devices/avp_cch.h"
 #include "devices/res_semadev.h"
+#include "devices/dummydev.h"
 
 #include "iomap.h"
 #include "traceavp.h"
@@ -76,8 +77,19 @@ TraceAVP::TraceAVP(MainWindow *window, QString name, QObject *parent) :
     addDevice( new Timer_usDev("timer us", TEGRA_TMRUS_BASE) );
     addDevice( new TimerDev("timer3", TEGRA_TMR3_BASE) );
     addDevice( new TimerDev("timer4", TEGRA_TMR4_BASE) );
+    addDevice( new DummyDev("ucq", 0x60010000) );
     addDevice( new BseDev("bsea", TEGRA_BSEA_BASE + 0x1000) );
+    addDevice( new DummyDev("sxe", 0x6001A000) );
     addDevice( new BseDev("bsev", TEGRA_VDE_BASE + 0x1000) );
+    addDevice( new DummyDev("mbe", 0x6001C000) );
+    addDevice( new DummyDev("ppe", 0x6001C200) );
+    addDevice( new DummyDev("mce", 0x6001C400) );
+    addDevice( new DummyDev("tfe", 0x6001C600) );
+    addDevice( new DummyDev("ppb", 0x6001C800) );
+    addDevice( new DummyDev("vdma", 0x6001CA00) );
+    addDevice( new DummyDev("ucq", 0x6001CC00) );
+    addDevice( new DummyDev("bsea", 0x6001D000) );
+    addDevice( new DummyDev("frameid", 0x6001D800) );
 //    addDevice( new Host1x_channelDev("host1x ch prot", TEGRA_HOST1X_BASE + 0x20000) );
     addDevice( new Res_semaDev("res sema", TEGRA_RES_SEMA_BASE) );
     addDevice( new Arb_semaDev("arb sema", TEGRA_ARB_SEMA_BASE) );
