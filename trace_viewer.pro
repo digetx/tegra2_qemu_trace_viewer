@@ -23,6 +23,7 @@ SOURCES += main.cpp\
     cdmatrace.cpp \
     traceui.cpp \
     tracesrc.cpp \
+    tracecpu.cpp \
     tracea9.cpp \
     traceavp.cpp \
     tracehost1x.cpp \
@@ -75,6 +76,7 @@ HEADERS  += mainwindow.h \
     tracedev.h \
     circularlog.h \
     tracesrc.h \
+    tracecpu.h \
     tracea9.h \
     traceavp.h \
     tracehost1x.h \

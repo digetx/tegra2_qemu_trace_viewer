@@ -15,70 +15,17 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QPushButton>
-
 #ifndef TraceAVP_H
 #define TraceAVP_H
 
-#include "tracesrc.h"
+#include "tracecpu.h"
 
-class TraceAVP : public TraceSRC
+class TraceAVP : public TraceCPU
 {
     Q_OBJECT
 public:
-    explicit TraceAVP(MainWindow *window, QString name, QObject *parent = 0);
-
-    void stopRecording(void);
-    void restartRecording(void);
-
-    enum {
-        BASE,
-        NAME,
-        READS,
-        WRITES,
-        IRQ_ACTIONS,
-        ERRORS,
-        RECORDING_EN,
-        COLUMS_NB,
-    };
-
-private slots:
-    void recordingToggle(void);
-    void firstTimeStatUpdated(int);
-    void readStatUpdated(int);
-    void writeStatUpdated(int);
-    void irqStatUpdated(int);
-    void errorStatUpdated(int);
-
-private:
-    QFile m_recordfile;
-    QDataStream m_recordstream;
-    QPushButton *m_rec_button;
-    QString m_log_path;
-    bool m_record_en;
-
-    void recordingSet(bool en);
-    bool openRecordFile(void);
-    void flushRecordFile(void);
-
-    // TraceSRC interface
-public:
-    void regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
-                   const u_int32_t &value, const u_int32_t &new_value,
-                   const u_int32_t &time, const bool &is_write,
-                   const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
-                   const bool &is_irq);
-
-    void addDevice(TraceDev *dev);
-    void reset(QString log_path);
-
-    // QAbstractItemModel interface
-public:
-    int columnCount(const QModelIndex &) const;
-    QVariant data(const QModelIndex &, int) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role);
-    Qt::ItemFlags flags(const QModelIndex &index) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+    explicit TraceAVP(MainWindow *window, QString name, QFile *recfile,
+                      QObject *parent = 0);
 };
 
 #endif // TraceAVP_H

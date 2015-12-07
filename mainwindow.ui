@@ -202,6 +202,14 @@ p, li { white-space: pre-wrap; }
                 </item>
                </layout>
               </widget>
+              <widget class="QPushButton" name="pushButton_RecordCPU">
+               <property name="focusPolicy">
+                <enum>Qt::TabFocus</enum>
+               </property>
+               <property name="text">
+                <string>Record IO</string>
+               </property>
+              </widget>
              </widget>
             </item>
            </layout>
@@ -382,15 +390,12 @@ p, li { white-space: pre-wrap; }
                 </item>
                </layout>
               </widget>
-              <widget class="QPushButton" name="pushButton_RecodAVP">
+              <widget class="QPushButton" name="pushButton_RecordAVP">
                <property name="focusPolicy">
                 <enum>Qt::TabFocus</enum>
                </property>
                <property name="text">
-                <string>Record AVP IO</string>
-               </property>
-               <property name="checkable">
-                <bool>false</bool>
+                <string>Record IO</string>
                </property>
               </widget>
              </widget>

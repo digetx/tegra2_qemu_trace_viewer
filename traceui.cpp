@@ -31,6 +31,7 @@ TraceUI::TraceUI(MainWindow *window, QString name, TraceSRC *parent) :
     m_tableViewTrace = tab->findChild<TraceDevView *>("tableWidgetTrace_" + name);
     m_textRegDesc = tab->findChild<QTextEdit *>("textRegDesc_" + name);
     m_regFilter = tab->findChild<QLineEdit *>("lineEditRegFilter_" + name);
+    m_rec_button = tab->findChild<QPushButton *>("pushButton_Record" + name);
 
     connect(m_listWidgetDevices,
             SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),

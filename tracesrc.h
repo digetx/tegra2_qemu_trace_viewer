@@ -21,6 +21,7 @@
 #include <QAbstractTableModel>
 #include <QObject>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QTextEdit>
 #include <QVarLengthArray>
 
@@ -41,6 +42,8 @@ public:
 
     void addDevice(TraceDev *dev);
     void resetUI(void);
+
+    QPushButton     *m_rec_button;
 
 private:
     MainWindow      *m_mainwindow;

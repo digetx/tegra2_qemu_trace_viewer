@@ -24,14 +24,6 @@
 
 #define HOST1X_CDMA	0x1010
 
-enum {
-    TEGRA2_A9_CORE0,
-    TEGRA2_A9_CORE1,
-    TEGRA2_COP,
-    TEGRA2_A9_NCORES = TEGRA2_COP,
-    TEGRA2_NCPUS
-};
-
 void TraceCore::onConnect(void)
 {
     QString ldir = TraceSettings::instance()->logsDirPath() + "/" +
@@ -53,8 +45,8 @@ void TraceCore::onDisconnect(void)
 TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
     : QObject(parent),
       m_mainwindow(mainwindow),
-      m_avp(mainwindow, "AVP", this),
-      m_a9(mainwindow, "CPU", this),
+      m_avp(mainwindow, "AVP", &m_recordfile, this),
+      m_a9(mainwindow, "CPU", &m_recordfile, this),
       m_host1x(mainwindow, "Host1x", this)
 {
     connect(&m_ipc, SIGNAL(connected(void)), this, SLOT(onConnect(void)));

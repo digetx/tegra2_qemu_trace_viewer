@@ -30,6 +30,14 @@
 #include "traceavp.h"
 #include "tracehost1x.h"
 
+enum {
+    TEGRA2_A9_CORE0,
+    TEGRA2_A9_CORE1,
+    TEGRA2_COP,
+    TEGRA2_A9_NCORES = TEGRA2_COP,
+    TEGRA2_NCPUS
+};
+
 class TraceCore : public QObject
 {
     Q_OBJECT
@@ -56,6 +64,7 @@ public slots:
 private:
     MainWindow *m_mainwindow;
     TraceIPC m_ipc;
+    QFile m_recordfile;
     TraceAVP m_avp;
     TraceA9 m_a9;
     TraceHOST1X m_host1x;
