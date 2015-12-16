@@ -23,10 +23,11 @@
 #include "tracecore.h"
 #include "tracecpu.h"
 
-#define RECORD_VER      06122015
+#define RECORD_VER      16122015
 #define RECORD_IRQ      0
 #define RECORD_READ     1
 #define RECORD_WRITE    2
+#define RECORD_READNF   3
 
 TraceCPU::TraceCPU(MainWindow *window, QString name, QFile *recfile,
                    QObject *parent) :
@@ -152,7 +153,7 @@ void TraceCPU::restartRecording(void)
 
 void TraceCPU::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
                          const u_int32_t &value, const u_int32_t &new_value,
-                         const u_int32_t &time, const bool &is_write,
+                         const u_int32_t &time, const u_int32_t &is_write,
                          const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
                          const bool &is_irq)
 {
@@ -170,9 +171,14 @@ void TraceCPU::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
 
             m_recordstream << quint32(RECORD_IRQ) << irq_nb << irq_sts;
         } else {
-            quint32 type = is_write ? RECORD_WRITE : RECORD_READ;
-            quint32 val  = is_write ? new_value : value;
+            quint32 type = (is_write & 1) ? RECORD_WRITE : RECORD_READ;
+            quint32 val  = (is_write & 1) ? new_value : value;
             quint32 addr = hwaddr + offset;
+            bool clk_disabled = !!(is_write & 2);
+
+            if (type == RECORD_READ && clk_disabled) {
+                type = RECORD_READNF;
+            }
 
             m_recordstream << type << addr << val;
         }

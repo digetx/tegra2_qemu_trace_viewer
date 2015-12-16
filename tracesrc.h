@@ -74,7 +74,7 @@ public:
 
     virtual void regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
                    const u_int32_t &value, const u_int32_t &new_value,
-                   const u_int32_t &time, const bool &is_write,
+                   const u_int32_t &time, const u_int32_t &is_write,
                    const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
                    const bool &is_irq);
 

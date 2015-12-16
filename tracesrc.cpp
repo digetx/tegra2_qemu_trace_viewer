@@ -80,15 +80,18 @@ TraceDev * TraceSRC::getDevByAddr(const u_int32_t &addr,
 
 void TraceSRC::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
                          const u_int32_t &value, const u_int32_t &new_value,
-                         const u_int32_t &time, const bool &is_write,
+                         const u_int32_t &time, const u_int32_t &is_write,
                          const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
                          const bool &is_irq)
 {
     Device *dev = static_cast<Device *> (getDevByAddr(hwaddr, TraceDev::MMIO));
+    bool clk_disabled = !!(is_write & 2);
+    bool in_reset = !!(is_write & 4);
 
     if (dev != NULL) {
         dev->write_log(offset, value, new_value, time,
-                       is_write, cpu_pc, cpu_id, is_irq);
+                       is_write & 1, cpu_pc, cpu_id, is_irq,
+                       clk_disabled, in_reset);
     } else {
         Device::log_entry err_entry;
 
@@ -97,7 +100,9 @@ void TraceSRC::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
         err_entry.cpu_pc = cpu_pc;
         err_entry.cpu_id = cpu_id;
         err_entry.offset = hwaddr + offset;
-        err_entry.is_write = is_write;
+        err_entry.is_write = is_write & 1;
+        err_entry.clk_disabled = clk_disabled;
+        err_entry.in_reset = in_reset;
 
         emit ErrUnkDev("Unknown device", err_entry);
     }

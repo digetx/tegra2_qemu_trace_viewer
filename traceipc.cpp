@@ -20,6 +20,7 @@
 #include "traceipc.h"
 
 #define PACKET_TRACE_RW     0x11111111
+#define PACKET_TRACE_RW_V2  0x11111112
 #define PACKET_TRACE_IRQ    0x22222222
 #define PACKET_TRACE_TXT    0x33333333
 #define PACKET_TRACE_CDMA   0x44444444
@@ -87,6 +88,7 @@ void TraceIPC::socket_readReady(void)
 
         switch (ntohl(entry)) {
         case PACKET_TRACE_RW:
+        case PACKET_TRACE_RW_V2:
             m_socket.read((char*)&pak_rw, sizeof(pak_rw));
 
             emit regAccess(ntohl(pak_rw.hwaddr), ntohl(pak_rw.offset),

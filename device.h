@@ -91,6 +91,8 @@ public:
         bool      is_error:1;
         bool      undefined_changed:1;
         bool      is_irq:1;
+        bool      clk_disabled:1;
+        bool      in_reset:1;
         u_int32_t custom;
     } log_entry;
 
@@ -130,7 +132,8 @@ public:
     void write_log(const u_int32_t &offset, const u_int32_t &value,
                    const u_int32_t &new_value, const u_int32_t &time,
                    const bool &is_write, const u_int32_t &cpu_pc,
-                   const u_int32_t &cpu_id, const bool &is_irq);
+                   const u_int32_t &cpu_id, const bool &is_irq,
+                   const bool &clk_disabled, const bool &in_reset);
 
     QString updateDetails(const int &index);
 

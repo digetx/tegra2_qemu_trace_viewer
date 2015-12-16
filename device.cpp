@@ -163,7 +163,8 @@ void Device::update_internal(log_entry &)
 void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
                        const u_int32_t &new_value, const u_int32_t &time,
                        const bool &is_write, const u_int32_t &cpu_pc,
-                       const u_int32_t &cpu_id, const bool &is_irq)
+                       const u_int32_t &cpu_id, const bool &is_irq,
+                       const bool &clk_disabled, const bool &in_reset)
 {
     log_entry entry = {
         .offset = offset,
@@ -176,6 +177,8 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
         .is_error = is_irq ? false : !is_offset_valid(offset),
         .undefined_changed = false,
         .is_irq = is_irq,
+        .clk_disabled = clk_disabled,
+        .in_reset = in_reset,
         .custom = 0,
     };
 
@@ -194,12 +197,22 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
         updateName();
         emit ErrorUnknownReg(m_name, entry);
         emit errorStatUpdated(this->id);
-    } else if (is_write && is_undef_changed(offset, value, new_value)) {
-        QString text = "changing undefined bits ";
-                text += get_register_name(entry) + " ";
-                text += QString().sprintf("0x%08X -> 0x%08X", value, new_value) + " ";
-                text += QString().sprintf("cpu=0x%08X", cpu_pc);
-        emit ErrorCustom(m_name, text, time);
+    } else {
+
+        if (is_write && is_undef_changed(offset, value, new_value)) {
+            QString text = "changing undefined bits ";
+                    text += get_register_name(entry) + " ";
+                    text += QString().sprintf("0x%08X -> 0x%08X", value, new_value) + " ";
+                    text += QString().sprintf("cpu=0x%08X", cpu_pc);
+            emit ErrorCustom(m_name, text, time);
+        }
+
+        if (clk_disabled || in_reset) {
+            m_dev_errs_nb++;
+            m_errs_stat_dirty = true;
+            updateName();
+            emit errorStatUpdated(this->id);
+        }
     }
 
     if (is_irq) {
@@ -340,6 +353,11 @@ QVariant Device::data(const QModelIndex &index, int role) const
                                          entry.is_write ? "write to" : "read",
                                          entry.offset);
 
+            if (entry.clk_disabled || entry.in_reset)
+                return get_register_name(entry) +
+                        "\nclk_enb: " + QString::number(!entry.clk_disabled) +
+                        " rst: " + QString::number(entry.in_reset);
+
             return get_register_name(entry);
         case Device::VALUE:
             if (entry.is_irq)
@@ -375,6 +393,11 @@ QVariant Device::data(const QModelIndex &index, int role) const
 
         if (entry.is_error)
             return QColor(255 / div, 150 / div, 150 / div); // light red
+
+        if (index.column() == Device::REGISTER) {
+            if (entry.clk_disabled || entry.in_reset)
+                return QColor(255 / div, 150 / div, 150 / div); // light red
+        }
 
         if (!entry.is_write)
             return QColor(200 / div, 255 / div, 200 / div); // light green

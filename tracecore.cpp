@@ -53,8 +53,8 @@ TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
 
     connect(&m_ipc, SIGNAL(disconnected(void)), this, SLOT(onDisconnect(void)));
 
-    connect(&m_ipc, SIGNAL(regAccess(u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, bool, u_int32_t, u_int32_t, bool)),
-            this, SLOT(regAccess(u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, bool, u_int32_t, u_int32_t, bool)));
+    connect(&m_ipc, SIGNAL(regAccess(u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, bool)),
+            this, SLOT(regAccess(u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, bool)));
 
     connect(&m_ipc, SIGNAL(message(char*)), this, SLOT(message(char*)));
 
@@ -76,7 +76,7 @@ void TraceCore::message(char *txt)
 }
 
 void TraceCore::regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
-                          u_int32_t new_value, u_int32_t time, bool is_write,
+                          u_int32_t new_value, u_int32_t time, u_int32_t is_write,
                           u_int32_t cpu_pc, u_int32_t cpu_id, bool is_irq)
 {
     bool host1x_irq = false;
