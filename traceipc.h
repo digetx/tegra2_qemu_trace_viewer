@@ -34,6 +34,8 @@ public:
 
     void connectTo(const QString &addr);
 
+    bool send(void *cmd, qint64 size);
+
 signals:
     void regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
                    u_int32_t new_value, u_int32_t time, u_int32_t is_write,

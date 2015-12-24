@@ -142,3 +142,8 @@ void TraceIPC::changeAddr(const QString &addr)
 {
     m_addr = addr;
 }
+
+bool TraceIPC::send(void *cmd, qint64 size)
+{
+    return m_socket.write((char*)cmd, size) == size;
+}

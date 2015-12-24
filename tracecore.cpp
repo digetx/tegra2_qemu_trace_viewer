@@ -24,6 +24,14 @@
 
 #define HOST1X_CDMA	0x1010
 
+#define CMD_CHANGE_TIMERS_SPEED     0x122
+
+static void changeSpeedButtonText(bool slowdown, QPushButton *button)
+{
+    button->setText(slowdown ? "Normal speed" : "Slow down time");
+    button->setStyleSheet(slowdown ? "background: blue" : "");
+}
+
 void TraceCore::onConnect(void)
 {
     QString ldir = TraceSettings::instance()->logsDirPath() + "/" +
@@ -40,6 +48,23 @@ void TraceCore::onConnect(void)
 
 void TraceCore::onDisconnect(void)
 {
+    changeSpeedButtonText(false,
+                          m_mainwindow->getUi()->pushButton_SlowDownTime);
+}
+
+void TraceCore::timeSpeedToggle(void)
+{
+    static bool slow = false;
+    quint32 cmd = CMD_CHANGE_TIMERS_SPEED;
+    quint32 speed;
+
+    slow = !slow;
+    speed = slow ? 5000 : 1000000;
+
+    if (m_ipc.send(&cmd, sizeof(cmd)) && m_ipc.send(&speed, sizeof(speed))) {
+        changeSpeedButtonText(slow,
+                              m_mainwindow->getUi()->pushButton_SlowDownTime);
+    }
 }
 
 TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
@@ -65,6 +90,9 @@ TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
 
     connect(TraceSettings::instance(), SIGNAL(remoteAddrChanged(const QString &)),
             &m_ipc, SLOT(changeAddr(const QString &)));
+
+    connect(m_mainwindow->getUi()->pushButton_SlowDownTime, SIGNAL(clicked(bool)),
+            this, SLOT(timeSpeedToggle()));
 
     m_ipc.connectTo(TraceSettings::instance()->remoteAddr());
 }

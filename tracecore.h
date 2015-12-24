@@ -61,6 +61,8 @@ public slots:
 
     void message(char *txt);
 
+    void timeSpeedToggle(void);
+
 private:
     MainWindow *m_mainwindow;
     TraceIPC m_ipc;
