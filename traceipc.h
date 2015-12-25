@@ -36,10 +36,47 @@ public:
 
     bool send(void *cmd, qint64 size);
 
+    typedef struct trace_pkt_rw_s {
+//        u_int32_t magic;
+        u_int32_t hwaddr;
+        u_int32_t offset;
+        u_int32_t value;
+        u_int32_t new_value;
+        union {
+            struct {
+                unsigned is_write:1;
+                unsigned clk_disabled:1;
+                unsigned in_reset:1;
+            };
+
+            uint32_t __old_is_write;
+        };
+        u_int32_t time;
+        u_int32_t cpu_pc;
+        u_int32_t cpu_id;
+    } __attribute__((packed, aligned(1))) packet_rw;
+
+    typedef struct trace_pkt_irq_s {
+//        u_int32_t magic;
+        u_int32_t hwaddr;
+        u_int32_t hwirq;
+        u_int32_t status;
+        u_int32_t time;
+        u_int32_t cpu_pc;
+        u_int32_t cpu_id;
+    } __attribute__((packed, aligned(1))) packet_irq;
+
+    typedef struct trace_pkt_cdma_s {
+//        u_int32_t magic;
+        u_int32_t time;
+        u_int32_t data;
+        u_int32_t is_gather;
+        u_int32_t ch_id;
+    } __attribute__((packed, aligned(1))) packet_cdma;
+
 signals:
-    void regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
-                   u_int32_t new_value, u_int32_t time, u_int32_t is_write,
-                   u_int32_t cpu_pc, u_int32_t cpu_id, bool is_irq);
+    void regAccess(TraceIPC::packet_rw pak_rw);
+    void irqEvent(TraceIPC::packet_irq pak_irq);
     void chWrite(u_int32_t ch_id, u_int32_t time,
                  u_int32_t data, u_int32_t is_gather);
     void connected(void);
@@ -69,36 +106,6 @@ private:
     QTimer m_reconnect_timer;
     QString m_addr;
     bool m_reconnect;
-
-    typedef struct trace_pkt_s {
-//        u_int32_t magic;
-        u_int32_t hwaddr;
-        u_int32_t offset;
-        u_int32_t value;
-        u_int32_t new_value;
-        u_int32_t is_write;
-        u_int32_t time;
-        u_int32_t cpu_pc;
-        u_int32_t cpu_id;
-    } __attribute__((packed, aligned(1))) packet_rw;
-
-    typedef struct trace_pkt_irq_s {
-//        u_int32_t magic;
-        u_int32_t hwaddr;
-        u_int32_t hwirq;
-        u_int32_t status;
-        u_int32_t time;
-        u_int32_t cpu_pc;
-        u_int32_t cpu_id;
-    } __attribute__((packed, aligned(1))) packet_irq;
-
-    typedef struct trace_pkt_cdma_s {
-//        u_int32_t magic;
-        u_int32_t time;
-        u_int32_t data;
-        u_int32_t is_gather;
-        u_int32_t ch_id;
-    } __attribute__((packed, aligned(1))) packet_cdma;
 };
 
 #endif // TRACEIPC_H

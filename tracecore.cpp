@@ -78,8 +78,11 @@ TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
 
     connect(&m_ipc, SIGNAL(disconnected(void)), this, SLOT(onDisconnect(void)));
 
-    connect(&m_ipc, SIGNAL(regAccess(u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, bool)),
-            this, SLOT(regAccess(u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, u_int32_t, bool)));
+    connect(&m_ipc, SIGNAL(regAccess(TraceIPC::packet_rw)),
+            this, SLOT(regAccess(TraceIPC::packet_rw)));
+
+    connect(&m_ipc, SIGNAL(irqEvent(TraceIPC::packet_irq)),
+            this, SLOT(irqEvent(TraceIPC::packet_irq)));
 
     connect(&m_ipc, SIGNAL(message(char*)), this, SLOT(message(char*)));
 
@@ -103,36 +106,48 @@ void TraceCore::message(char *txt)
     delete[] txt;
 }
 
-void TraceCore::regAccess(u_int32_t hwaddr, u_int32_t offset, u_int32_t value,
-                          u_int32_t new_value, u_int32_t time, u_int32_t is_write,
-                          u_int32_t cpu_pc, u_int32_t cpu_id, bool is_irq)
+void TraceCore::regAccess(TraceIPC::packet_rw pak_rw)
+{
+    switch (pak_rw.cpu_id) {
+    case TEGRA2_A9_CORE0:
+    case TEGRA2_A9_CORE1:
+        m_a9.handle(pak_rw);
+        break;
+    case TEGRA2_COP:
+        m_avp.handle(pak_rw);
+        break;
+    case HOST1X_CDMA:
+        m_host1x.handle(pak_rw);
+        break;
+    default:
+        Q_ASSERT(0);
+        break;
+    }
+}
+
+void TraceCore::irqEvent(TraceIPC::packet_irq pak_irq)
 {
     bool host1x_irq = false;
 
-    if (is_irq) {
-        if (offset == 65 || offset == 67) {
-            cpu_id = TEGRA2_A9_CORE0;
-            host1x_irq = true;
-        } else if (offset == 64 || offset == 66) {
-            cpu_id = TEGRA2_COP;
-        }
+    if (pak_irq.hwirq == 65 || pak_irq.hwirq == 67) {
+        pak_irq.cpu_id = TEGRA2_A9_CORE0;
+        host1x_irq = true;
+    } else if (pak_irq.hwirq == 64 || pak_irq.hwirq == 66) {
+        pak_irq.cpu_id = TEGRA2_COP;
     }
 
-    switch (cpu_id) {
+    switch (pak_irq.cpu_id) {
     case TEGRA2_A9_CORE0:
     case TEGRA2_A9_CORE1:
-        m_a9.regAccess(hwaddr, offset, value, new_value, time, is_write,
-                       cpu_pc, cpu_id, is_irq);
-        if (!is_irq || host1x_irq) {
+        m_a9.handle(pak_irq);
+        if (host1x_irq) {
             break;
         }
     case TEGRA2_COP:
-        m_avp.regAccess(hwaddr, offset, value, new_value, time, is_write,
-                        cpu_pc, cpu_id, is_irq);
+        m_avp.handle(pak_irq);
         break;
     case HOST1X_CDMA:
-        m_host1x.regAccess(hwaddr, offset, value, new_value, time, is_write,
-                           cpu_pc, cpu_id, is_irq);
+        m_host1x.handle(pak_irq);
         break;
     default:
         Q_ASSERT(0);

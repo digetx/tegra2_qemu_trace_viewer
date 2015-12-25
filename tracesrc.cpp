@@ -28,10 +28,16 @@ TraceSRC::TraceSRC(MainWindow *window, QString name, QObject *parent) :
     ErrorsTableWidget *e = window->getUi()->tableWidgetErrors;
     TraceTabWidget *tab = window->getUi()->tabWidgetTrace;
 
+    connect(this, SIGNAL(ErrCustom(const QString, const QString, const u_int32_t)),
+            e, SLOT(AddCustomEntry(const QString, const QString, const u_int32_t)));
+
     connect(this, SIGNAL(ErrUnkDev(const QString, const Device::log_entry)),
             e, SLOT(AddEntry(const QString, const Device::log_entry)));
 
     connect(this, SIGNAL(ErrUnkDev(const QString, const Device::log_entry)),
+            tab, SLOT(OnError(void)));
+
+    connect(this, SIGNAL(ErrCustom(const QString, const QString, const u_int32_t)),
             tab, SLOT(OnError(void)));
 
     m_tui = new TraceUI(window, name, this);
@@ -78,33 +84,38 @@ TraceDev * TraceSRC::getDevByAddr(const u_int32_t &addr,
     return NULL;
 }
 
-void TraceSRC::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
-                         const u_int32_t &value, const u_int32_t &new_value,
-                         const u_int32_t &time, const u_int32_t &is_write,
-                         const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
-                         const bool &is_irq)
+void TraceSRC::handle(const TraceIPC::packet_rw &pak_rw)
 {
-    Device *dev = static_cast<Device *> (getDevByAddr(hwaddr, TraceDev::MMIO));
-    bool clk_disabled = !!(is_write & 2);
-    bool in_reset = !!(is_write & 4);
+    Device *dev =
+            static_cast<Device *> (getDevByAddr(pak_rw.hwaddr, TraceDev::MMIO));
 
     if (dev != NULL) {
-        dev->write_log(offset, value, new_value, time,
-                       is_write & 1, cpu_pc, cpu_id, is_irq,
-                       clk_disabled, in_reset);
+        dev->write_log(pak_rw);
     } else {
         Device::log_entry err_entry;
 
-        err_entry.time = time;
-        err_entry.value = value;
-        err_entry.cpu_pc = cpu_pc;
-        err_entry.cpu_id = cpu_id;
-        err_entry.offset = hwaddr + offset;
-        err_entry.is_write = is_write & 1;
-        err_entry.clk_disabled = clk_disabled;
-        err_entry.in_reset = in_reset;
+        err_entry.time         = pak_rw.time;
+        err_entry.value        = pak_rw.value;
+        err_entry.cpu_pc       = pak_rw.cpu_pc;
+        err_entry.cpu_id       = pak_rw.cpu_id;
+        err_entry.offset       = pak_rw.hwaddr + pak_rw.offset;
+        err_entry.is_write     = pak_rw.is_write;
+        err_entry.clk_disabled = pak_rw.clk_disabled;
+        err_entry.in_reset     = pak_rw.in_reset;
 
         emit ErrUnkDev("Unknown device", err_entry);
+    }
+}
+
+void TraceSRC::handle(const TraceIPC::packet_irq &pak_irq)
+{
+    Device *dev =
+            static_cast<Device *> (getDevByAddr(pak_irq.hwaddr, TraceDev::MMIO));
+
+    if (dev != NULL) {
+        dev->write_log(pak_irq);
+    } else {
+        emit ErrCustom("Unknown device", "IRQ on unknown device", pak_irq.time);
     }
 }
 

@@ -91,31 +91,48 @@ void TraceIPC::socket_readReady(void)
         case PACKET_TRACE_RW_V2:
             m_socket.read((char*)&pak_rw, sizeof(pak_rw));
 
-            emit regAccess(ntohl(pak_rw.hwaddr), ntohl(pak_rw.offset),
-                          ntohl(pak_rw.value), ntohl(pak_rw.new_value),
-                          ntohl(pak_rw.time), ntohl(pak_rw.is_write),
-                          ntohl(pak_rw.cpu_pc), ntohl(pak_rw.cpu_id), false);
+            pak_rw.hwaddr           = ntohl(pak_rw.hwaddr);
+            pak_rw.offset           = ntohl(pak_rw.offset);
+            pak_rw.value            = ntohl(pak_rw.value);
+            pak_rw.new_value        = ntohl(pak_rw.new_value);
+            pak_rw.__old_is_write   = ntohl(pak_rw.__old_is_write);
+            pak_rw.time             = ntohl(pak_rw.time);
+            pak_rw.cpu_pc           = ntohl(pak_rw.cpu_pc);
+            pak_rw.cpu_id           = ntohl(pak_rw.cpu_id);
+
+            emit regAccess(pak_rw);
             break;
         case PACKET_TRACE_IRQ:
             m_socket.read((char*)&pak_irq, sizeof(pak_irq));
 
-            emit regAccess(ntohl(pak_irq.hwaddr), ntohl(pak_irq.hwirq),
-                          ntohl(pak_irq.status), 0,
-                          ntohl(pak_irq.time), false,
-                          ntohl(pak_irq.cpu_pc), ntohl(pak_irq.cpu_id), true);
+            pak_irq.hwaddr = ntohl(pak_irq.hwaddr);
+            pak_irq.hwirq  = ntohl(pak_irq.hwirq);
+            pak_irq.status = ntohl(pak_irq.status);
+            pak_irq.time   = ntohl(pak_irq.time);
+            pak_irq.cpu_pc = ntohl(pak_irq.cpu_pc);
+            pak_irq.cpu_id = ntohl(pak_irq.cpu_id);
+
+            emit irqEvent(pak_irq);
             break;
         case PACKET_TRACE_TXT:
         {
             m_socket.read((char*)&entry, sizeof(entry));
 
+            entry = ntohl(entry);
+
             char *txt = new char[entry];
-            m_socket.read(txt, ntohl(entry));
+            m_socket.read(txt, entry);
 
             emit message(txt);
             break;
         }
         case PACKET_TRACE_CDMA:
             m_socket.read((char*)&pak_cdma, sizeof(pak_cdma));
+
+            pak_cdma.time       = ntohl(pak_cdma.time);
+            pak_cdma.data       = ntohl(pak_cdma.data);
+            pak_cdma.is_gather  = ntohl(pak_cdma.is_gather);
+            pak_cdma.ch_id      = ntohl(pak_cdma.ch_id);
 
             emit chWrite(ntohl(pak_cdma.ch_id), ntohl(pak_cdma.time),
                          ntohl(pak_cdma.data), ntohl(pak_cdma.is_gather));

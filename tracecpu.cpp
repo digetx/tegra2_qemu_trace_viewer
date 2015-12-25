@@ -151,39 +151,39 @@ void TraceCPU::restartRecording(void)
     recordingSet(true);
 }
 
-void TraceCPU::regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
-                         const u_int32_t &value, const u_int32_t &new_value,
-                         const u_int32_t &time, const u_int32_t &is_write,
-                         const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
-                         const bool &is_irq)
+void TraceCPU::handle(const TraceIPC::packet_rw &pak_rw)
 {
-    TraceSRC::regAccess(hwaddr, offset, value, new_value, time, is_write,
-                        cpu_pc, cpu_id, is_irq);
+    TraceSRC::handle(pak_rw);
 
-    Device *dev = static_cast<Device *> (getDevByAddr(hwaddr, TraceDev::MMIO));
+    Device *dev = static_cast<Device *> (getDevByAddr(pak_rw.hwaddr, TraceDev::MMIO));
 
     if (dev != NULL && dev->rec_enb && m_record_en && openRecordFile()) {
-        m_recordstream << quint8(cpu_id == TEGRA2_COP);
+        m_recordstream << quint8(pak_rw.cpu_id == TEGRA2_COP);
 
-        if (is_irq) {
-            quint32 irq_nb = offset;
-            quint32 irq_sts = value;
+        quint32 type = (pak_rw.is_write) ? RECORD_WRITE : RECORD_READ;
+        quint32 val  = (pak_rw.is_write) ? pak_rw.new_value : pak_rw.value;
+        quint32 addr = pak_rw.hwaddr + pak_rw.offset;
 
-            m_recordstream << quint32(RECORD_IRQ) << irq_nb << irq_sts;
-        } else {
-            quint32 type = (is_write & 1) ? RECORD_WRITE : RECORD_READ;
-            quint32 val  = (is_write & 1) ? new_value : value;
-            quint32 addr = hwaddr + offset;
-            bool clk_disabled = !!(is_write & 2);
-
-            if (type == RECORD_READ && clk_disabled) {
-                type = RECORD_READNF;
-            }
-
-            m_recordstream << type << addr << val;
+        if (type == RECORD_READ && pak_rw.clk_disabled) {
+            type = RECORD_READNF;
         }
+
+        m_recordstream << type << addr << val;
     }
 }
+
+void TraceCPU::handle(const TraceIPC::packet_irq &pak_irq)
+{
+    TraceSRC::handle(pak_irq);
+
+    Device *dev = static_cast<Device *> (getDevByAddr(pak_irq.hwaddr, TraceDev::MMIO));
+
+    if (dev != NULL && dev->rec_enb && m_record_en && openRecordFile()) {
+        m_recordstream << quint8(pak_irq.cpu_id == TEGRA2_COP);
+        m_recordstream << quint32(RECORD_IRQ) << pak_irq.hwirq << pak_irq.status;
+    }
+}
+
 
 void TraceCPU::reset(QString log_path)
 {

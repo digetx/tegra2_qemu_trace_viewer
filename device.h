@@ -26,6 +26,7 @@
 
 #include "circularlog.h"
 #include "tracedev.h"
+#include "traceipc.h"
 
 #define MAX_LOG_ENTRIES 3000
 
@@ -129,11 +130,9 @@ public:
 
     void setLogPath(QString ldir);
 
-    void write_log(const u_int32_t &offset, const u_int32_t &value,
-                   const u_int32_t &new_value, const u_int32_t &time,
-                   const bool &is_write, const u_int32_t &cpu_pc,
-                   const u_int32_t &cpu_id, const bool &is_irq,
-                   const bool &clk_disabled, const bool &in_reset);
+    void write_log(const TraceIPC::packet_rw &);
+    void write_log(const TraceIPC::packet_irq &);
+    void write_log(log_entry &);
 
     QString updateDetails(const int &index);
 

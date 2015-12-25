@@ -18,6 +18,7 @@
 #ifndef TraceCPU_H
 #define TraceCPU_H
 
+#include "traceipc.h"
 #include "tracesrc.h"
 
 class TraceCPU : public TraceSRC
@@ -61,12 +62,8 @@ private:
 
     // TraceSRC interface
 public:
-    void regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
-                   const u_int32_t &value, const u_int32_t &new_value,
-                   const u_int32_t &time, const u_int32_t &is_write,
-                   const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
-                   const bool &is_irq);
-
+    void handle(const TraceIPC::packet_rw &pak_rw);
+    void handle(const TraceIPC::packet_irq &pak_irq);
     void addDevice(TraceDev *dev);
     void reset(QString log_path);
 

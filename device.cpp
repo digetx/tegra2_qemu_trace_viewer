@@ -160,29 +160,48 @@ void Device::update_internal(log_entry &)
 {
 }
 
-void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
-                       const u_int32_t &new_value, const u_int32_t &time,
-                       const bool &is_write, const u_int32_t &cpu_pc,
-                       const u_int32_t &cpu_id, const bool &is_irq,
-                       const bool &clk_disabled, const bool &in_reset)
+void Device::write_log(const TraceIPC::packet_rw &pak_rw)
 {
-    log_entry entry = {
-        .offset = offset,
-        .value = value,
-        .new_value = is_write ? new_value : value,
-        .time = time,
-        .cpu_pc = cpu_pc,
-        .cpu_id = cpu_id,
-        .is_write = is_write,
-        .is_error = is_irq ? false : !is_offset_valid(offset),
-        .undefined_changed = false,
-        .is_irq = is_irq,
-        .clk_disabled = clk_disabled,
-        .in_reset = in_reset,
-        .custom = 0,
-    };
+    log_entry entry;
 
-    update_internal(entry);
+    entry.offset       = pak_rw.offset;
+    entry.value        = pak_rw.value;
+    entry.new_value    = pak_rw.is_write ? pak_rw.new_value : pak_rw.value;
+    entry.time         = pak_rw.time;
+    entry.cpu_pc       = pak_rw.cpu_pc;
+    entry.cpu_id       = pak_rw.cpu_id;
+    entry.is_write     = pak_rw.is_write;
+    entry.is_error     = !is_offset_valid(pak_rw.offset);
+    entry.is_irq       = false;
+    entry.clk_disabled = pak_rw.clk_disabled;
+    entry.in_reset     = pak_rw.in_reset;
+    entry.custom       = 0;
+
+    write_log(entry);
+}
+
+void Device::write_log(const TraceIPC::packet_irq &pak_irq)
+{
+    log_entry entry;
+
+    entry.offset       = pak_irq.hwirq;
+    entry.value        = pak_irq.status;
+    entry.time         = pak_irq.time;
+    entry.cpu_pc       = pak_irq.cpu_pc;
+    entry.cpu_id       = pak_irq.cpu_id;
+    entry.is_error     = false;
+    entry.clk_disabled = false;
+    entry.in_reset     = false;
+    entry.is_irq       = true;
+
+    write_log(entry);
+}
+
+void Device::write_log(log_entry &entry)
+{
+    if (!entry.is_irq) {
+        update_internal(entry);
+    }
 
     bool log_is_full = m_log.write(entry);
     emit layoutChanged();
@@ -197,17 +216,17 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
         updateName();
         emit ErrorUnknownReg(m_name, entry);
         emit errorStatUpdated(this->id);
-    } else {
+    } else if (!entry.is_irq) {
 
-        if (is_write && is_undef_changed(offset, value, new_value)) {
+        if (entry.is_write && is_undef_changed(entry.offset, entry.value, entry.new_value)) {
             QString text = "changing undefined bits ";
                     text += get_register_name(entry) + " ";
-                    text += QString().sprintf("0x%08X -> 0x%08X", value, new_value) + " ";
-                    text += QString().sprintf("cpu=0x%08X", cpu_pc);
-            emit ErrorCustom(m_name, text, time);
+                    text += QString().sprintf("0x%08X -> 0x%08X", entry.value, entry.new_value) + " ";
+                    text += QString().sprintf("cpu=0x%08X", entry.cpu_pc);
+            emit ErrorCustom(m_name, text, entry.time);
         }
 
-        if (clk_disabled || in_reset) {
+        if (entry.clk_disabled || entry.in_reset) {
             m_dev_errs_nb++;
             m_errs_stat_dirty = true;
             updateName();
@@ -215,11 +234,11 @@ void Device::write_log(const u_int32_t &offset, const u_int32_t &value,
         }
     }
 
-    if (is_irq) {
+    if (entry.is_irq) {
         m_irq_act = !!entry.value;
         m_dev_irqs_nb++;
         m_irqs_stat_dirty = true;
-    } else if (is_write) {
+    } else if (entry.is_write) {
         m_dev_writes_nb++;
         m_writes_stat_dirty = true;
     } else {

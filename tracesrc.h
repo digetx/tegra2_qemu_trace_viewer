@@ -72,12 +72,8 @@ class TraceSRC : public QAbstractTableModel
 public:
     explicit TraceSRC(MainWindow *window, QString name, QObject *parent = 0);
 
-    virtual void regAccess(const u_int32_t &hwaddr, const u_int32_t &offset,
-                   const u_int32_t &value, const u_int32_t &new_value,
-                   const u_int32_t &time, const u_int32_t &is_write,
-                   const u_int32_t &cpu_pc, const u_int32_t &cpu_id,
-                   const bool &is_irq);
-
+    virtual void handle(const TraceIPC::packet_rw &pak_rw);
+    virtual void handle(const TraceIPC::packet_irq &pak_irq);
     virtual void chWrite(const u_int32_t &ch_id, const u_int32_t &time,
                  const u_int32_t &data, const u_int32_t &is_gather);
 
@@ -100,6 +96,7 @@ private:
 
 signals:
     void ErrUnkDev(const QString, const Device::log_entry);
+    void ErrCustom(const QString, const QString, const u_int32_t);
 
 public slots:
 
