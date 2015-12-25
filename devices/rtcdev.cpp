@@ -350,7 +350,7 @@ void RtcDev::fill_intr_mask_details(const u_int32_t &value, const u_int32_t &new
 
 #define INTR_STATUS_OFFSET 0x2C
 #define INTR_STATUS_UNDEFMASK 0xFFFFFFE0
-union intr_status_u {
+union rtc_intr_status_u {
     struct {
         unsigned int sec_alarm0:1;
         unsigned int sec_alarm1:1;
@@ -365,8 +365,8 @@ union intr_status_u {
 
 void RtcDev::fill_intr_status_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const intr_status_u old_value_t = { .reg32 = value };
-    const intr_status_u new_value_t = { .reg32 = new_value };
+    const rtc_intr_status_u old_value_t = { .reg32 = value };
+    const rtc_intr_status_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);

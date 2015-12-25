@@ -133,7 +133,7 @@ void BseDev::fill_cmdque_control_details(const u_int32_t &value, const u_int32_t
 
 #define INTR_STATUS_OFFSET 0x18
 #define INTR_STATUS_UNDEFMASK 0xFFFFFDF6
-union intr_status_u {
+union bse_intr_status_u {
     struct {
         unsigned int engine_busy:1;         /* AES busy (RO) */
         unsigned int undefined_bits_1_2:2;
@@ -148,8 +148,8 @@ union intr_status_u {
 
 void BseDev::fill_intr_status_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const intr_status_u old_value_t = { .reg32 = value };
-    const intr_status_u new_value_t = { .reg32 = new_value };
+    const bse_intr_status_u old_value_t = { .reg32 = value };
+    const bse_intr_status_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);

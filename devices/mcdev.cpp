@@ -3890,7 +3890,7 @@ void McDev::fill_bwshare_vi_details(const u_int32_t &value, const u_int32_t &new
 
 #define INTSTATUS_OFFSET 0x0
 #define INTSTATUS_UNDEFMASK 0xFFFFFE3F
-union intstatus_u {
+union mc_intstatus_u {
     struct {
         unsigned int undefined_bits_0_5:6;
         unsigned int decerr_emem_others_int:1;/* EMEM Address Decode Error for a non AXI client. */
@@ -3904,8 +3904,8 @@ union intstatus_u {
 
 void McDev::fill_intstatus_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const intstatus_u old_value_t = { .reg32 = value };
-    const intstatus_u new_value_t = { .reg32 = new_value };
+    const mc_intstatus_u old_value_t = { .reg32 = value };
+    const mc_intstatus_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -3930,7 +3930,7 @@ void McDev::fill_intstatus_details(const u_int32_t &value, const u_int32_t &new_
 
 #define INTMASK_OFFSET 0x4
 #define INTMASK_UNDEFMASK 0xFFFFFE3F
-union intmask_u {
+union mc_intmask_u {
     struct {
         unsigned int undefined_bits_0_5:6;
         unsigned int decerr_emem_others_intmask:1;/* EMEM Address Decode Error for a non AXI client. */
@@ -3944,8 +3944,8 @@ union intmask_u {
 
 void McDev::fill_intmask_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const intmask_u old_value_t = { .reg32 = value };
-    const intmask_u new_value_t = { .reg32 = new_value };
+    const mc_intmask_u old_value_t = { .reg32 = value };
+    const mc_intmask_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -3970,7 +3970,7 @@ void McDev::fill_intmask_details(const u_int32_t &value, const u_int32_t &new_va
 
 #define CLKEN_OVERRIDE_OFFSET 0x68
 #define CLKEN_OVERRIDE_UNDEFMASK 0xFFFFFFE2
-union clken_override_u {
+union mc_clken_override_u {
     struct {
         unsigned int cif_clken_ovr:1;
         unsigned int undefined_bit_1:1;
@@ -3985,8 +3985,8 @@ union clken_override_u {
 
 void McDev::fill_clken_override_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const clken_override_u old_value_t = { .reg32 = value };
-    const clken_override_u new_value_t = { .reg32 = new_value };
+    const mc_clken_override_u old_value_t = { .reg32 = value };
+    const mc_clken_override_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -4135,7 +4135,7 @@ void McDev::fill_security_cfg2_details(const u_int32_t &value, const u_int32_t &
 
 #define STAT_CONTROL_OFFSET 0x90
 #define STAT_CONTROL_UNDEFMASK 0xFFFFFCFF
-union stat_control_u {
+union mc_stat_control_u {
     struct {
         unsigned int undefined_bits_0_7:8;
         unsigned int emc_gather:2;
@@ -4147,8 +4147,8 @@ union stat_control_u {
 
 void McDev::fill_stat_control_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const stat_control_u old_value_t = { .reg32 = value };
-    const stat_control_u new_value_t = { .reg32 = new_value };
+    const mc_stat_control_u old_value_t = { .reg32 = value };
+    const mc_stat_control_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -4163,7 +4163,7 @@ void McDev::fill_stat_control_details(const u_int32_t &value, const u_int32_t &n
 
 #define STAT_STATUS_OFFSET 0x94
 #define STAT_STATUS_UNDEFMASK 0xFFFFFEFF
-union stat_status_u {
+union mc_stat_status_u {
     struct {
         unsigned int undefined_bits_0_7:8;
         unsigned int emc_limit:1;
@@ -4175,8 +4175,8 @@ union stat_status_u {
 
 void McDev::fill_stat_status_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const stat_status_u old_value_t = { .reg32 = value };
-    const stat_status_u new_value_t = { .reg32 = new_value };
+    const mc_stat_status_u old_value_t = { .reg32 = value };
+    const mc_stat_status_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);

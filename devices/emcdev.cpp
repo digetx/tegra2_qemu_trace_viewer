@@ -21,7 +21,7 @@
 
 #define INTSTATUS_OFFSET 0x0
 #define INTSTATUS_UNDEFMASK 0xFFFFFFC7
-union intstatus_u {
+union emc_intstatus_u {
     struct {
         unsigned int undefined_bits_0_2:3;
         unsigned int refresh_overflow_int:1;/* Refresh request overflow timeout. 0 = CLEAR 1 = SET */
@@ -35,8 +35,8 @@ union intstatus_u {
 
 void EmcDev::fill_intstatus_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const intstatus_u old_value_t = { .reg32 = value };
-    const intstatus_u new_value_t = { .reg32 = new_value };
+    const emc_intstatus_u old_value_t = { .reg32 = value };
+    const emc_intstatus_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -63,7 +63,7 @@ void EmcDev::fill_intstatus_details(const u_int32_t &value, const u_int32_t &new
 
 #define INTMASK_OFFSET 0x4
 #define INTMASK_UNDEFMASK 0xFFFFFFC7
-union intmask_u {
+union emc_intmask_u {
     struct {
         unsigned int undefined_bits_0_2:3;
         unsigned int refresh_overflow_intmask:1;/* Mask for refresh request overflow timeout. 0 = MASKED 1 = UNMASKED */
@@ -77,8 +77,8 @@ union intmask_u {
 
 void EmcDev::fill_intmask_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const intmask_u old_value_t = { .reg32 = value };
-    const intmask_u new_value_t = { .reg32 = new_value };
+    const emc_intmask_u old_value_t = { .reg32 = value };
+    const emc_intmask_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -178,7 +178,7 @@ void EmcDev::fill_dbg_details(const u_int32_t &value, const u_int32_t &new_value
 
 #define CFG_OFFSET 0xC
 #define CFG_UNDEFMASK 0x1CFE00FE
-union cfg_u {
+union emc_cfg_u {
     struct {
         unsigned int pre_idle_en:1;         /* preemptively closes all of the banks after the EMC has been idle for PRE_IDLE_CYCLES cycles and there are banks open. PRE_IDLE_EN can be enabled if violating tRAS max is an issue; 0 = DISABLE; 1 = ENABLE */
         unsigned int undefined_bits_1_7:7;
@@ -198,8 +198,8 @@ union cfg_u {
 
 void EmcDev::fill_cfg_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const cfg_u old_value_t = { .reg32 = value };
-    const cfg_u new_value_t = { .reg32 = new_value };
+    const emc_cfg_u old_value_t = { .reg32 = value };
+    const emc_cfg_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -3303,7 +3303,7 @@ void EmcDev::fill_fbio_wrptr_eq_2_details(const u_int32_t &value, const u_int32_
 
 #define CLKEN_OVERRIDE_OFFSET 0x140
 #define CLKEN_OVERRIDE_UNDEFMASK 0xFFFFFF80
-union clken_override_u {
+union emc_clken_override_u {
     struct {
         unsigned int arb_clken_ovr:1;
         unsigned int cmdq_clken_ovr:1;
@@ -3320,8 +3320,8 @@ union clken_override_u {
 
 void EmcDev::fill_clken_override_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const clken_override_u old_value_t = { .reg32 = value };
-    const clken_override_u new_value_t = { .reg32 = new_value };
+    const emc_clken_override_u old_value_t = { .reg32 = value };
+    const emc_clken_override_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -3346,7 +3346,7 @@ void EmcDev::fill_clken_override_details(const u_int32_t &value, const u_int32_t
 
 #define STAT_CONTROL_OFFSET 0x160
 #define STAT_CONTROL_UNDEFMASK 0xFFFCFCF8
-union stat_control_u {
+union emc_stat_control_u {
     struct {
         unsigned int llmc_gather:3;
         unsigned int undefined_bits_3_7:5;
@@ -3361,8 +3361,8 @@ union stat_control_u {
 
 void EmcDev::fill_stat_control_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const stat_control_u old_value_t = { .reg32 = value };
-    const stat_control_u new_value_t = { .reg32 = new_value };
+    const emc_stat_control_u old_value_t = { .reg32 = value };
+    const emc_stat_control_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -3383,7 +3383,7 @@ void EmcDev::fill_stat_control_details(const u_int32_t &value, const u_int32_t &
 
 #define STAT_STATUS_OFFSET 0x164
 #define STAT_STATUS_UNDEFMASK 0xFFFEFEFE
-union stat_status_u {
+union emc_stat_status_u {
     struct {
         unsigned int llmc_limit:1;
         unsigned int undefined_bits_1_7:7;
@@ -3398,8 +3398,8 @@ union stat_status_u {
 
 void EmcDev::fill_stat_status_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const stat_status_u old_value_t = { .reg32 = value };
-    const stat_status_u new_value_t = { .reg32 = new_value };
+    const emc_stat_status_u old_value_t = { .reg32 = value };
+    const emc_stat_status_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);

@@ -21,7 +21,7 @@
 
 #define INTSTATUS_OFFSET 0x0
 #define INTSTATUS_UNDEFMASK 0x3FFFE080
-union intstatus_u {
+union host1x_intstatus_u {
     struct {
         unsigned int host_int:1;            /* 0 = NOT_PENDING 1 = PENDING */
         unsigned int mpe_int:1;             /* 0 = NOT_PENDING 1 = PENDING */
@@ -46,8 +46,8 @@ union intstatus_u {
 
 void Host1x_syncDev::fill_intstatus_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const intstatus_u old_value_t = { .reg32 = value };
-    const intstatus_u new_value_t = { .reg32 = new_value };
+    const host1x_intstatus_u old_value_t = { .reg32 = value };
+    const host1x_intstatus_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -118,7 +118,7 @@ void Host1x_syncDev::fill_intstatus_details(const u_int32_t &value, const u_int3
 
 #define INTMASK_OFFSET 0x4
 #define INTMASK_UNDEFMASK 0xFFFFFFFC
-union intmask_u {
+union host1x_intmask_u {
     struct {
         unsigned int cpu0_int_mask_all:1;   /* 0 = DISABLE 1 = ENABLE */
         unsigned int cpu1_int_mask_all:1;   /* 0 = DISABLE 1 = ENABLE */
@@ -130,8 +130,8 @@ union intmask_u {
 
 void Host1x_syncDev::fill_intmask_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const intmask_u old_value_t = { .reg32 = value };
-    const intmask_u new_value_t = { .reg32 = new_value };
+    const host1x_intmask_u old_value_t = { .reg32 = value };
+    const host1x_intmask_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
@@ -7048,7 +7048,7 @@ void Host1x_syncDev::fill_cdma_stats_words_discarded_details(const u_int32_t &va
 
 #define CFG_OFFSET 0x94C
 #define CFG_UNDEFMASK 0x0000FFFE
-union cfg_u {
+union host1x_cfg_u {
     struct {
         unsigned int disable_use_idle_div:1;/* Prevent use of low freq clock */
         unsigned int undefined_bits_1_15:15;
@@ -7060,8 +7060,8 @@ union cfg_u {
 
 void Host1x_syncDev::fill_cfg_details(const u_int32_t &value, const u_int32_t &new_value)
 {
-    const cfg_u old_value_t = { .reg32 = value };
-    const cfg_u new_value_t = { .reg32 = new_value };
+    const host1x_cfg_u old_value_t = { .reg32 = value };
+    const host1x_cfg_u new_value_t = { .reg32 = new_value };
     BitDetails::bit_entry entry;
 
     m_bit_details_model.has_changed_bits = (value != new_value);
