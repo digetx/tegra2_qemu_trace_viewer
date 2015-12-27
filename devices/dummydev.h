@@ -31,7 +31,7 @@ signals:
 public slots:
 
 private:
-    bool is_offset_valid(const u_int32_t &) const { return false; }
+    bool is_offset_valid(const u_int32_t &) const { return true; }
 
     bool is_undef_changed(const u_int32_t &,
                           const u_int32_t &,
@@ -39,11 +39,37 @@ private:
 
     // Device interface
 private:
-    QString get_register_name(const log_entry &) const  { return ""; }
+    QString get_register_name(const log_entry &entry) const
+    {
+        return QString().sprintf("0x%08X", entry.offset + m_base);
+    }
 
-    void fill_bits_details(const u_int32_t &, const u_int32_t &,
-                           const u_int32_t &) {}
+    void fill_bits_details(const u_int32_t &, const u_int32_t &value,
+                           const u_int32_t &new_value)
+    {
+        BitDetails::bit_entry entry = { "00: data:32", "", 32,
+                                        value, new_value };
 
+        m_bit_details_model.bits.append(entry);
+        m_bit_details_model.has_changed_bits = (value != new_value);
+    }
+
+    // QAbstractItemModel interface
+public:
+    QVariant data(const QModelIndex &index, int role) const
+    {
+        log_entry entry;
+
+        switch (role) {
+        case Qt::EditRole:
+            if (index.column() == Device::REGISTER) {
+                entry = m_log.read( index.row() );
+                return get_register_name(entry);
+            }
+        default:
+            return Device::data(index, role);
+        }
+    }
 };
 
 #endif // DUMMYDEV_H
