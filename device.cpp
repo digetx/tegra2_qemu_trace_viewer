@@ -127,7 +127,7 @@ Qt::ItemFlags BitDetails::flags(const QModelIndex &index) const
 
 QString Device::entryAsString(void *e) const
 {
-    log_entry *entry = (Device::log_entry*) e;
+    const log_entry *entry = (Device::log_entry*) e;
     QTime mstime = QTime(0, 0).addMSecs(entry->time / 1000);
     QString ret;
 
@@ -135,7 +135,8 @@ QString Device::entryAsString(void *e) const
                     QString().sprintf(".%03d\t", entry->time % 1000);
     if (!entry->is_irq) {
         ret += entry->is_write ? "writing" : "reading";
-        ret += QString().sprintf(" 0x%08X ", entry->new_value);
+        ret += QString().sprintf("%d 0x%08X ", entry->rw_size,
+                            entry->is_write ? entry->new_value : entry->value);
         ret += (entry->is_write ? "to " : "from ");
         ret += get_register_name(*entry);
         ret += QString().sprintf("\tcpu[%d] @0x%08X", entry->cpu_id, entry->cpu_pc);
@@ -176,6 +177,7 @@ void Device::write_log(const TraceIPC::packet_rw &pak_rw)
     entry.clk_disabled = pak_rw.clk_disabled;
     entry.in_reset     = pak_rw.in_reset;
     entry.custom       = 0;
+    entry.rw_size      = pak_rw.size * 8;
 
     write_log(entry);
 }
@@ -367,10 +369,10 @@ QVariant Device::data(const QModelIndex &index, int role) const
             if (entry.is_irq)
                 return QString("IRQ ") + QString::number(entry.offset);
 
-            if (entry.is_error)
-                return QString().sprintf("%s 0x%X",
-                                         entry.is_write ? "write to" : "read",
-                                         entry.offset);
+            if (entry.is_error) {
+                const char *format = entry.is_write ? "write%d to 0x%X" : "read%d 0x%X";
+                return QString().sprintf(format, entry.rw_size, entry.offset);
+            }
 
             if (entry.clk_disabled || entry.in_reset)
                 return get_register_name(entry) +

@@ -23,11 +23,18 @@
 #include "tracecore.h"
 #include "tracecpu.h"
 
-#define RECORD_VER      16122015
-#define RECORD_IRQ      0
-#define RECORD_READ     1
-#define RECORD_WRITE    2
-#define RECORD_READNF   3
+#define RECORD_VER      20151226
+
+enum {
+    RECORD_IRQ,
+    RECORD_READ32,
+    RECORD_WRITE32,
+    RECORD_READ32NF,
+    RECORD_READ8,
+    RECORD_WRITE8,
+    RECORD_READ16,
+    RECORD_WRITE16,
+};
 
 TraceCPU::TraceCPU(MainWindow *window, QString name, QFile *recfile,
                    QObject *parent) :
@@ -160,12 +167,27 @@ void TraceCPU::handle(const TraceIPC::packet_rw &pak_rw)
     if (dev != NULL && dev->rec_enb && m_record_en && openRecordFile()) {
         m_recordstream << quint8(pak_rw.cpu_id == TEGRA2_COP);
 
-        quint32 type = (pak_rw.is_write) ? RECORD_WRITE : RECORD_READ;
+        quint32 type;
         quint32 val  = (pak_rw.is_write) ? pak_rw.new_value : pak_rw.value;
         quint32 addr = pak_rw.hwaddr + pak_rw.offset;
 
-        if (type == RECORD_READ && pak_rw.clk_disabled) {
-            type = RECORD_READNF;
+        switch (pak_rw.size) {
+        case 1:
+            type = (pak_rw.is_write) ? RECORD_WRITE8 : RECORD_READ8;
+            break;
+        case 2:
+            type = (pak_rw.is_write) ? RECORD_WRITE16 : RECORD_READ16;
+            break;
+        case 4:
+            type = (pak_rw.is_write) ? RECORD_WRITE32 : RECORD_READ32;
+            break;
+        default:
+            Q_ASSERT(0);
+            break;
+        }
+
+        if (type == RECORD_READ32 && pak_rw.clk_disabled) {
+            type = RECORD_READ32NF;
         }
 
         m_recordstream << type << addr << val;

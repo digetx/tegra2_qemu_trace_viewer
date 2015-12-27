@@ -47,6 +47,7 @@ public:
                 unsigned is_write:1;
                 unsigned clk_disabled:1;
                 unsigned in_reset:1;
+                unsigned size:3;
             };
 
             uint32_t __old_is_write;

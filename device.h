@@ -95,6 +95,7 @@ public:
         bool      clk_disabled:1;
         bool      in_reset:1;
         u_int32_t custom;
+        unsigned  rw_size;
     } log_entry;
 
     explicit Device(QObject *parent = 0);
@@ -160,7 +161,6 @@ protected:
                                   const u_int32_t &new_value) const = 0;
     virtual void update_internal(log_entry &entry);
 
-private:
     bool m_is_listitem;
     const QString m_name;
     CircularLog<Device, Device::log_entry> m_log;
