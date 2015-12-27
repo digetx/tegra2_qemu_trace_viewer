@@ -116,4 +116,7 @@ TraceA9::TraceA9(MainWindow *window, QString name, QFile *recfile,
     addDevice( new Gr2dDev("host1x gr2d", 0x51) );
     addDevice( new Gr2dDev("host1x gr2d_sb", 0x52) );
     addDevice( new Gr2dDev("host1x gr3d", 0x60) );
+
+    addDevice( new DummyDev("dram", 0x2F600000) );
+    addDevice( new DummyDev("iram", 0x40000400) );
 }
