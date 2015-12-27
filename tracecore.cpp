@@ -26,10 +26,20 @@
 
 #define CMD_CHANGE_TIMERS_SPEED     0x122
 
-static void changeSpeedButtonText(bool slowdown, QPushButton *button)
+void TraceCore::setTimeSpeed(bool slowdown)
 {
-    button->setText(slowdown ? "Normal speed" : "Slow down time");
-    button->setStyleSheet(slowdown ? "background: blue" : "");
+    quint32 cmd = CMD_CHANGE_TIMERS_SPEED;
+    quint32 speed = slowdown ? 5000 : 1000000;
+
+    m_ipc.send(&cmd, sizeof(cmd));
+    m_ipc.send(&speed, sizeof(speed));
+
+    m_mainwindow->getUi()->pushButton_SlowDownTime->setText(
+                slowdown ? "Normal speed" : "Slow down time");
+    m_mainwindow->getUi()->pushButton_SlowDownTime->setStyleSheet(
+                slowdown ? "background: blue" : "");
+
+    m_slowdowntime = slowdown;
 }
 
 void TraceCore::onConnect(void)
@@ -44,27 +54,20 @@ void TraceCore::onConnect(void)
 
     m_mainwindow->getUi()->tableWidgetMessages->setRowCount(0);
     m_mainwindow->getUi()->tableWidgetErrors->ClearLog();
+
+    if (m_slowdowntime) {
+        setTimeSpeed(true);
+    }
 }
 
 void TraceCore::onDisconnect(void)
 {
-    changeSpeedButtonText(false,
-                          m_mainwindow->getUi()->pushButton_SlowDownTime);
+    setTimeSpeed(false);
 }
 
 void TraceCore::timeSpeedToggle(void)
 {
-    static bool slow = false;
-    quint32 cmd = CMD_CHANGE_TIMERS_SPEED;
-    quint32 speed;
-
-    slow = !slow;
-    speed = slow ? 5000 : 1000000;
-
-    if (m_ipc.send(&cmd, sizeof(cmd)) && m_ipc.send(&speed, sizeof(speed))) {
-        changeSpeedButtonText(slow,
-                              m_mainwindow->getUi()->pushButton_SlowDownTime);
-    }
+    setTimeSpeed(!m_slowdowntime);
 }
 
 TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
@@ -72,7 +75,8 @@ TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
       m_mainwindow(mainwindow),
       m_avp(mainwindow, "AVP", &m_recordfile, this),
       m_a9(mainwindow, "CPU", &m_recordfile, this),
-      m_host1x(mainwindow, "Host1x", this)
+      m_host1x(mainwindow, "Host1x", this),
+      m_slowdowntime(false)
 {
     connect(&m_ipc, SIGNAL(connected(void)), this, SLOT(onConnect(void)));
 

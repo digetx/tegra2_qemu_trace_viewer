@@ -61,6 +61,8 @@ public slots:
 
     void message(char *txt);
 
+    void setTimeSpeed(bool slowdown);
+
     void timeSpeedToggle(void);
 
 private:
@@ -70,6 +72,7 @@ private:
     TraceAVP m_avp;
     TraceA9 m_a9;
     TraceHOST1X m_host1x;
+    bool m_slowdowntime;
 };
 
 #endif // TRACECORE_H
