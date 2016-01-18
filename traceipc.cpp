@@ -134,8 +134,8 @@ void TraceIPC::socket_readReady(void)
             pak_cdma.is_gather  = ntohl(pak_cdma.is_gather);
             pak_cdma.ch_id      = ntohl(pak_cdma.ch_id);
 
-            emit chWrite(ntohl(pak_cdma.ch_id), ntohl(pak_cdma.time),
-                         ntohl(pak_cdma.data), ntohl(pak_cdma.is_gather));
+            emit chWrite(pak_cdma.ch_id, pak_cdma.time, pak_cdma.data,
+                         pak_cdma.is_gather);
             break;
         default:
             Q_ASSERT(0);
