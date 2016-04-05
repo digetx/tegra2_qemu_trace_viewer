@@ -45,7 +45,7 @@
        <enum>Qt::TabFocus</enum>
       </property>
       <property name="text">
-       <string>Slow down time</string>
+       <string>Slowdown time</string>
       </property>
      </widget>
     </item>
@@ -237,6 +237,9 @@ p, li { white-space: pre-wrap; }
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>
@@ -425,6 +428,9 @@ p, li { white-space: pre-wrap; }
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
            <attribute name="verticalHeaderVisible">
             <bool>false</bool>
            </attribute>

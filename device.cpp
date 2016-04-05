@@ -376,7 +376,7 @@ QVariant Device::data(const QModelIndex &index, int role) const
 
             if (entry.clk_disabled || entry.in_reset)
                 return get_register_name(entry) +
-                        "\nclk_enb: " + QString::number(!entry.clk_disabled) +
+                        " clk_enb: " + QString::number(!entry.clk_disabled) +
                         " rst: " + QString::number(entry.in_reset);
 
             return get_register_name(entry);
