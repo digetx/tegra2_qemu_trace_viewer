@@ -143,6 +143,11 @@ void TraceCPU::recordingToggle(void)
     recordingSet(!m_record_en);
 }
 
+void TraceCPU::startRecording(void)
+{
+    recordingSet(true);
+}
+
 void TraceCPU::stopRecording(void)
 {
     recordingSet(false);

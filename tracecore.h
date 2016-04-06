@@ -18,6 +18,7 @@
 #ifndef TRACECORE_H
 #define TRACECORE_H
 
+#include <QtDBus/QDBusAbstractAdaptor>
 #include <QObject>
 #include <QListWidgetItem>
 #include <QVarLengthArray>
@@ -38,16 +39,32 @@ enum {
     TEGRA2_NCPUS
 };
 
-class TraceCore : public QObject
+class TraceCore : public QDBusAbstractAdaptor
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.traceviewer.control")
 
 public:
-    explicit TraceCore(MainWindow *mainwindow, QObject *parent = 0);
+    explicit TraceCore(MainWindow *mainwindow);
 
 signals:
 
 public slots:
+    void startRecordingAVP(void);
+
+    void stopRecordingAVP(void);
+
+    void startRecordingCPU(void);
+
+    void stopRecordingCPU(void);
+
+    void setTimeSpeed(bool slowdown);
+
+    QString recordingFilePath(void);
+
+    void timeSpeedToggle(void);
+
+private slots:
     void regAccess(TraceIPC::packet_rw pak_rw);
 
     void irqEvent(TraceIPC::packet_irq pak_irq);
@@ -60,10 +77,6 @@ public slots:
     void onDisconnect(void);
 
     void message(char *txt);
-
-    void setTimeSpeed(bool slowdown);
-
-    void timeSpeedToggle(void);
 
 private:
     MainWindow *m_mainwindow;

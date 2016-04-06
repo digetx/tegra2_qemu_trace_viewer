@@ -28,6 +28,7 @@ public:
     explicit TraceCPU(MainWindow *window, QString name, QFile *recfile,
                       QObject *parent = 0);
 
+    void startRecording(void);
     void stopRecording(void);
     void restartRecording(void);
 

@@ -16,6 +16,7 @@
  */
 
 #include <QDateTime>
+#include <QtDBus/QtDBus>
 #include <QDir>
 
 #include "tracecore.h"
@@ -25,6 +26,31 @@
 #define HOST1X_CDMA	0x1010
 
 #define CMD_CHANGE_TIMERS_SPEED     0x122
+
+void TraceCore::startRecordingAVP(void)
+{
+    m_avp.startRecording();
+}
+
+void TraceCore::stopRecordingAVP(void)
+{
+    m_avp.stopRecording();
+}
+
+void TraceCore::startRecordingCPU(void)
+{
+    m_a9.startRecording();
+}
+
+void TraceCore::stopRecordingCPU(void)
+{
+    m_a9.stopRecording();
+}
+
+QString TraceCore::recordingFilePath(void)
+{
+    return m_recordfile.fileName();
+}
 
 void TraceCore::setTimeSpeed(bool slowdown)
 {
@@ -70,8 +96,8 @@ void TraceCore::timeSpeedToggle(void)
     setTimeSpeed(!m_slowdowntime);
 }
 
-TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
-    : QObject(parent),
+TraceCore::TraceCore(MainWindow *mainwindow)
+    : QDBusAbstractAdaptor(mainwindow),
       m_mainwindow(mainwindow),
       m_avp(mainwindow, "AVP", &m_recordfile, this),
       m_a9(mainwindow, "CPU", &m_recordfile, this),
@@ -102,6 +128,13 @@ TraceCore::TraceCore(MainWindow *mainwindow, QObject *parent)
             this, SLOT(timeSpeedToggle()));
 
     m_ipc.connectTo(TraceSettings::instance()->remoteAddr());
+
+    QDBusConnection::sessionBus().registerObject("/", mainwindow);
+
+    if (!QDBusConnection::sessionBus().registerService("org.traceviewer")) {
+        fprintf(stderr, "%s\n",
+                qPrintable(QDBusConnection::sessionBus().lastError().message()));
+    }
 }
 
 void TraceCore::message(char *txt)
