@@ -62,7 +62,7 @@ void TraceCore::setTimeSpeed(bool slowdown)
     m_ipc.send(&speed, sizeof(speed));
 
     m_mainwindow->getUi()->pushButton_SlowDownTime->setText(
-                slowdown ? "Normal speed" : "Slow down time");
+                slowdown ? "Normal speed" : "Slowdown time");
     m_mainwindow->getUi()->pushButton_SlowDownTime->setStyleSheet(
                 slowdown ? "background: blue" : "");
 
