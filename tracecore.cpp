@@ -23,7 +23,8 @@
 #include "tracesettings.h"
 #include "ui_mainwindow.h"
 
-#define HOST1X_CDMA	0x1010
+#define HOST1X_CDMA     0x1010
+#define QEMU_DEBUGGER   0xFF
 
 #define CMD_CHANGE_TIMERS_SPEED     0x122
 
@@ -155,6 +156,8 @@ void TraceCore::regAccess(TraceIPC::packet_rw pak_rw)
         break;
     case HOST1X_CDMA:
         m_host1x.handle(pak_rw);
+        break;
+    case QEMU_DEBUGGER:
         break;
     default:
         Q_ASSERT(0);
