@@ -24,17 +24,17 @@
 TraceHOST1X::TraceHOST1X(MainWindow *window, QString name, QObject *parent) :
     TraceSRC(window, name, parent)
 {
-    addDevice( new CdmaTrace(0) );
-    addDevice( new CdmaTrace(1) );
-    addDevice( new CdmaTrace(2) );
-    addDevice( new CdmaTrace(3) );
-    addDevice( new CdmaTrace(4) );
-    addDevice( new CdmaTrace(5) );
-    addDevice( new CdmaTrace(6) );
-    addDevice( new CdmaTrace(7) );
+    addDevice( new CdmaTrace(this, 0) );
+    addDevice( new CdmaTrace(this, 1) );
+    addDevice( new CdmaTrace(this, 2) );
+    addDevice( new CdmaTrace(this, 3) );
+    addDevice( new CdmaTrace(this, 4) );
+    addDevice( new CdmaTrace(this, 5) );
+    addDevice( new CdmaTrace(this, 6) );
+    addDevice( new CdmaTrace(this, 7) );
 
-    addDevice( new Host1xDev("host1x", 0x1, true) );
-    addDevice( new Gr2dDev("host1x gr2d", 0x51, true) );
-    addDevice( new Gr2dDev("host1x gr2d_sb", 0x52, true) );
-    addDevice( new Gr2dDev("host1x gr3d", 0x60, true) );
+    addDevice( new Host1xDev(this, "host1x", 0x1, true) );
+    addDevice( new Gr2dDev(this, "host1x gr2d", 0x51, true) );
+    addDevice( new Gr2dDev(this, "host1x gr2d_sb", 0x52, true) );
+    addDevice( new Gr2dDev(this, "host1x gr3d", 0x60, true) );
 }

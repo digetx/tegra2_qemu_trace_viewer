@@ -100,8 +100,8 @@ public:
 
     explicit Device(QObject *parent = 0);
 
-    explicit Device(const QString name, u_int32_t base, bool listitem = false,
-                    QObject *parent = 0)
+    explicit Device(QObject *parent, const QString name,
+                    u_int32_t base, bool listitem = false)
         : TraceDev(parent),
           m_bit_details_model(this),
           m_is_listitem(listitem),

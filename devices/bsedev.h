@@ -27,8 +27,8 @@ class BseDev : public Device
     using Device::Device;
 
 public:
-    BseDev(const QString name, u_int32_t base) :
-        Device(name, base), m_state(BseDev::IDLE) {}
+    BseDev(QObject *parent, const QString name, u_int32_t base) :
+        Device(parent, name, base), m_state(BseDev::IDLE) {}
 
 signals:
 

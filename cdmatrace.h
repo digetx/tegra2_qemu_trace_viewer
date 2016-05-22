@@ -34,7 +34,7 @@ class CdmaTrace : public TraceDev
     Q_OBJECT
 
 public:
-    explicit CdmaTrace(int id, QObject *parent = 0)
+    explicit CdmaTrace(QObject *parent, unsigned id)
         : TraceDev(parent),
           m_log(this, MAX_LOG_ENTRIES),
           m_class_id(0),
