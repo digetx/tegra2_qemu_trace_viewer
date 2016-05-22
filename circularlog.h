@@ -63,6 +63,7 @@ CircularLog<O_Type, E_Type>::CircularLog(O_Type *o, unsigned max_log_size)
       m_log_size(0)
 {
     m_log.clear();
+    m_out.setDevice(&m_file);
 }
 
 template <class O_Type, class E_Type>
@@ -80,7 +81,6 @@ void CircularLog<O_Type, E_Type>::setLogFilePath(QString file_path)
     m_file.close();
     m_file.setFileName(file_path);
     m_file.open(QIODevice::WriteOnly | QIODevice::Text);
-    m_out.setDevice(&m_file);
 
     mutex.unlock();
 }
