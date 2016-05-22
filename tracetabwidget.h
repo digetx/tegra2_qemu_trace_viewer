@@ -29,7 +29,6 @@ public:
 signals:
 
 public slots:
-    void TabChanged(int index);
     void OnError(void);
     void ClearErrorState(void);
 
@@ -41,6 +40,8 @@ private:
         ERROR_TAB,
         CONSOLE_TAB
     };
+
+    unsigned errors_cnt;
 
 };
 

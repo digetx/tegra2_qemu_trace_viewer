@@ -109,5 +109,8 @@ void TraceUI::ActiveDeviceChanged(TraceDev *dev)
 
 void TraceUI::resetUI(void)
 {
+    TraceTabWidget *tab = m_mainwindow->getUi()->tabWidgetTrace;
+
+    tab->ClearErrorState();
     m_textRegDesc->setPlainText("");
 }

@@ -20,31 +20,19 @@
 #include "tracetabwidget.h"
 
 TraceTabWidget::TraceTabWidget(QWidget *parent) :
-    QTabWidget(parent)
+    QTabWidget(parent),
+    errors_cnt(0)
 {
-    connect(this, SIGNAL(currentChanged(int)), this, SLOT(TabChanged(int)));
-}
-
-void TraceTabWidget::TabChanged(int index)
-{
-    switch (index) {
-    case TraceTabWidget::ERROR_TAB:
-        tabBar()->setTabTextColor(index, QColor());
-        break;
-    default:
-        break;
-    }
 }
 
 void TraceTabWidget::OnError(void)
 {
-    if (currentIndex() == TraceTabWidget::ERROR_TAB)
-        return;
-
-    tabBar()->setTabTextColor(TraceTabWidget::ERROR_TAB, Qt::red);
+    tabBar()->setTabText(TraceTabWidget::ERROR_TAB,
+                         QString().sprintf("Errors (%d)", ++errors_cnt));
 }
 
 void TraceTabWidget::ClearErrorState(void)
 {
-    tabBar()->setTabTextColor(TraceTabWidget::ERROR_TAB, QColor());
+    tabBar()->setTabText(TraceTabWidget::ERROR_TAB, "Errors");
+    errors_cnt = 0;
 }
