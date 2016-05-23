@@ -89,7 +89,7 @@ TraceAVP::TraceAVP(MainWindow *window, QString name, QFile *recfile,
     addDevice( new DummyDev(this, "ppb", 0x6001C800) );
     addDevice( new DummyDev(this, "vdma", 0x6001CA00) );
     addDevice( new DummyDev(this, "ucq", 0x6001CC00) );
-    addDevice( new DummyDev(this, "bsea", 0x6001D000) );
+    addDevice( new DummyDev(this, "bsea2", 0x6001D000) );
     addDevice( new DummyDev(this, "frameid", 0x6001D800) );
 //    addDevice( new Host1x_channelDev(this, "host1x_ch_prot", TEGRA_HOST1X_BASE + 0x20000) );
     addDevice( new Res_semaDev(this, "res_sema", TEGRA_RES_SEMA_BASE) );
