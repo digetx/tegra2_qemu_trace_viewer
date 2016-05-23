@@ -15,6 +15,8 @@
  *  with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QtDBus/QtDBus>
+
 #include "cdmatrace.h"
 #include "device.h"
 #include "tracecore.h"
@@ -50,6 +52,9 @@ void TraceSRC::addDevice(TraceDev *dev)
     m_tui->addDevice(dev);
 
     emit layoutChanged();
+
+    QDBusConnection::sessionBus().registerObject(
+        "/" + m_name + "/" + dev->name(), dev, QDBusConnection::ExportAllSlots);
 }
 
 TraceDev * TraceSRC::getDevByAddr(const u_int32_t &addr,

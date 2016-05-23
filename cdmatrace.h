@@ -35,13 +35,12 @@ class CdmaTrace : public TraceDev
 
 public:
     explicit CdmaTrace(QObject *parent, unsigned id)
-        : TraceDev(parent),
+        : TraceDev(parent, QString().sprintf("host1x_cdma%d", id)),
           m_log(this, MAX_LOG_ENTRIES),
           m_class_id(0),
           m_access_nb(0),
           m_ch_id(id)
     {
-        m_name = QString().sprintf("host1x cdma%d", m_ch_id);
         updateStats();
 
         m_update_stats_timer.setSingleShot(true);
@@ -65,7 +64,6 @@ private:
         bool invalid;
     } log_entry;
 
-    QString m_name;
     CircularLog<CdmaTrace, log_entry> m_log;
     u_int8_t m_class_id;
     u_int64_t m_access_nb;

@@ -50,6 +50,7 @@ private slots:
     void writeStatUpdated(int);
     void irqStatUpdated(int);
     void errorStatUpdated(int);
+    void recStateUpdated(int);
 
 private:
     QFile *m_recordfile;

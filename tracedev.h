@@ -24,9 +24,13 @@
 class TraceDev : public QAbstractTableModel, public QListWidgetItem
 {
     Q_OBJECT
+
 public:
-    explicit TraceDev(QObject *parent = 0)
-        : QAbstractTableModel(parent), id(0), rec_enb(false)
+    explicit TraceDev(QObject *parent, QString name = "")
+        : QAbstractTableModel(parent),
+          id(0),
+          m_name(name),
+          m_rec_enb(false)
     {
     }
 
@@ -50,14 +54,33 @@ public:
     virtual QString entryAsString(void *) const { return ""; }
 
     int id;
-    bool rec_enb;
+
+    QString name(void)
+    {
+        return m_name;
+    }
+
+    bool recEnabled(void)
+    {
+        return m_rec_enb;
+    }
+
+protected:
+    QString m_name;
+    bool m_rec_enb;
 
 signals:
+    void recStateUpdated(int);
 
 public slots:
     virtual void ClearLog(void) = 0;
     virtual void regFilterChanged(const QString &) {}
 
+    void setRecording(bool enable)
+    {
+        m_rec_enb = enable;
+        emit recStateUpdated(id);
+    }
 };
 
 #endif // TRACEDEV_H

@@ -102,10 +102,9 @@ public:
 
     explicit Device(QObject *parent, const QString name,
                     u_int32_t base, bool listitem = false)
-        : TraceDev(parent),
+        : TraceDev(parent, name + (listitem ? "_" + QString::number(base, 16).toUpper() : "")),
           m_bit_details_model(this),
           m_is_listitem(listitem),
-          m_name(name + (listitem ? " @" + QString::number(base, 16).toUpper() : "")),
           m_log(this, MAX_LOG_ENTRIES),
           m_base(base),
           m_dev_writes_nb(0),
@@ -162,7 +161,6 @@ protected:
     virtual void update_internal(log_entry &entry);
 
     bool m_is_listitem;
-    const QString m_name;
     CircularLog<Device, Device::log_entry> m_log;
     QTimer update_dev_stats_timer;
     QTimer blink_reset_timer;

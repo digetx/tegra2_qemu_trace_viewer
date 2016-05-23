@@ -66,6 +66,9 @@ void TraceCPU::addDevice(TraceDev *dev)
 
     connect(dev_, SIGNAL(errorStatUpdated(int)),
             this, SLOT(errorStatUpdated(int)));
+
+    connect(dev_, SIGNAL(recStateUpdated(int)),
+            this, SLOT(recStateUpdated(int)));
 }
 
 void TraceCPU::firstTimeStatUpdated(int id)
@@ -97,6 +100,12 @@ void TraceCPU::writeStatUpdated(int id)
 void TraceCPU::errorStatUpdated(int id)
 {
     const QModelIndex idx = index(id, ERRORS);
+    emit dataChanged(idx, idx);
+}
+
+void TraceCPU::recStateUpdated(int id)
+{
+    const QModelIndex idx = index(id, RECORDING_EN);
     emit dataChanged(idx, idx);
 }
 
@@ -169,7 +178,7 @@ void TraceCPU::handle(const TraceIPC::packet_rw &pak_rw)
 
     Device *dev = static_cast<Device *> (getDevByAddr(pak_rw.hwaddr, TraceDev::MMIO));
 
-    if (dev != NULL && dev->rec_enb && m_record_en && openRecordFile()) {
+    if (dev != NULL && dev->recEnabled() && m_record_en && openRecordFile()) {
         m_recordstream << quint8(pak_rw.cpu_id == TEGRA2_COP);
 
         quint32 type;
@@ -205,7 +214,7 @@ void TraceCPU::handle(const TraceIPC::packet_irq &pak_irq)
 
     Device *dev = static_cast<Device *> (getDevByAddr(pak_irq.hwaddr, TraceDev::MMIO));
 
-    if (dev != NULL && dev->rec_enb && m_record_en && openRecordFile()) {
+    if (dev != NULL && dev->recEnabled() && m_record_en && openRecordFile()) {
         m_recordstream << quint8(pak_irq.cpu_id == TEGRA2_COP);
         m_recordstream << quint32(RECORD_IRQ) << pak_irq.hwirq << pak_irq.status;
     }
@@ -270,7 +279,7 @@ QVariant TraceCPU::data(const QModelIndex &index, int role) const
     case Qt::CheckStateRole:
         switch ( index.column() ) {
         case RECORDING_EN:
-            return dev->rec_enb ? Qt::Checked : Qt::Unchecked;
+            return dev->recEnabled() ? Qt::Checked : Qt::Unchecked;
         default:
             break;
         }
@@ -290,8 +299,7 @@ bool TraceCPU::setData(const QModelIndex &index, const QVariant &value, int role
     case Qt::CheckStateRole:
         switch ( index.column() ) {
         case RECORDING_EN:
-            dev->rec_enb = value.toBool();
-            emit dataChanged(index, index);
+            dev->setRecording(value.toBool());
             return true;
         default:
             break;
