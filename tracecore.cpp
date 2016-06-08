@@ -56,7 +56,7 @@ QString TraceCore::recordingFilePath(void)
 void TraceCore::setTimeSpeed(bool slowdown)
 {
     quint32 cmd = CMD_CHANGE_TIMERS_SPEED;
-    quint32 speed = slowdown ? 5000 : 1000000;
+    quint32 speed = slowdown ? m_mainwindow->getUi()->timer_freq_spinBox->value() : 1000000;
 
     m_ipc.send(&cmd, sizeof(cmd));
     m_ipc.send(&speed, sizeof(speed));
@@ -65,6 +65,7 @@ void TraceCore::setTimeSpeed(bool slowdown)
                 slowdown ? "Normal speed" : "Slowdown time");
     m_mainwindow->getUi()->pushButton_SlowDownTime->setStyleSheet(
                 slowdown ? "background: blue" : "");
+    m_mainwindow->getUi()->timer_freq_spinBox->setEnabled(!slowdown);
 
     m_slowdowntime = slowdown;
 }

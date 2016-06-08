@@ -139,7 +139,8 @@ void TraceCPU::recordingSet(bool en)
 {
     m_record_en = en;
 
-    m_tui->m_rec_button->setText(m_record_en ? "Stop recording" : "Record IO");
+    m_tui->m_rec_button->setText(
+                (m_record_en ? "Stop recording " : "Record IO ") + m_name);
     m_tui->m_rec_button->setStyleSheet(m_record_en ? "background: red" : "");
 
     if (!m_record_en) {
