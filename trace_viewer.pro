@@ -61,7 +61,8 @@ SOURCES += devices/apb_dmadev.cpp \
     devices/host1x_dev.cpp \
     devices/gr2ddev.cpp \
     devices/avp_cch.cpp \
-    devices/res_semadev.cpp
+    devices/res_semadev.cpp \
+    devices/ahb_dmadev.cpp
 
 HEADERS  += mainwindow.h \
     iomap.h \
@@ -115,7 +116,8 @@ HEADERS  += devices/host1x_dev.h \
     devices/ictlr_quaddev.h \
     devices/avp_cch.h \
     devices/res_semadev.h \
-    devices/dummydev.h
+    devices/dummydev.h \
+    devices/ahb_dmadev.h
 
 FORMS    += mainwindow.ui
 

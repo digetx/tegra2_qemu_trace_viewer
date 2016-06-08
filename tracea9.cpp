@@ -45,6 +45,7 @@
 #include "devices/gr2ddev.h"
 #include "devices/res_semadev.h"
 #include "devices/dummydev.h"
+#include "devices/ahb_dmadev.h"
 
 #include "device.h"
 #include "iomap.h"
@@ -57,6 +58,7 @@ TraceA9::TraceA9(MainWindow *window, QString name, QFile *recfile,
     addDevice( new EmcDev(this, "emc", TEGRA_EMC_BASE) );
     addDevice( new McDev(this, "mc", TEGRA_MC_BASE) );
     addDevice( new GizmoDev(this, "ahb_gizmo", TEGRA_AHB_GIZMO_BASE) );
+    addDevice( new Ahb_dmaDev(this, "ahb_dma", TEGRA_AHB_DMA_BASE) );
     addDevice( new FuseDev(this, "apb_fuse", TEGRA_FUSE_BASE) );
     addDevice( new Apb_dmaDev(this, "apb_dma", TEGRA_APB_DMA_BASE) );
     addDevice( new Apb_miscDev(this, "apb_misc", TEGRA_APB_MISC_BASE) );
