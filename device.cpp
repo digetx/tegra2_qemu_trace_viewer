@@ -39,11 +39,15 @@ int BitDetails::columnCount(const QModelIndex &) const
 QVariant BitDetails::data(const QModelIndex &index, int role) const
 {
     int bit_index = index.row();
+    int column = index.column();
+
+    if (!has_changed_bits && column > BitDetails::VALUE)
+        column++;
 
     switch (role) {
     case Qt::EditRole:
     case Qt::DisplayRole:
-        switch (index.column()) {
+        switch (column) {
         case BitDetails::NAME:
             return bits.at(bit_index).name;
 //        case BIT_SIZE:
@@ -54,6 +58,8 @@ QVariant BitDetails::data(const QModelIndex &index, int role) const
         case BitDetails::NEW_VALUE:
             return QString().sprintf("0x%0*X", qCeil(bits.at(bit_index).bits / 4),
                                      bits.at(bit_index).new_value);
+        case BitDetails::COMMENT:
+            return bits.at(bit_index).comment;
         default:
             break;
         }
@@ -63,7 +69,7 @@ QVariant BitDetails::data(const QModelIndex &index, int role) const
             return QColor(255, 255, 150); // light yellow
         break;
     case Qt::ToolTipRole:
-        switch (index.column()) {
+        switch (column) {
         case BitDetails::NAME:
             return bits.at(bit_index).comment;
         case BitDetails::VALUE: {
@@ -83,6 +89,7 @@ QVariant BitDetails::data(const QModelIndex &index, int role) const
         default:
             break;
         }
+        break;
     case Qt::ForegroundRole:
         if (bits.at(bit_index).value != bits.at(bit_index).new_value)
             return QColor(Qt::black);
@@ -94,8 +101,15 @@ QVariant BitDetails::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant BitDetails::headerData(int section, Qt::Orientation, int role) const
+QVariant BitDetails::headerData(int section, Qt::Orientation orientation,
+                                int role) const
 {
+    if (orientation == Qt::Orientation::Vertical)
+        return QVariant();
+
+    if (!has_changed_bits && section > BitDetails::VALUE)
+        section++;
+
     switch (role) {
     case Qt::DisplayRole:
         switch (section) {
@@ -105,9 +119,12 @@ QVariant BitDetails::headerData(int section, Qt::Orientation, int role) const
             return has_changed_bits ? "Old Value" : "Value";
         case BitDetails::NEW_VALUE:
             return "New value";
+        case BitDetails::COMMENT:
+            return "Comment";
         default:
             break;
         }
+        break;
     default:
         break;
     }

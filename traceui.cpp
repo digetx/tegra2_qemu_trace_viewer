@@ -74,6 +74,14 @@ void TraceUI::addDevice(TraceDev *dev)
 void TraceUI::ActiveRegChanged(const QModelIndex &index)
 {
     m_textRegDesc->setPlainText( m_activeDevice->updateDetails(index.row()) );
+
+    if (m_tableViewBitDetails->model() == NULL)
+        return;
+
+    for (int i = 0; i < m_tableViewBitDetails->model()->columnCount() - 1; i++)
+        m_tableViewBitDetails->resizeColumnToContents(i);
+
+    m_tableViewBitDetails->resizeRowsToContents();
 }
 
 void TraceUI::ActiveDeviceChanged(QListWidgetItem *item, QListWidgetItem *)
@@ -97,9 +105,7 @@ void TraceUI::ActiveDeviceChanged(TraceDev *dev)
     m_tableViewBitDetails->setModel(m_activeDevice->getBitDetailsModel());
     m_tableViewBitDetails->setVisible(
                 m_activeDevice->hasCap(TraceDev::BITS_DESC) );
-    m_tableViewBitDetails->setColumnWidth(0, 350);
-    m_tableViewBitDetails->setColumnWidth(1, 150);
-    m_tableViewBitDetails->setColumnWidth(2, 150);
+
     m_textRegDesc->setVisible(
                 m_activeDevice->hasCap(TraceDev::REG_DESC) );
 

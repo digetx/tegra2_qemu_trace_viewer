@@ -52,16 +52,18 @@ public:
 
     bool has_changed_bits:1;
 
-protected:
-
-private:
     enum {
         NAME = 0,
     //    BIT_SIZE,
         VALUE,
         NEW_VALUE,
+        COMMENT,
         COLUMNS_NB
     };
+
+protected:
+
+private:
 
 signals:
 
