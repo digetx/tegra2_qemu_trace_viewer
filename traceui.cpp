@@ -73,7 +73,13 @@ void TraceUI::addDevice(TraceDev *dev)
 
 void TraceUI::ActiveRegChanged(const QModelIndex &index)
 {
+    m_textRegDesc->setVisible(
+                m_activeDevice->hasCap(TraceDev::REG_DESC) );
+
     m_textRegDesc->setPlainText( m_activeDevice->updateDetails(index.row()) );
+
+    if (m_tableViewBitDetails->model() == NULL && m_activeDevice != NULL)
+        m_tableViewBitDetails->setModel(m_activeDevice->getBitDetailsModel());
 
     if (m_tableViewBitDetails->model() == NULL)
         return;
@@ -102,12 +108,12 @@ void TraceUI::ActiveDeviceChanged(TraceDev *dev)
     m_activeDevice = dev;
 
     m_tableViewTrace->setModel(m_activeDevice);
-    m_tableViewBitDetails->setModel(m_activeDevice->getBitDetailsModel());
+    m_tableViewBitDetails->setModel(NULL);
     m_tableViewBitDetails->setVisible(
                 m_activeDevice->hasCap(TraceDev::BITS_DESC) );
 
-    m_textRegDesc->setVisible(
-                m_activeDevice->hasCap(TraceDev::REG_DESC) );
+    m_textRegDesc->setVisible(false);
+    m_textRegDesc->setPlainText("");
 
     connect(m_regFilter, SIGNAL(textEdited(const QString)),
             m_activeDevice, SLOT(regFilterChanged(const QString)));
