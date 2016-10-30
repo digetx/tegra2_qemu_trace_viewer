@@ -81,6 +81,7 @@ public:
 
 signals:
     void itemInserted(void);
+    void cdmaStarted(unsigned);
 
 public slots:
     void ClearLog();

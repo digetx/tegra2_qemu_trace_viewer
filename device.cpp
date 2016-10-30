@@ -237,10 +237,12 @@ void Device::write_log(log_entry &entry)
         emit errorStatUpdated(this->id);
     } else if (!entry.is_irq) {
 
-        if (entry.is_write && is_undef_changed(entry.offset, entry.value, entry.new_value)) {
+        if (entry.is_write &&
+                is_undef_changed(entry.offset, entry.value, entry.new_value)) {
             QString text = "changing undefined bits ";
                     text += get_register_name(entry) + " ";
-                    text += QString().sprintf("0x%08X -> 0x%08X", entry.value, entry.new_value) + " ";
+                    text += QString().sprintf("0x%08X -> 0x%08X",
+                                        entry.value, entry.new_value) + " ";
                     text += QString().sprintf("cpu=0x%08X", entry.cpu_pc);
             emit ErrorCustom(m_name, text, entry.time);
         }
@@ -275,6 +277,9 @@ void Device::write_log(log_entry &entry)
     }
 
     blink_reset_timer.start(1500);
+
+    if (m_record_dev)
+        m_record_dev->write_log(entry);
 }
 
 QString Device::updateDetails(const int &index)
@@ -307,25 +312,25 @@ void Device::update_dev_stats(void)
     static const QBrush bcolor_wr_new_value = QBrush ( QColor(0xf4, 0xa7, 0) );
     static const QBrush bcolor_wr_no_upd = QBrush ( QColor(255, 255, 150) );
 
-    if (m_is_listitem) {
+    if (m_is_host1x_item) {
         updateName();
 
         if (entry.is_irq) {
             if (entry.value) {
                 m_background = bcolor_irq_on;
-                setBackground( bcolor_irq_on );
+                setBackground( 0, bcolor_irq_on );
                 goto LOG_FLUSH;
             } else {
-                setBackground( bcolor_irq_off );
+                setBackground( 0, bcolor_irq_off );
             }
         } else if (entry.is_error)
-            setBackground( bcolor_err );
+            setBackground( 0, bcolor_err );
         else if (!entry.is_write)
-            setBackground( bcolor_read );
+            setBackground( 0, bcolor_read );
         else if (entry.value != entry.new_value)
-            setBackground( bcolor_wr_new_value );
+            setBackground( 0, bcolor_wr_new_value );
         else
-            setBackground( bcolor_wr_no_upd );
+            setBackground( 0, bcolor_wr_no_upd );
 
         m_background = QBrush ( Qt::lightGray );
     } else {
@@ -356,7 +361,7 @@ LOG_FLUSH:
 
 void Device::blink_reset(void)
 {
-    setBackground(m_background);
+    setBackground(0, m_background);
     emit firstTimeStatUpdated(this->id);
 }
 
@@ -374,7 +379,8 @@ QVariant Device::data(const QModelIndex &index, int role) const
         case Device::REGISTER:
             entry = m_log.read( index.row() );
             return get_register_name(entry) +
-                        QString().sprintf(" 0x%08X", entry.offset + (m_base >= 0x50000000 ? m_base : 0));
+                        QString().sprintf(" 0x%08X",
+                            entry.offset + (m_base >= 0x50000000 ? m_base : 0));
         default:
             break;
         }
@@ -387,7 +393,8 @@ QVariant Device::data(const QModelIndex &index, int role) const
                 return QString("IRQ ") + QString::number(entry.offset);
 
             if (entry.is_error) {
-                const char *format = entry.is_write ? "write%d to 0x%X" : "read%d 0x%X";
+                const char *format =
+                        entry.is_write ? "write%d to 0x%X" : "read%d 0x%X";
                 return QString().sprintf(format, entry.rw_size, entry.offset);
             }
 
@@ -416,7 +423,8 @@ QVariant Device::data(const QModelIndex &index, int role) const
     case Qt::BackgroundRole:
         entry = m_log.read( index.row() );
 
-        if (m_regFilter.length() && get_register_name(entry).indexOf(m_regFilter) == -1)
+        if (m_regFilter.length() &&
+                get_register_name(entry).indexOf(m_regFilter) == -1)
             div = 2;
 
         if (index.column() == Device::CPU_PC)
@@ -521,16 +529,25 @@ void Device::ClearLog(void)
     m_bit_details_model.signalUpdate();
     updateName();
     blink_reset();
+
+    m_record_dev = NULL;
+
+    while (childCount()) {
+        QTreeWidgetItem *item = child( childCount() - 1);
+        Device *dev = static_cast<Device*>(item);
+        removeChild(item);
+        delete dev;
+    }
 }
 
 void Device::updateName(void)
 {
-    if (!m_is_listitem) {
+    if (!m_is_host1x_item) {
         return;
     }
 
     /* FIXME: sprintf() is a CPU consumption hog */
-    setText(m_name +
+    setText(0, m_name +
             QString().sprintf(" (r %lu, w %lu, i %lu, e %lu)",
                               m_dev_reads_nb, m_dev_writes_nb,
                               m_dev_irqs_nb, m_dev_errs_nb));
@@ -563,4 +580,8 @@ bool Device::hasCap(TraceDev::dev_caps cap) const
     }
 
     return false;
+}
+
+void Device::breakRecord(unsigned)
+{
 }

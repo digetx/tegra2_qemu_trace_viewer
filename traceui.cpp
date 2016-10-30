@@ -27,15 +27,15 @@ TraceUI::TraceUI(MainWindow *window, QString name, TraceSRC *parent) :
 
     m_tableViewDevices = tab->findChild<QTableView *>("tableViewDevices_" + name);
     m_tableViewBitDetails = tab->findChild<QTableView *>("tableViewBitDetails_" + name);
-    m_listWidgetDevices = tab->findChild<QListWidget *>("listWidgetDevices_" + name);
+    m_treeWidgetDevices = tab->findChild<QTreeWidget *>("treeWidgetDevices_" + name);
     m_tableViewTrace = tab->findChild<TraceDevView *>("tableWidgetTrace_" + name);
     m_textRegDesc = tab->findChild<QTextEdit *>("textRegDesc_" + name);
     m_regFilter = tab->findChild<QLineEdit *>("lineEditRegFilter_" + name);
     m_rec_button = window->findChild<QPushButton *>("pushButton_Record" + name);
 
-    connect(m_listWidgetDevices,
-            SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)),
-            this, SLOT(ActiveDeviceChanged(QListWidgetItem *, QListWidgetItem *)));
+    connect(m_treeWidgetDevices,
+            SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)),
+            this, SLOT(ActiveDeviceChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
 
     connect(m_tableViewTrace, SIGNAL(selected(const QModelIndex &)),
             this, SLOT(ActiveRegChanged(const QModelIndex &)));
@@ -54,8 +54,8 @@ void TraceUI::addDevice(TraceDev *dev)
     ErrorsTableWidget *e = m_mainwindow->getUi()->tableWidgetErrors;
     TraceTabWidget *tab = m_mainwindow->getUi()->tabWidgetTrace;
 
-    if (m_listWidgetDevices != NULL) {
-        m_listWidgetDevices->addItem(dev);
+    if (m_treeWidgetDevices != NULL) {
+        m_treeWidgetDevices->addTopLevelItem(dev);
     }
 
     connect(dev, SIGNAL(ErrorUnknownReg(const QString, const Device::log_entry)),
@@ -92,7 +92,7 @@ void TraceUI::ActiveRegChanged(const QModelIndex &index)
     m_tableViewBitDetails->resizeRowsToContents();
 }
 
-void TraceUI::ActiveDeviceChanged(QListWidgetItem *item, QListWidgetItem *)
+void TraceUI::ActiveDeviceChanged(QTreeWidgetItem *item, QTreeWidgetItem *)
 {
     ActiveDeviceChanged( static_cast<TraceDev *> (item) );
 }

@@ -634,7 +634,13 @@ p, li { white-space: pre-wrap; }
             </item>
            </layout>
           </widget>
-          <widget class="QListWidget" name="listWidgetDevices_Host1x"/>
+          <widget class="QTreeWidget" name="treeWidgetDevices_Host1x">
+           <column>
+            <property name="text">
+             <string>Channels / clients</string>
+            </property>
+           </column>
+          </widget>
          </widget>
         </item>
        </layout>

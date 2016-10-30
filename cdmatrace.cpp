@@ -33,6 +33,9 @@ void CdmaTrace::validateEntry(log_entry &entry)
     {
         setcl_op op = { .reg32 = entry.data };
 
+        if (m_class_id != op.class_id)
+            emit cdmaStarted(op.class_id);
+
         m_class_id = op.class_id;
         entry.class_id = 0;
 
@@ -110,7 +113,7 @@ void CdmaTrace::trace(const u_int32_t &time, const u_int32_t &data, const bool &
 
 void CdmaTrace::updateStats(void)
 {
-    setText(m_name + QString().sprintf(" (%lu)", m_access_nb));
+    setText(0, m_name + QString().sprintf(" (%lu)", m_access_nb));
     m_log.flush();
 }
 

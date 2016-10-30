@@ -103,11 +103,12 @@ public:
     explicit Device(QObject *parent = 0);
 
     explicit Device(QObject *parent, const QString name,
-                    u_int32_t base, bool listitem = false)
-        : TraceDev(parent, name + (listitem ? "_" + QString::number(base, 16).toUpper() : "")),
+                    u_int32_t base, bool host1x_item = false,
+                    unsigned max_log_entries = MAX_LOG_ENTRIES)
+        : TraceDev(parent, name + (host1x_item ? "_" + QString::number(base, 16).toUpper() : "")),
           m_bit_details_model(this),
-          m_is_listitem(listitem),
-          m_log(this, MAX_LOG_ENTRIES),
+          m_is_host1x_item(host1x_item),
+          m_log(this, max_log_entries),
           m_base(base),
           m_dev_writes_nb(0),
           m_dev_reads_nb(0),
@@ -115,7 +116,8 @@ public:
           m_dev_errs_nb(0),
           m_regFilter(""),
           m_stats_changed(false),
-          m_irq_act(false)
+          m_irq_act(false),
+          m_record_dev(NULL)
     {
         updateName();
 
@@ -152,17 +154,17 @@ public:
 public slots:
     void ClearLog(void);
     void regFilterChanged(const QString &text);
+    virtual void breakRecord(unsigned);
 
 protected:
-    BitDetails m_bit_details_model;
-
     virtual bool is_offset_valid(const u_int32_t &offset) const = 0;
     virtual bool is_undef_changed(const u_int32_t &offset,
                                   const u_int32_t &value,
                                   const u_int32_t &new_value) const = 0;
     virtual void update_internal(log_entry &entry);
 
-    bool m_is_listitem;
+    BitDetails m_bit_details_model;
+    bool m_is_host1x_item;
     CircularLog<Device, Device::log_entry> m_log;
     QTimer update_dev_stats_timer;
     QTimer blink_reset_timer;
@@ -179,6 +181,7 @@ protected:
     QBrush m_background;
     bool m_stats_changed;
     bool m_irq_act;
+    Device *m_record_dev;
 
     virtual QString get_register_name(const log_entry &entry) const = 0;
 

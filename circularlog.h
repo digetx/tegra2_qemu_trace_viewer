@@ -28,8 +28,8 @@ template <class O_Type, class E_Type>
 class CircularLog : public QObject
 {
 public:
-    explicit CircularLog(O_Type *o, unsigned max_log_size);
-    explicit CircularLog(O_Type *o, unsigned max_log_size, QString file_path);
+    explicit CircularLog(O_Type *o, int max_log_size);
+    explicit CircularLog(O_Type *o, int max_log_size, QString file_path);
 
     void setLogFilePath(QString file_path);
     E_Type read(int index) const;
@@ -55,7 +55,7 @@ private:
 };
 
 template <class O_Type, class E_Type>
-CircularLog<O_Type, E_Type>::CircularLog(O_Type *o, unsigned max_log_size)
+CircularLog<O_Type, E_Type>::CircularLog(O_Type *o, int max_log_size)
     : QObject(o), m_owner(o),
       m_max_log_size(max_log_size),
       m_log_pointer_last(0),
@@ -67,7 +67,7 @@ CircularLog<O_Type, E_Type>::CircularLog(O_Type *o, unsigned max_log_size)
 }
 
 template <class O_Type, class E_Type>
-CircularLog<O_Type, E_Type>::CircularLog(O_Type *d, unsigned max_log_size, QString file_path)
+CircularLog<O_Type, E_Type>::CircularLog(O_Type *d, int max_log_size, QString file_path)
     : CircularLog(d, max_log_size)
 {
     setLogFilePath(file_path);

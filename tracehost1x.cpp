@@ -17,6 +17,7 @@
 
 #include "devices/host1x_dev.h"
 #include "devices/gr2ddev.h"
+//#include "devices/gr3ddev.h"
 
 #include "cdmatrace.h"
 #include "tracehost1x.h"
@@ -24,17 +25,48 @@
 TraceHOST1X::TraceHOST1X(MainWindow *window, QString name, QObject *parent) :
     TraceSRC(window, name, parent)
 {
-    addDevice( new CdmaTrace(this, 0) );
-    addDevice( new CdmaTrace(this, 1) );
-    addDevice( new CdmaTrace(this, 2) );
-    addDevice( new CdmaTrace(this, 3) );
-    addDevice( new CdmaTrace(this, 4) );
-    addDevice( new CdmaTrace(this, 5) );
-    addDevice( new CdmaTrace(this, 6) );
-    addDevice( new CdmaTrace(this, 7) );
+    CdmaTrace *cdma0 = new CdmaTrace(this, 0);
+    CdmaTrace *cdma1 = new CdmaTrace(this, 1);
+    CdmaTrace *cdma2 = new CdmaTrace(this, 2);
+    CdmaTrace *cdma3 = new CdmaTrace(this, 3);
+    CdmaTrace *cdma4 = new CdmaTrace(this, 4);
+    CdmaTrace *cdma5 = new CdmaTrace(this, 5);
+    CdmaTrace *cdma6 = new CdmaTrace(this, 6);
+    CdmaTrace *cdma7 = new CdmaTrace(this, 7);
 
-    addDevice( new Host1xDev(this, "host1x", 0x1, true) );
-    addDevice( new Gr2dDev(this, "host1x_gr2d", 0x51, true) );
-    addDevice( new Gr2dDev(this, "host1x_gr2d_sb", 0x52, true) );
-    addDevice( new Gr2dDev(this, "host1x_gr3d", 0x60, true) );
+    Host1xDev *host1x         = new Host1xDev(this, "host1x", 0x1, true);
+    Gr2dDev   *host1x_gr2d    = new Gr2dDev(this, "host1x_gr2d", 0x51, true);
+    Gr2dDev   *host1x_gr2d_sb = new Gr2dDev(this, "host1x_gr2d_sb", 0x52, true);
+//    Gr3dDev   *host1x_gr3d    = new Gr3dDev(this, "host1x_gr3d", 0x60, true);
+
+    addDevice( cdma0 );
+    addDevice( cdma1 );
+    addDevice( cdma2 );
+    addDevice( cdma3 );
+    addDevice( cdma4 );
+    addDevice( cdma5 );
+    addDevice( cdma6 );
+    addDevice( cdma7 );
+
+    addDevice( host1x );
+    addDevice( host1x_gr2d );
+    addDevice( host1x_gr2d_sb );
+//    addDevice( host1x_gr3d );
+
+//    connect(cdma0, SIGNAL(cdmaStarted(unsigned)),
+//            host1x_gr3d, SLOT(breakRecord(unsigned)));
+//    connect(cdma1, SIGNAL(cdmaStarted(unsigned)),
+//            host1x_gr3d, SLOT(breakRecord(unsigned)));
+//    connect(cdma2, SIGNAL(cdmaStarted(unsigned)),
+//            host1x_gr3d, SLOT(breakRecord(unsigned)));
+//    connect(cdma3, SIGNAL(cdmaStarted(unsigned)),
+//            host1x_gr3d, SLOT(breakRecord(unsigned)));
+//    connect(cdma4, SIGNAL(cdmaStarted(unsigned)),
+//            host1x_gr3d, SLOT(breakRecord(unsigned)));
+//    connect(cdma5, SIGNAL(cdmaStarted(unsigned)),
+//            host1x_gr3d, SLOT(breakRecord(unsigned)));
+//    connect(cdma6, SIGNAL(cdmaStarted(unsigned)),
+//            host1x_gr3d, SLOT(breakRecord(unsigned)));
+//    connect(cdma7, SIGNAL(cdmaStarted(unsigned)),
+//            host1x_gr3d, SLOT(breakRecord(unsigned)));
 }

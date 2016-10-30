@@ -19,9 +19,9 @@
 #define TRACEDEV_H
 
 #include <QAbstractTableModel>
-#include <QListWidgetItem>
+#include <QTreeWidgetItem>
 
-class TraceDev : public QAbstractTableModel, public QListWidgetItem
+class TraceDev : public QAbstractTableModel, public QTreeWidgetItem
 {
     Q_OBJECT
 

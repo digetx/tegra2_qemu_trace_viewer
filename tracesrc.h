@@ -23,6 +23,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTextEdit>
+#include <QTreeWidget>
 #include <QVarLengthArray>
 
 #include "mainwindow.h"
@@ -50,7 +51,7 @@ private:
     QTableView      *m_tableViewDevices;
     TraceDevView    *m_tableViewTrace;
     QTableView      *m_tableViewBitDetails;
-    QListWidget     *m_listWidgetDevices;
+    QTreeWidget     *m_treeWidgetDevices;
     QTextEdit       *m_textRegDesc;
     QLineEdit       *m_regFilter;
     TraceDev        *m_activeDevice;
@@ -61,7 +62,7 @@ private:
 signals:
 
 private slots:
-    void ActiveDeviceChanged(QListWidgetItem *item, QListWidgetItem *);
+    void ActiveDeviceChanged(QTreeWidgetItem *item, QTreeWidgetItem *);
     void ActiveDeviceChanged(const QModelIndex &, const QModelIndex &);
     void ActiveRegChanged(const QModelIndex &);
 };
