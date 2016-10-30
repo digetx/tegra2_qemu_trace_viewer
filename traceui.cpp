@@ -73,10 +73,12 @@ void TraceUI::addDevice(TraceDev *dev)
 
 void TraceUI::ActiveRegChanged(const QModelIndex &index)
 {
-    m_textRegDesc->setVisible(
-                m_activeDevice->hasCap(TraceDev::REG_DESC) );
+    QString reg_desc = m_activeDevice->updateDetails(index.row());
 
-    m_textRegDesc->setPlainText( m_activeDevice->updateDetails(index.row()) );
+    m_textRegDesc->setVisible(
+            m_activeDevice->hasCap(TraceDev::REG_DESC) && !reg_desc.isEmpty());
+
+    m_textRegDesc->setPlainText(reg_desc);
 
     if (m_tableViewBitDetails->model() == NULL && m_activeDevice != NULL)
         m_tableViewBitDetails->setModel(m_activeDevice->getBitDetailsModel());
