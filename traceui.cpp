@@ -47,6 +47,8 @@ TraceUI::TraceUI(MainWindow *window, QString name, TraceSRC *parent) :
                 SIGNAL(currentRowChanged(const QModelIndex &, const QModelIndex &)),
                 this, SLOT(ActiveDeviceChanged(const QModelIndex &, const QModelIndex &)));
     }
+
+    m_tableViewBitDetails->setVisible(false);
 }
 
 void TraceUI::addDevice(TraceDev *dev)
@@ -56,6 +58,10 @@ void TraceUI::addDevice(TraceDev *dev)
 
     if (m_treeWidgetDevices != NULL) {
         m_treeWidgetDevices->addTopLevelItem(dev);
+    }
+
+    if (m_tableViewDevices != NULL) {
+        m_tableViewDevices->resizeColumnsToContents();
     }
 
     connect(dev, SIGNAL(ErrorUnknownReg(const QString, const Device::log_entry)),
@@ -75,10 +81,8 @@ void TraceUI::ActiveRegChanged(const QModelIndex &index)
 {
     QString reg_desc = m_activeDevice->updateDetails(index.row());
 
-    m_textRegDesc->setVisible(
-            m_activeDevice->hasCap(TraceDev::REG_DESC) && !reg_desc.isEmpty());
-
-    m_textRegDesc->setPlainText(reg_desc);
+    m_tableViewBitDetails->setVisible(
+                m_activeDevice->hasCap(TraceDev::BITS_DESC) );
 
     if (m_tableViewBitDetails->model() == NULL && m_activeDevice != NULL)
         m_tableViewBitDetails->setModel(m_activeDevice->getBitDetailsModel());
@@ -90,6 +94,11 @@ void TraceUI::ActiveRegChanged(const QModelIndex &index)
         m_tableViewBitDetails->resizeColumnToContents(i);
 
     m_tableViewBitDetails->resizeRowsToContents();
+
+    m_textRegDesc->setPlainText(reg_desc);
+
+    m_textRegDesc->setVisible(
+            m_activeDevice->hasCap(TraceDev::REG_DESC) && !reg_desc.isEmpty());
 }
 
 void TraceUI::ActiveDeviceChanged(QTreeWidgetItem *item, QTreeWidgetItem *)
@@ -110,9 +119,11 @@ void TraceUI::ActiveDeviceChanged(TraceDev *dev)
     m_activeDevice = dev;
 
     m_tableViewTrace->setModel(m_activeDevice);
+    m_tableViewTrace->resizeColumnToContents(1);
+    m_tableViewTrace->resizeColumnToContents(2);
+
+    m_tableViewBitDetails->setVisible(false);
     m_tableViewBitDetails->setModel(NULL);
-    m_tableViewBitDetails->setVisible(
-                m_activeDevice->hasCap(TraceDev::BITS_DESC) );
 
     m_textRegDesc->setVisible(false);
     m_textRegDesc->setPlainText("");
