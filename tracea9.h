@@ -24,8 +24,8 @@ class TraceA9 : public TraceCPU
 {
     Q_OBJECT
 public:
-    explicit TraceA9(MainWindow *window, QString name, QFile *recfile,
-                     QObject *parent = 0);
+    TraceA9(MainWindow *window, QString name, QFile *recfile,
+            QObject *parent = 0);
 };
 
 #endif // TraceA9_H

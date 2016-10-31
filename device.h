@@ -54,7 +54,6 @@ public:
 
     enum {
         NAME = 0,
-    //    BIT_SIZE,
         VALUE,
         NEW_VALUE,
         COMMENT,
@@ -100,11 +99,11 @@ public:
         unsigned  rw_size;
     } log_entry;
 
-    explicit Device(QObject *parent = 0);
-
-    explicit Device(QObject *parent, const QString name,
-                    u_int32_t base, bool host1x_item = false,
-                    unsigned max_log_entries = MAX_LOG_ENTRIES)
+    Device(QObject    *parent,
+           QString     name,
+           u_int32_t   base,
+           bool        host1x_item = false,
+           int         max_log_entries = MAX_LOG_ENTRIES)
         : TraceDev(parent, name + (host1x_item ? "_" + QString::number(base, 16).toUpper() : "")),
           m_bit_details_model(this),
           m_is_host1x_item(host1x_item),

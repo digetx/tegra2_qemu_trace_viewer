@@ -23,7 +23,7 @@
 class TraceMessages : public TraceQTableWidget
 {
 public:
-    explicit TraceMessages(QWidget *parent = 0);
+    TraceMessages(QWidget *parent = 0);
 
     void insertMessage(char *msg);
 };

@@ -24,7 +24,7 @@ class TraceTabWidget : public QTabWidget
 {
     Q_OBJECT
 public:
-    explicit TraceTabWidget(QWidget *parent = 0);
+    TraceTabWidget(QWidget *parent = 0);
 
 signals:
 

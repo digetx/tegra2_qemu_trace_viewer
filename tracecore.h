@@ -45,7 +45,7 @@ class TraceCore : public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "org.traceviewer.control")
 
 public:
-    explicit TraceCore(MainWindow *mainwindow);
+    TraceCore(MainWindow *mainwindow);
 
 signals:
 

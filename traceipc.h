@@ -30,7 +30,7 @@ class TraceIPC : public QObject
     Q_OBJECT
 
 public:
-    explicit TraceIPC(QObject *parent = 0);
+    TraceIPC(QObject *parent = 0);
 
     void connectTo(const QString &addr);
 

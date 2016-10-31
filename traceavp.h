@@ -24,8 +24,8 @@ class TraceAVP : public TraceCPU
 {
     Q_OBJECT
 public:
-    explicit TraceAVP(MainWindow *window, QString name, QFile *recfile,
-                      QObject *parent = 0);
+    TraceAVP(MainWindow *window, QString name, QFile *recfile,
+             QObject *parent = 0);
 };
 
 #endif // TraceAVP_H

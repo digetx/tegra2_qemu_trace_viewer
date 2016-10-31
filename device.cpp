@@ -50,8 +50,6 @@ QVariant BitDetails::data(const QModelIndex &index, int role) const
         switch (column) {
         case BitDetails::NAME:
             return bits.at(bit_index).name;
-//        case BIT_SIZE:
-//            return QString::number(bits.at(bit_index).bits);
         case BitDetails::VALUE:
             return QString().sprintf("0x%0*X", qCeil(bits.at(bit_index).bits / 4),
                                      bits.at(bit_index).value);
@@ -162,11 +160,6 @@ QString Device::entryAsString(void *e) const
     }
 
     return ret;
-}
-
-Device::Device(QObject *parent) :
-    TraceDev(parent), m_log(this, MAX_LOG_ENTRIES), m_base(0)
-{
 }
 
 void Device::setLogPath(const QString ldir)

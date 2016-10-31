@@ -26,7 +26,7 @@ class TraceDev : public QAbstractTableModel, public QTreeWidgetItem
     Q_OBJECT
 
 public:
-    explicit TraceDev(QObject *parent, QString name = "")
+    TraceDev(QObject *parent, QString name = "")
         : QAbstractTableModel(parent),
           id(0),
           m_name(name),

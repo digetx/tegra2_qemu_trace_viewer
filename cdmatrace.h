@@ -34,8 +34,8 @@ class CdmaTrace : public TraceDev
     Q_OBJECT
 
 public:
-    explicit CdmaTrace(QObject *parent, unsigned id)
-        : TraceDev(parent, QString().sprintf("host1x_cdma%d", id)),
+    CdmaTrace(QObject *parent, unsigned id)
+        : TraceDev(parent, QString().sprintf("cdma%d", id)),
           m_log(this, MAX_LOG_ENTRIES),
           m_class_id(0),
           m_access_nb(0),

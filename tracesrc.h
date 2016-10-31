@@ -39,7 +39,7 @@ class TraceUI : public QObject
 {
     Q_OBJECT
 public:
-    explicit TraceUI(MainWindow *window, QString name, TraceSRC *parent);
+    TraceUI(MainWindow *window, QString name, TraceSRC *parent);
 
     void addDevice(TraceDev *dev);
     void resetUI(void);

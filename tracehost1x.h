@@ -23,7 +23,7 @@
 class TraceHOST1X : public TraceSRC
 {
 public:
-    explicit TraceHOST1X(MainWindow *window, QString name, QObject *parent = 0);
+    TraceHOST1X(MainWindow *window, QString name, QObject *parent = 0);
 };
 
 #endif // TraceHOST1X_H

@@ -23,8 +23,8 @@
 class TraceQTableWidget : public QTableWidget
 {
 public:
-    explicit TraceQTableWidget(QWidget *parent = 0);
-    explicit TraceQTableWidget(int rows, int columns, QWidget * parent = 0);
+    TraceQTableWidget(QWidget *parent = 0);
+    TraceQTableWidget(int rows, int columns, QWidget * parent = 0);
 
     // QAbstractItemView interface
 protected slots:

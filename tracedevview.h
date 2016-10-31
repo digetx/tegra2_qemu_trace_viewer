@@ -27,7 +27,7 @@ class TraceDevView : public QTableView
     Q_OBJECT
 
 public:
-    explicit TraceDevView(QWidget *parent = 0);
+    TraceDevView(QWidget *parent = 0);
 
     void setModel(TraceDev *dev);
 
