@@ -18,7 +18,6 @@
 #ifndef TRACEIPC_H
 #define TRACEIPC_H
 
-#include <QMutex>
 #include <QLocalSocket>
 #include <QTcpSocket>
 #include <QTimer>
@@ -26,6 +25,12 @@
 #ifndef Q_OS_ANDROID
 #define LOCAL_SOCKET
 #endif
+
+#define PACKET_TRACE_RW     0x11111111
+#define PACKET_TRACE_RW_V2  0x11111112
+#define PACKET_TRACE_IRQ    0x22223333
+#define PACKET_TRACE_TXT    0x33334444
+#define PACKET_TRACE_CDMA   0x44445555
 
 class TraceIPC : public QObject
 {
@@ -39,7 +44,7 @@ public:
     bool send(void *cmd, qint64 size);
 
     typedef struct trace_pkt_rw_s {
-//        u_int32_t magic;
+        u_int32_t magic;
         u_int32_t hwaddr;
         u_int32_t offset;
         u_int32_t value;
@@ -60,7 +65,7 @@ public:
     } __attribute__((packed, aligned(1))) packet_rw;
 
     typedef struct trace_pkt_irq_s {
-//        u_int32_t magic;
+        u_int32_t magic;
         u_int32_t hwaddr;
         u_int32_t hwirq;
         u_int32_t status;
@@ -71,7 +76,7 @@ public:
     } __attribute__((packed, aligned(1))) packet_irq;
 
     typedef struct trace_pkt_cdma_s {
-//        u_int32_t magic;
+        u_int32_t magic;
         u_int32_t time;
         u_int32_t data;
         u_int32_t is_gather;
@@ -81,12 +86,12 @@ public:
     } __attribute__((packed, aligned(1))) packet_cdma;
 
     typedef struct trace_pkt_txt_s {
-//        u_int32_t magic;
+        u_int32_t magic;
         u_int32_t text_sz;
         u_int64_t __pad0;
         u_int64_t __pad1;
         u_int64_t __pad2;
-        u_int32_t __pad4;
+        u_int32_t __pad3;
     } __attribute__((packed, aligned(1))) packet_txt;
 
 signals:

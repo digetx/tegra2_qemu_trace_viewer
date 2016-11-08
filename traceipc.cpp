@@ -19,12 +19,6 @@
 
 #include "traceipc.h"
 
-#define PACKET_TRACE_RW     0x11111111
-#define PACKET_TRACE_RW_V2  0x11111112
-#define PACKET_TRACE_IRQ    0x22223333
-#define PACKET_TRACE_TXT    0x33334444
-#define PACKET_TRACE_CDMA   0x44445555
-
 TraceIPC::TraceIPC(QObject *parent) :
     QObject(parent), m_reconnect(false)
 {
@@ -71,84 +65,74 @@ void TraceIPC::socket_disconnected(void)
 void TraceIPC::socket_readReady(void)
 {
     union {
+        u_int32_t magic;
         TraceIPC::packet_cdma pak_cdma;
         TraceIPC::packet_irq pak_irq;
         TraceIPC::packet_txt pak_txt;
         TraceIPC::packet_rw pak_rw;
+        char packet[36];
     };
-    u_int32_t magic;
 
-    while (m_socket.bytesAvailable()) {
-        while (m_socket.bytesAvailable() < sizeof(pak_rw) + 4)
+moar:
+    while (m_socket.bytesAvailable() < sizeof(packet))
+        if (!m_socket.waitForReadyRead())
+            return socket_error();
+
+    m_socket.read(packet, sizeof(packet));
+
+    switch (ntohl(magic)) {
+    case PACKET_TRACE_RW:
+    case PACKET_TRACE_RW_V2:
+        pak_rw.hwaddr           = ntohl(pak_rw.hwaddr);
+        pak_rw.offset           = ntohl(pak_rw.offset);
+        pak_rw.value            = ntohl(pak_rw.value);
+        pak_rw.new_value        = ntohl(pak_rw.new_value);
+        pak_rw.__old_is_write   = ntohl(pak_rw.__old_is_write);
+        pak_rw.time             = ntohl(pak_rw.time);
+        pak_rw.cpu_pc           = ntohl(pak_rw.cpu_pc);
+        pak_rw.cpu_id           = ntohl(pak_rw.cpu_id);
+
+        emit regAccess(pak_rw);
+        break;
+    case PACKET_TRACE_IRQ:
+        pak_irq.hwaddr = ntohl(pak_irq.hwaddr);
+        pak_irq.hwirq  = ntohl(pak_irq.hwirq);
+        pak_irq.status = ntohl(pak_irq.status);
+        pak_irq.time   = ntohl(pak_irq.time);
+        pak_irq.cpu_pc = ntohl(pak_irq.cpu_pc);
+        pak_irq.cpu_id = ntohl(pak_irq.cpu_id);
+
+        emit irqEvent(pak_irq);
+        break;
+    case PACKET_TRACE_TXT:
+    {
+        while (m_socket.bytesAvailable() < ntohl(pak_txt.text_sz))
             if (!m_socket.waitForReadyRead())
-                goto socket_err;
+                return socket_error();
 
-        m_socket.read((char*)&magic, sizeof(magic));
+        char *txt = new char[ntohl(pak_txt.text_sz)];
+        m_socket.read(txt, ntohl(pak_txt.text_sz));
 
-        switch (ntohl(magic)) {
-        case PACKET_TRACE_RW:
-        case PACKET_TRACE_RW_V2:
-            m_socket.read((char*)&pak_rw, sizeof(pak_rw));
+        emit message(txt);
+        break;
+    }
+    case PACKET_TRACE_CDMA:
+        pak_cdma.time       = ntohl(pak_cdma.time);
+        pak_cdma.data       = ntohl(pak_cdma.data);
+        pak_cdma.is_gather  = ntohl(pak_cdma.is_gather);
+        pak_cdma.ch_id      = ntohl(pak_cdma.ch_id);
 
-            pak_rw.hwaddr           = ntohl(pak_rw.hwaddr);
-            pak_rw.offset           = ntohl(pak_rw.offset);
-            pak_rw.value            = ntohl(pak_rw.value);
-            pak_rw.new_value        = ntohl(pak_rw.new_value);
-            pak_rw.__old_is_write   = ntohl(pak_rw.__old_is_write);
-            pak_rw.time             = ntohl(pak_rw.time);
-            pak_rw.cpu_pc           = ntohl(pak_rw.cpu_pc);
-            pak_rw.cpu_id           = ntohl(pak_rw.cpu_id);
-
-            emit regAccess(pak_rw);
-            break;
-        case PACKET_TRACE_IRQ:
-            m_socket.read((char*)&pak_irq, sizeof(pak_irq));
-
-            pak_irq.hwaddr = ntohl(pak_irq.hwaddr);
-            pak_irq.hwirq  = ntohl(pak_irq.hwirq);
-            pak_irq.status = ntohl(pak_irq.status);
-            pak_irq.time   = ntohl(pak_irq.time);
-            pak_irq.cpu_pc = ntohl(pak_irq.cpu_pc);
-            pak_irq.cpu_id = ntohl(pak_irq.cpu_id);
-
-            emit irqEvent(pak_irq);
-            break;
-        case PACKET_TRACE_TXT:
-        {
-            m_socket.read((char*)&pak_txt, sizeof(pak_txt));
-
-            while (m_socket.bytesAvailable() < ntohl(pak_txt.text_sz))
-                if (!m_socket.waitForReadyRead())
-                    goto socket_err;
-
-            char *txt = new char[ntohl(pak_txt.text_sz)];
-            m_socket.read(txt, ntohl(pak_txt.text_sz));
-
-            emit message(txt);
-            break;
-        }
-        case PACKET_TRACE_CDMA:
-            m_socket.read((char*)&pak_cdma, sizeof(pak_cdma));
-
-            pak_cdma.time       = ntohl(pak_cdma.time);
-            pak_cdma.data       = ntohl(pak_cdma.data);
-            pak_cdma.is_gather  = ntohl(pak_cdma.is_gather);
-            pak_cdma.ch_id      = ntohl(pak_cdma.ch_id);
-
-            emit chWrite(pak_cdma.ch_id, pak_cdma.time, pak_cdma.data,
-                         pak_cdma.is_gather);
-            break;
-        default:
-            qDebug() << QString().sprintf("0x%08X", ntohl(magic));
-            Q_ASSERT(0);
-            break;
-        }
+        emit chWrite(pak_cdma.ch_id, pak_cdma.time, pak_cdma.data,
+                     pak_cdma.is_gather);
+        break;
+    default:
+        qDebug() << QString().sprintf("0x%08X", ntohl(magic));
+        Q_ASSERT(0);
+        break;
     }
 
-    return;
-
-socket_err:
-    qDebug() << "socket_error" << m_socket.errorString();
+    if (m_socket.bytesAvailable())
+        goto moar;
 }
 
 void TraceIPC::socket_error(void)
