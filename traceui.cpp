@@ -122,7 +122,6 @@ void TraceUI::ActiveDeviceChanged(TraceDev *dev)
     m_tableViewTrace->resizeColumnToContents(1);
     m_tableViewTrace->resizeColumnToContents(2);
 
-    m_tableViewBitDetails->setVisible(false);
     m_tableViewBitDetails->setModel(NULL);
 
     m_textRegDesc->setVisible(false);
@@ -130,6 +129,8 @@ void TraceUI::ActiveDeviceChanged(TraceDev *dev)
 
     connect(m_regFilter, SIGNAL(textEdited(const QString)),
             m_activeDevice, SLOT(regFilterChanged(const QString)));
+
+    m_activeDevice->regFilterChanged( m_regFilter->text() );
 }
 
 void TraceUI::resetUI(void)
