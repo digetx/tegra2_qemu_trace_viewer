@@ -19,10 +19,6 @@
 #define TRACECORE_H
 
 #include <QtDBus/QDBusAbstractAdaptor>
-#include <QObject>
-#include <QListWidgetItem>
-#include <QVarLengthArray>
-#include <QTableView>
 
 #include "mainwindow.h"
 #include "traceipc.h"
