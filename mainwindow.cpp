@@ -30,6 +30,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
     restoreState(settings.value("mainWindowState").toByteArray());
+
+    QAction *exitAction = new QAction(this);
+    exitAction->setShortcut(Qt::Key_Q | Qt::CTRL);
+
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+    addAction(exitAction);
 }
 
 MainWindow::~MainWindow()
