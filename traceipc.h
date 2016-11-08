@@ -18,12 +18,14 @@
 #ifndef TRACEIPC_H
 #define TRACEIPC_H
 
-#define LOCAL_SOCKET
-
-#include <QObject>
+#include <QMutex>
 #include <QLocalSocket>
 #include <QTcpSocket>
 #include <QTimer>
+
+#ifndef Q_OS_ANDROID
+#define LOCAL_SOCKET
+#endif
 
 class TraceIPC : public QObject
 {
@@ -65,6 +67,7 @@ public:
         u_int32_t time;
         u_int32_t cpu_pc;
         u_int32_t cpu_id;
+        u_int64_t __pad;
     } __attribute__((packed, aligned(1))) packet_irq;
 
     typedef struct trace_pkt_cdma_s {
@@ -73,7 +76,18 @@ public:
         u_int32_t data;
         u_int32_t is_gather;
         u_int32_t ch_id;
+        u_int64_t __pad0;
+        u_int64_t __pad1;
     } __attribute__((packed, aligned(1))) packet_cdma;
+
+    typedef struct trace_pkt_txt_s {
+//        u_int32_t magic;
+        u_int32_t text_sz;
+        u_int64_t __pad0;
+        u_int64_t __pad1;
+        u_int64_t __pad2;
+        u_int32_t __pad4;
+    } __attribute__((packed, aligned(1))) packet_txt;
 
 signals:
     void regAccess(TraceIPC::packet_rw pak_rw);
@@ -88,11 +102,7 @@ public slots:
     void socket_connected(void);
     void socket_disconnected(void);
     void socket_readReady(void);
-#ifdef LOCAL_SOCKET
-    void socket_error(QLocalSocket::LocalSocketError);
-#else
-    void socket_error(QAbstractSocket::SocketError);
-#endif
+    void socket_error(void);
 
 private slots:
     void Reconnect(void);

@@ -21,11 +21,9 @@
 
 #define PACKET_TRACE_RW     0x11111111
 #define PACKET_TRACE_RW_V2  0x11111112
-#define PACKET_TRACE_IRQ    0x22222222
-#define PACKET_TRACE_TXT    0x33333333
-#define PACKET_TRACE_CDMA   0x44444444
-
-#define MAX_JOBS        1000
+#define PACKET_TRACE_IRQ    0x22223333
+#define PACKET_TRACE_TXT    0x33334444
+#define PACKET_TRACE_CDMA   0x44445555
 
 TraceIPC::TraceIPC(QObject *parent) :
     QObject(parent), m_reconnect(false)
@@ -33,13 +31,8 @@ TraceIPC::TraceIPC(QObject *parent) :
     connect(&m_socket, SIGNAL(connected()), this, SLOT(socket_connected()));
     connect(&m_socket, SIGNAL(disconnected()), this, SLOT(socket_disconnected()));
     connect(&m_socket, SIGNAL(readyRead()), this, SLOT(socket_readReady()));
-#ifdef LOCAL_SOCKET
-    connect(&m_socket, SIGNAL(error(QLocalSocket::LocalSocketError)),
-            this, SLOT(socket_error(QLocalSocket::LocalSocketError)));
-#else
     connect(&m_socket, SIGNAL(error(QAbstractSocket::SocketError)),
-            this, SLOT(socket_error(QAbstractSocket::SocketError)));
-#endif
+            this, SLOT(socket_error()));
 
     m_reconnect_timer.setSingleShot(true);
     connect(&m_reconnect_timer, SIGNAL(timeout()), this, SLOT(Reconnect()));
@@ -77,16 +70,22 @@ void TraceIPC::socket_disconnected(void)
 
 void TraceIPC::socket_readReady(void)
 {
-    TraceIPC::packet_cdma pak_cdma;
-    TraceIPC::packet_irq pak_irq;
-    TraceIPC::packet_rw pak_rw;
-    int i = MAX_JOBS;
-    u_int32_t entry;
+    union {
+        TraceIPC::packet_cdma pak_cdma;
+        TraceIPC::packet_irq pak_irq;
+        TraceIPC::packet_txt pak_txt;
+        TraceIPC::packet_rw pak_rw;
+    };
+    u_int32_t magic;
 
-    while (m_socket.bytesAvailable() >= sizeof(pak_irq) && i--) {
-        m_socket.read((char*)&entry, sizeof(entry));
+    while (m_socket.bytesAvailable()) {
+        while (m_socket.bytesAvailable() < sizeof(pak_rw) + 4)
+            if (!m_socket.waitForReadyRead())
+                goto socket_err;
 
-        switch (ntohl(entry)) {
+        m_socket.read((char*)&magic, sizeof(magic));
+
+        switch (ntohl(magic)) {
         case PACKET_TRACE_RW:
         case PACKET_TRACE_RW_V2:
             m_socket.read((char*)&pak_rw, sizeof(pak_rw));
@@ -116,12 +115,14 @@ void TraceIPC::socket_readReady(void)
             break;
         case PACKET_TRACE_TXT:
         {
-            m_socket.read((char*)&entry, sizeof(entry));
+            m_socket.read((char*)&pak_txt, sizeof(pak_txt));
 
-            entry = ntohl(entry);
+            while (m_socket.bytesAvailable() < ntohl(pak_txt.text_sz))
+                if (!m_socket.waitForReadyRead())
+                    goto socket_err;
 
-            char *txt = new char[entry];
-            m_socket.read(txt, entry);
+            char *txt = new char[ntohl(pak_txt.text_sz)];
+            m_socket.read(txt, ntohl(pak_txt.text_sz));
 
             emit message(txt);
             break;
@@ -138,17 +139,20 @@ void TraceIPC::socket_readReady(void)
                          pak_cdma.is_gather);
             break;
         default:
+            qDebug() << QString().sprintf("0x%08X", ntohl(magic));
             Q_ASSERT(0);
             break;
         }
     }
+
+    return;
+
+socket_err:
+    qDebug() << "socket_error" << m_socket.errorString();
 }
 
-#ifdef LOCAL_SOCKET
-void TraceIPC::socket_error(QLocalSocket::LocalSocketError)
-#else
-void TraceIPC::socket_error(QAbstractSocket::SocketError)
-#endif
+void TraceIPC::socket_error(void)
+
 {
     qDebug() << "socket_error" << m_socket.errorString();
 
