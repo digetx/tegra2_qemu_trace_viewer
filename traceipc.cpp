@@ -27,6 +27,8 @@ TraceIPC::TraceIPC(QObject *parent) :
     connect(&m_socket, SIGNAL(readyRead()), this, SLOT(socket_readReady()));
     connect(&m_socket, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(socket_error()));
+    connect(&m_socket, SIGNAL(error(QLocalSocket::LocalSocketError)),
+            this, SLOT(socket_error()));
 
     m_reconnect_timer.setSingleShot(true);
     connect(&m_reconnect_timer, SIGNAL(timeout()), this, SLOT(Reconnect()));
